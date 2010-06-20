@@ -6,35 +6,40 @@
 // User model(s)
 
 class Person: public ActiveRecord::Base<Person> {
-//  static void has_many(string x);
+ public:
+  Person(int id) : ActiveRecord::Base<Person>(id) {}
 };
 
 //Person::has_many("books");
 
+namespace ActiveRecord {
+  extern Connection current_connection;
+}
+
 // Define the name of the table
 template <>
 string ActiveRecord::Base<Person>::table_name = "people";
+template <>
+ActiveRecord::Connection * ActiveRecord::Base<Person>::connection = &ActiveRecord::current_connection;
 
 // Optional: Define a name for result sets
-typedef ActiveRecord::Query<Person> People;
+typedef vector<Person> People;
 
 //////////////////////////////////////////////
 
 #include <iostream>
 using namespace std;
-// Keep these until we replace the define on list_of:
-#include <boost/assign.hpp>
-using namespace boost::assign;
-
-namespace ActiveRecord {
-
-extern Connection current_connection;
-
-}
+using namespace ActiveRecord;
 
 int main(int argc, const char* argv[]) {
-  ActiveRecord::current_connection.connect(to_options ("adapter", "sqlite") ("database", "/home/joe/foobar.sqlite3"));
-  Person person;
-  People people = person.where(to_options ("name = ?", "Joe") ("age = ?", "45")).limit(3).order("surname");
-  cout << people.sql() << endl;
+  connect(options ("adapter", "sqlite") ("database", "/home/joe/foobar.sqlite3"));
+  ActiveRecord::Query<Person> query;
+  //People people = query.where(options ("name = ?", "Joe") ("age = ?", "45")).limit(3).order("surname").all();
+  People people = query.where(conditions ("surname = ?", "Yates")).all();
+  int count = people.size();
+  cout << "Result count: " << count << endl;
+  for (int i = 0; i < count; ++i) {
+    cout << people[i]["id"] << endl;
+    cout << people[i]["name"] << endl;
+  }
 }
