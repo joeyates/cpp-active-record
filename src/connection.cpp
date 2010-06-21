@@ -70,19 +70,19 @@ bool Connection::sqlite_create() {
 
 void Connection::bind_parameters(sqlite3_stmt *ppStmt, const AttributeList &parameters) {
   for (int i = 0; i < parameters.size(); ++i) {
-    switch (parameters[i].first) {
+    switch (parameters[i].which() + VARIANT_TYPES_BASE) {
     case integer: {
-      int value = boost::get<int>(parameters[i].second);
+      int value = boost::get<int>(parameters[i]);
       sqlite3_bind_int(ppStmt, i + 1, value);
       break;
     }
     case text: {
-      string value = boost::get<std::string>(parameters[i].second);
+      string value = boost::get<std::string>(parameters[i]);
       sqlite3_bind_text(ppStmt, i + 1, value.c_str(), value.size(), 0);
       break;
     }
     case floating_point: {
-      double value = boost::get<double>(parameters[i].second);
+      double value = boost::get<double>(parameters[i]);
       sqlite3_bind_double(ppStmt, i + 1, value);
       break;
     }

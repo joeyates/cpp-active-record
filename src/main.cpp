@@ -41,11 +41,9 @@ int main(int argc, const char* argv[]) {
     ("database", "/home/joe/foobar.sqlite3"));
   Person::setup(&connection); // Must be called for each model
 
-  /* Insert data
+  // Insert data
   Person joe;
   joe["name"] = "Joe";
-  cout << "joe[\"name\"]: " << joe["name"] << endl;
-  */
 
   // Retrieve data
   vector<Person> people = ActiveRecord::Query<Person>()

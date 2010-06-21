@@ -23,16 +23,14 @@ class Query {
   Query(const Query<T> &other);
   Query<T> operator=(const Query<T> &other);
 
-  Query<T>  where(const string &condition, const string &value);
-  Query<T>  where(const string &condition, int value);
-  Query<T>  where(const string &condition, double value);
+  Query<T>  where(const string &condition, const Attribute &value);
   Query<T>  order(string order);
   Query<T>  limit(int limit);
   // Results
   T         first();
   vector<T> all();
  protected:
-  TypedAttributePairList  conditions_;
+  AttributePairList  conditions_;
   int            limit_;
   vector<string> orderings_;
  private:
@@ -57,15 +55,8 @@ Query<T> Query<T>::operator=(const Query<T> &other) {
 
 // foo.where(options ("name = ?", "Joe"));
 template <class T>
-Query<T> Query<T>::where(const string &condition, const string &value) {
-  conditions_.push_back(TypedAttributePair(condition, TypedAttribute(text, value)));
-  return *this;
-}
-
-// foo.where(options ("age = ?", 45));
-template <class T>
-Query<T> Query<T>::where(const string &condition, int value) {
-  conditions_.push_back(TypedAttributePair(condition, TypedAttribute(integer, value)));
+Query<T> Query<T>::where(const string &condition, const Attribute &value) {
+  conditions_.push_back(AttributePair(condition, value));
   return *this;
 }
 
@@ -106,7 +97,7 @@ QueryParametersPair Query<T>::condition_clause() {
     return QueryParametersPair("", parameters);
   stringstream ss;
   ss << " ";
-  for (TypedAttributePairList::const_iterator it = conditions_.begin(); it != conditions_.end(); ++it) {
+  for (AttributePairList::const_iterator it = conditions_.begin(); it != conditions_.end(); ++it) {
     if (it == conditions_.begin())
       ss << "WHERE ";
     else

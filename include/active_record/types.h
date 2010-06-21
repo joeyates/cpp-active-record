@@ -25,15 +25,14 @@ enum Type {
   text = 2,
   floating_point = 3
 };
-
+#define VARIANT_TYPES_BASE 1
 // N.B. boost::variant.which() returns a 0-based index into this type list
 typedef boost::variant< int, string, double > Attribute;
-typedef pair< Type, Attribute >               TypedAttribute;
-typedef pair< string, TypedAttribute >        TypedAttributePair;
-typedef map< string, TypedAttribute >         AttributeHash;
-typedef vector< TypedAttribute >              AttributeList;
-typedef vector< TypedAttributePair >          TypedAttributePairList;
-typedef pair< string, AttributeList >         QueryParametersPair;
+typedef pair< string, Attribute >        AttributePair;
+typedef map< string, Attribute >         AttributeHash;
+typedef vector< Attribute >              AttributeList;
+typedef vector< AttributePair >          AttributePairList;
+typedef pair< string, AttributeList >    QueryParametersPair;
 } // namespace ActiveRecord
 
 // Instantiate boost::assign::list_of for our option type

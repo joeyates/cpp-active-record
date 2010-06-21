@@ -36,32 +36,31 @@ class Base {
       update_database();
   }
   Base() : loaded_(false) {
-    attributes_[tables[T::class_name].primary_key] = TypedAttribute(ActiveRecord::integer, -1); // TODO invalid id
+    attributes_[tables[T::class_name].primary_key] = -1; // TODO invalid id
   }
   Base(int id) : loaded_(false) {
-    attributes_[tables[T::class_name].primary_key] =
-      TypedAttribute(ActiveRecord::integer, id);
+    attributes_[tables[T::class_name].primary_key] = id;
   }
   Attribute& operator[](const string &name) {
-    return attributes_[name].second;
+    return attributes_[name];
   }
   string text(const string &name) {
     // TODO: check type? ...or allow conversion
     if (!loaded_)
       load();
-    return boost::get<string>(attributes_[name].second);
+    return boost::get<string>(attributes_[name]);
   }
   int integer(const string &name) {
     // TODO: check type?
     if (!loaded_)
       load();
-    return boost::get<int>(attributes_[name].second);
+    return boost::get<int>(attributes_[name]);
   }
   double floating_point(const string &name) {
     // TODO: check type?
     if (!loaded_)
       load();
-    return boost::get<double>(attributes_[name].second);
+    return boost::get<double>(attributes_[name]);
   }
  private:
   static void update_database();
@@ -78,7 +77,7 @@ bool Base<T>::load() {
   ss << "FROM " << tables[T::class_name].table_name << " ";
   ss << "WHERE ";
   ss << tables[T::class_name].primary_key << " = ";
-  ss << attributes_[tables[T::class_name].primary_key].second;
+  ss << attributes_[tables[T::class_name].primary_key];
   Row row = tables[T::class_name].connection->select_one(ss.str());
   attributes_ = row.attributes();
   loaded_ = true;
