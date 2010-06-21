@@ -6,6 +6,8 @@
 #include <active_record/query.h>
 #include <active_record/table_data.h>
 
+#define ACTIVE_RECORD_UNSAVED -1
+
 namespace ActiveRecord {
 
 // Mm, nice, globals!
@@ -36,7 +38,7 @@ class Base {
       update_database();
   }
   Base() : loaded_(false) {
-    attributes_[tables[T::class_name].primary_key] = -1; // TODO invalid id
+    attributes_[tables[T::class_name].primary_key] = ACTIVE_RECORD_UNSAVED;
   }
   Base(int id) : loaded_(false) {
     attributes_[tables[T::class_name].primary_key] = id;
@@ -45,30 +47,66 @@ class Base {
     return attributes_[name];
   }
   string text(const string &name) {
+    if (is_new())
+      return boost::get<string>(attributes_[name]);
     // TODO: check type? ...or allow conversion
     if (!loaded_)
       load();
     return boost::get<string>(attributes_[name]);
   }
   int integer(const string &name) {
+    if (is_new())
+      return boost::get<int>(attributes_[name]);
     // TODO: check type?
     if (!loaded_)
       load();
     return boost::get<int>(attributes_[name]);
   }
   double floating_point(const string &name) {
+    if (is_new())
+      return boost::get<double>(attributes_[name]);
     // TODO: check type?
     if (!loaded_)
       load();
     return boost::get<double>(attributes_[name]);
   }
+  bool save() {
+    if (is_new())
+      return create();
+    else
+      return update();
+  }
  private:
-  static void update_database();
+  static void   update_database();
   bool          loaded_;
   AttributeHash attributes_;
   bool          load();
-  bool          is_new() { return (attributes_[tables[T::class_name].primary_key] == -1)? true : false; } // TODO invalid id
+  bool          create();
+  bool          update();
+  inline int id() {
+    return boost::get<int>(attributes_[tables[T::class_name].primary_key]);
+  }
+  inline bool   is_new() {
+    return (id() == ACTIVE_RECORD_UNSAVED)? true : false;
+  }
 };
+
+/////////////////////////////////////////
+// Private
+
+// TODO: Handle alter table
+template <class T>
+void Base<T>::update_database() {
+  TableData td = tables[T::class_name];
+  stringstream ss;
+  ss << "CREATE TABLE IF NOT EXISTS " << td.table_name << " (";
+  ss << td.primary_key << " INTEGER PRIMARY KEY";
+  for (vector<Field>::iterator it = td.fields.begin(); it != td.fields.end(); ++it) {
+    ss << ", " << it->name() << " " << type_name[it->type()];
+  }
+  ss << ");";
+  tables[T::class_name].connection->execute(ss.str());
+}
 
 template <class T>
 bool Base<T>::load() {
@@ -84,18 +122,51 @@ bool Base<T>::load() {
   return true;
 }
 
-// TODO: Handle alter table
+// TODO: Re-read the record afterwards to get default values?
 template <class T>
-void Base<T>::update_database() {
-  TableData td = tables[T::class_name];
-  stringstream ss;
-  ss << "CREATE TABLE IF NOT EXISTS " << td.table_name << " (";
-  ss << td.primary_key << " INTEGER PRIMARY KEY";
-  for (vector<Field>::iterator it = td.fields.begin(); it != td.fields.end(); ++it) {
-    ss << ", " << it->name() << " " << type_name[it->type()];
+bool Base<T>::create() {
+  stringstream ss, columns, placeholders;
+  ss << "INSERT INTO " << tables[T::class_name].table_name << " ";
+  bool columns_added = false;
+  AttributeList parameters;
+  for (AttributeHash::iterator it = attributes_.begin(); it != attributes_.end(); ++it) {
+    if (it->first == tables[T::class_name].primary_key)
+      continue;
+    if (columns_added) {
+      columns << ", ";
+      placeholders << ", ";
+    }
+    columns << it->first;
+    placeholders << "?";
+    parameters.push_back(it->second);
+    columns_added = true;
   }
-  ss << ");";
-  tables[T::class_name].connection->execute(ss.str());
+  ss << "(" << columns.str() << ") VALUES (" << placeholders.str() << ");";
+  return tables[T::class_name].connection->execute(ss.str(), parameters);  
+}
+
+template <class T>
+bool Base<T>::update() {
+  if (!loaded_)
+    load();
+  stringstream ss, columns;
+  ss << "UPDATE " << tables[T::class_name].table_name << " ";
+  bool columns_added = false;
+  AttributeList parameters;
+  for (AttributeHash::iterator it = attributes_.begin(); it != attributes_.end(); ++it) {
+    if (it->first == tables[T::class_name].primary_key)
+      continue;
+    if (columns_added)
+      columns << ", ";
+    columns << it->first << " = ?";
+    parameters.push_back(it->second);
+    columns_added = true;
+  }
+  ss << "SET " << columns.str() << " ";
+  ss << "WHERE " << tables[T::class_name].primary_key << " = ?;";
+  parameters.push_back(id());
+  cout << ss.str() << endl;
+  return tables[T::class_name].connection->execute(ss.str(), parameters);
 }
 
 } // namespace ActiveRecord
