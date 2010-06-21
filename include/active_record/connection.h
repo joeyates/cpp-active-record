@@ -13,24 +13,20 @@ class Connection {
  public:
   Connection();
   void    connect(OptionsHash options);
-  bool    execute(string query);
-  Row     select_value(string query);
-  Row     select_one(string query);
-  RowSet  select_values(string query, AttributeList parameters = AttributeList());
-  RowSet  select_all(string query);
+  bool    execute(const string &query, const AttributeList &parameters = AttributeList());
+  Row     select_value(const string &query, const AttributeList &parameters = AttributeList());
+  Row     select_one(const string &query, const AttributeList &parameters = AttributeList());
+  RowSet  select_values(const string &query, const AttributeList &parameters = AttributeList());
+  RowSet  select_all(const string &query, const AttributeList &parameters = AttributeList());
  private:
   Connection(const Connection& other);
   Connection operator=(const Connection& other);
  private:
   bool    sqlite_initialize(string database_path_name);
   bool    sqlite_create();
+  void    bind_parameters(sqlite3_stmt *ppStmt, const AttributeList &parameters);
   sqlite3 * db_;
 };
-
-/*
- Connect the default database
- */
-void connect(OptionsHash options);
 
 } // namespace ActiveRecord
 

@@ -10,6 +10,8 @@ Row::Row(sqlite3_stmt *pStmt) {
     const char * type = sqlite3_column_decltype(pStmt, i);
     if (strcmp(type, "INTEGER") == 0) {
       attributes_[name] = TypedAttribute(ActiveRecord::integer, sqlite3_column_int(pStmt, i));
+    } else if (strcmp(type, "FLOAT") == 0) {
+      attributes_[name] = TypedAttribute(ActiveRecord::floating_point, sqlite3_column_double(pStmt, i));
     } else if (strcmp(type, "TEXT") == 0) {
       const char * value = (const char *) sqlite3_column_text(pStmt, i);
       if (value != 0)

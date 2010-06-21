@@ -4,23 +4,30 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <active_record/row.h>
 #include <active_record/types.h>
+#include <active_record/table_data.h>
+#include <active_record/row.h>
 #include <active_record/connection.h>
 using namespace std;
 
+#define INVALID_LIMIT -1
+
 namespace ActiveRecord {
+
+extern TableSet tables;
 
 template <class T>
 class Query {
  public:
-  Query() {};
+  Query() : limit_(INVALID_LIMIT) {};
   Query(const Query<T> &other);
   Query<T> operator=(const Query<T> &other);
 
-  Query<T>  where(TypedAttributePairList conditions);
-  Query<T>  limit(int limit);
+  Query<T>  where(const string &condition, const string &value);
+  Query<T>  where(const string &condition, int value);
+  Query<T>  where(const string &condition, double value);
   Query<T>  order(string order);
+  Query<T>  limit(int limit);
   // Results
   T         first();
   vector<T> all();
@@ -31,10 +38,9 @@ class Query {
  private:
   QueryParametersPair condition_clause();
   string              order_clause();
+  string              limit_clause();
   QueryParametersPair query_and_parameters();
 };
-
-extern map<string, TableData> tables;
 
 template <class T>
 Query<T>::Query(const Query<T> &other) {
@@ -51,8 +57,15 @@ Query<T> Query<T>::operator=(const Query<T> &other) {
 
 // foo.where(options ("name = ?", "Joe"));
 template <class T>
-Query<T> Query<T>::where(TypedAttributePairList conditions) {
-  conditions_ = conditions;
+Query<T> Query<T>::where(const string &condition, const string &value) {
+  conditions_.push_back(TypedAttributePair(condition, TypedAttribute(text, value)));
+  return *this;
+}
+
+// foo.where(options ("age = ?", 45));
+template <class T>
+Query<T> Query<T>::where(const string &condition, int value) {
+  conditions_.push_back(TypedAttributePair(condition, TypedAttribute(integer, value)));
   return *this;
 }
 
@@ -73,12 +86,11 @@ Query<T> Query<T>::order(string order) {
 // foo.all();
 template <class T>
 vector<T> Query<T>::all() {
-  TableData td = tables[T::table_name];
   QueryParametersPair query = query_and_parameters();
-  RowSet rows = T::connection->select_values(query.first, query.second);
+  RowSet rows = tables[T::class_name].connection->select_values(query.first, query.second);
   vector<T> results;
   for (RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
-    T t(it->get_integer(td.primary_key));
+    T t(it->get_integer(tables[T::class_name].primary_key));
     results.push_back(t);
   }
   return results;
@@ -93,9 +105,10 @@ QueryParametersPair Query<T>::condition_clause() {
   if (conditions_.size() == 0)
     return QueryParametersPair("", parameters);
   stringstream ss;
+  ss << " ";
   for (TypedAttributePairList::const_iterator it = conditions_.begin(); it != conditions_.end(); ++it) {
     if (it == conditions_.begin())
-      ss << " WHERE ";
+      ss << "WHERE ";
     else
       ss << " AND ";
     ss << it->first;
@@ -104,32 +117,45 @@ QueryParametersPair Query<T>::condition_clause() {
   return QueryParametersPair(ss.str(), parameters);
 }
 
-// BUG HERE: there should be a comma between orderings!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 template <class T>
 string Query<T>::order_clause() {
   if (orderings_.size() == 0)
     return "";
   stringstream ss;
-  ss << " ORDER BY";
-  for (vector<string>::const_iterator it = orderings_.begin(); it != orderings_.end(); ++it)
-    ss << " " << *it;
+  ss << " ";
+  for (vector<string>::const_iterator it = orderings_.begin(); it != orderings_.end(); ++it) {
+    if (it == orderings_.begin())
+      ss << "ORDER BY ";
+    else
+      ss << ", ";
+    ss << *it;
+  }
+  return ss.str();
+}
+
+template <class T>
+string Query<T>::limit_clause() {
+  if (limit_ == INVALID_LIMIT)
+    return "";
+  stringstream ss;
+  ss << " LIMIT " << limit_;
   return ss.str();
 }
 
 template <class T>
 QueryParametersPair Query<T>::query_and_parameters() {
-  TableData td = tables[T::table_name];
   stringstream ss;
   ss << "SELECT ";
-  ss << td.primary_key << " ";
-  ss << "FROM " << T::table_name;
+  ss << tables[T::class_name].primary_key << " ";
+  ss << "FROM ";
+  ss << tables[T::class_name].table_name;
   QueryParametersPair conditions = condition_clause();
   ss << conditions.first;
   ss << order_clause();
+  ss << limit_clause();
   ss << ";";
   return QueryParametersPair(ss.str(), conditions.second);
 }
-
 
 } // namespace ActiveRecord
 

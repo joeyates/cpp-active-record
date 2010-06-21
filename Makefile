@@ -1,6 +1,7 @@
 SOURCES   = \
   src/connection.cpp \
   src/row.cpp \
+  src/types.cpp \
   src/main.cpp
 OBJECTS   := $(SOURCES:src/%.cpp=objects/%.o)
 C++-FLAGS = -c -I./include
@@ -11,7 +12,8 @@ $(OBJECTS): \
   include/active_record/row.h \
   include/active_record/connection.h \
   include/active_record/query.h \
-  include/active_record/types.h
+  include/active_record/types.h \
+  include/active_record/table_data.h
 
 debug: active_record
 run-debug:
