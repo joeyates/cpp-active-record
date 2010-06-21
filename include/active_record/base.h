@@ -68,7 +68,7 @@ class Base {
   bool          loaded_;
   AttributeHash attributes_;
   bool          load();
-  bool          is_new() { return (attributes_[tables[T::class_name].primary_key] == -1)? true : false; }
+  bool          is_new() { return (attributes_[tables[T::class_name].primary_key] == -1)? true : false; } // TODO invalid id
 };
 
 template <class T>
