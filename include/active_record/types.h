@@ -20,12 +20,11 @@ typedef map< string, string >                 OptionsHash;
 
 // Attributes are typed
 enum Type {
-  unknown = 0,
-  integer = 1,
-  text = 2,
-  floating_point = 3
+  integer = 0,
+  text = 1,
+  floating_point = 2
 };
-#define VARIANT_TYPES_BASE 1
+//define VARIANT_TYPES_BASE 1
 // N.B. boost::variant.which() returns a 0-based index into this type list
 typedef boost::variant< int, string, double > Attribute;
 typedef pair< string, Attribute >        AttributePair;

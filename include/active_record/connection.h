@@ -23,7 +23,6 @@ class Connection {
   Connection operator=(const Connection& other);
  private:
   bool    sqlite_initialize(string database_path_name);
-  bool    sqlite_create();
   void    bind_parameters(sqlite3_stmt *ppStmt, const AttributeList &parameters);
   sqlite3 * db_;
 };

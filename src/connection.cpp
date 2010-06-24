@@ -14,7 +14,6 @@ Connection Connection::operator=(const Connection& other) {
 
 void Connection::connect(OptionsHash options) {
   sqlite_initialize(options["database"]);
-  //sqlite_create();
 }
 
 bool Connection::execute(const string &query, const AttributeList &parameters) {
@@ -61,16 +60,9 @@ bool Connection::sqlite_initialize(string database_path_name) {
   }
 }
 
-// TODO: Move this to model
-bool Connection::sqlite_create() {
-  execute("INSERT INTO people (name, surname, age, height) VALUES (\"Joe\", \"Yates\", 45, 1.80)");
-  execute("INSERT INTO people (name, surname, age, height) VALUES (\"Elena\", \"Yates\", 7, 1.10)");
-  execute("INSERT INTO people (name, surname, age, height) VALUES (\"Patrizia\", \"Parri\", 43, 1.75)");
-}
-
 void Connection::bind_parameters(sqlite3_stmt *ppStmt, const AttributeList &parameters) {
   for (int i = 0; i < parameters.size(); ++i) {
-    switch (parameters[i].which() + VARIANT_TYPES_BASE) {
+    switch (parameters[i].which()) {
     case integer: {
       int value = boost::get<int>(parameters[i]);
       sqlite3_bind_int(ppStmt, i + 1, value);

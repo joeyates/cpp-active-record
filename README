@@ -1,6 +1,11 @@
 TODO:
-- define a NullClass for variant 0 position
-- validations
+- a date type
+- start testing
+- run timings
+- move models
+- decide what to do about exceptions
+- validations: check types before saving
+
 = Rationale =
 
 == Tables ==

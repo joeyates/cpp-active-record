@@ -10,9 +10,7 @@
 
 namespace ActiveRecord {
 
-// Mm, nice, globals!
-// TODO: thread safety
-TableSet tables;
+extern TableSet tables;
 extern TypeNameMap type_name;
 
 /*
