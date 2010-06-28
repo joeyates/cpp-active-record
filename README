@@ -1,14 +1,14 @@
 TODO:
+- use automake
 - a date type
-- start testing
-- run timings
-- move models
+- do profiling
 - decide what to do about exceptions
 - validations: check types before saving
+- class associations
 
-= Rationale =
+= Rationale
 
-== Tables ==
+== Tables
 
 We need to connect:
 - the "model", e.g. Person, with it's list of attributes,
@@ -20,7 +20,7 @@ E.g.
 - a class might use a non-default database connection
 - other classes might not use other defaults, e.g. 'id' as the primary key column
 
-== Attributes ==
+== Attributes
 
 1)
 With an ORM, the choice is to have the structure in the database or in the model.
@@ -42,13 +42,13 @@ For reasons (1) and (2) we need:
 
 This repetition would be unnecessary in a language with introspection, but in C++ I can't seem to DRY it up any more than this.
 
-== Types ==
+== Types
 
 Ways of holding attributes:
 - a hashmap of attribute name -> variant
 - strongly typed member variables.
 
-=== Variants ===
+=== Variants
 
 This method is easy to code, but makes the interface horrible:
   variant var = person.get("name");
@@ -60,7 +60,7 @@ Maybe, as the variant would hold the already converted value, it wouldn't be so 
 Pro: Easy, clean coding. Easy for user to understand and debug.
 Con: Ugly API with type conversion done by client. Slow?
 
-=== Typed Members ===
+=== Typed Members
 
 The model would have typed members.
 Plus, it would have typed getters and setters:
@@ -86,6 +86,6 @@ That would mean editors would not recognise the file type. So, no syntax highlig
 Pro: very clean model interface.
 Con: using macros/preprocessing is very hard to debug.
 
-= SQLite Interface =
+= Testing
 
-http://www.sqlite.org/c3ref/column_blob.html
+This project uses Google Test.

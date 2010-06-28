@@ -3,7 +3,7 @@ But, below is a complete example program.
 
 Assumptions:
 libactive_record.o should be in /usr/lib
-/usr/include/active_record/ shoudl contian the project's headers.
+/usr/include/active_record/ should contain the project's headers.
 
 File layout:
 |-- Makefile
@@ -36,7 +36,6 @@ class Person: public ActiveRecord::Base<Person> {
     td.fields.push_back(Field("age", ActiveRecord::integer));
     td.fields.push_back(Field("height", ActiveRecord::floating_point));
     td.update_database = true;
-    //td.has_many("books");
   }
 };
 
