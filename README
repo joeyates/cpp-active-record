@@ -1,7 +1,8 @@
 TODO:
-- use automake
-- a date type
+- switch to Rake build system
+- how do I include the newly built library for testing?
 - do profiling
+- a date type
 - decide what to do about exceptions
 - validations: check types before saving
 - class associations
