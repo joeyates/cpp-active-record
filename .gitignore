@@ -1,2 +1,5 @@
 .DS_Store
-objects/*.o
+*.o
+*depend.mf
+libactive_record_sqlite.a
+*.sqlite3
