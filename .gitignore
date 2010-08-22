@@ -3,3 +3,4 @@
 *depend.mf
 libactive_record_sqlite.a
 *.sqlite3
+.rake-builder*
