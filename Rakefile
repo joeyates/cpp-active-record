@@ -3,7 +3,7 @@ require 'rake/builder'
 Rake::Builder.new do |builder|
   builder.target               = 'libactive_record_sqlite.a'
   builder.source_search_paths  = [ 'src' ]
-  builder.header_search_paths  = [ 'include/active_record' ]
+  builder.header_search_paths  = [ 'include/**/*.h' ]
   builder.objects_path         = 'objects'
   builder.include_paths        = [ 'include' ]
   builder.library_dependencies = [ 'sqlite3' ]
