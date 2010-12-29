@@ -1,0 +1,88 @@
+= Rationale
+
+ActiveRecord is a pattern for the design of Object-Relational Mapping libraries.
+
+The problem with implementing ActiveRecord in C++ is the language's lack of dynamic code generation.
+
+C++ templates, and the Boost library make it possible to construct such a library,
+but the rough edges do tend to show.
+
+Models are declared as classes and the database columns are declared as classes attributes.
+
+== Tables
+
+We need to connect:
+- the "model", e.g. Person, with it's list of attributes,
+- the program's store of information about models and their equivalent database tables (and, optionally the connection to use)
+- the database(s)
+
+E.g.
+- we need to say that class Person represents records from table 'people' in the default database,
+- a class might use a non-default database connection
+- other classes might not use other defaults, e.g. 'id' as the primary key column
+
+== Attributes
+
+1)
+With an ORM, the choice is to have the structure in the database or in the model.
+When the structure is in the database, the system reads the structure at startup.
+Doing so would mean:
+- no compiled-in C++ methods: e.g. person.name = 'John'; Everything would need to be done at runtime - which would be very ugly in C++.
+- slower startup.
+I have chosen to put the list of a table's columns in the model.
+That way, instructions in the model can be used to:
+- create the columns, on the first run,
+- modify the table to follow changes to the model.
+
+2)
+There needs to be a list of attributes that describe the relative database table, available to live code.
+
+For reasons (1) and (2) we need:
+- a list of attributes in macros in the body of the class, used to produce getter and setter methods,
+- a function called by the base class's add() method which lists attributes (i.e. columns) and their types.
+
+This repetition would be unnecessary in a language with introspection, but in C++ I can't seem to DRY it up any more than this.
+
+== Types
+
+Ways of holding attributes:
+- a hashmap of attribute name -> variant
+- strongly typed member variables.
+
+=== Variants
+
+This method is easy to code, but makes the interface horrible:
+  variant var = person.get("name");
+  string name = var.to_string();
+And it could mean a lot conversions.
+Would it really be slower?
+Maybe, as the variant would hold the already converted value, it wouldn't be so bad.
+
+Pro: Easy, clean coding. Easy for user to understand and debug.
+Con: Ugly API with type conversion done by client. Slow?
+
+=== Typed Members
+
+The model would have typed members.
+Plus, it would have typed getters and setters:
+  class Person {
+    string name;
+    int age;
+   public:
+    string get_name();
+    ...
+  }
+The model loader code would need to read typed values from a record and assign to the model's equivalent attribute.
+To do so in C++ seems to require a *lot* of macros/a specific pre-processor to generate all the necessary code.
+Classes would be a mix of C++ and code used for generation, e.g.:
+  class Person {
+    ACTIVE_RECORD_ATTIRBUTES_LIST_START
+      name, string
+      age, int
+    ACTIVE_RECORD_ATTIRBUTES_LIST_END
+  }
+A preprocessor program would probably require models to be put in files with a specific extension - to allow preprocessing.
+That would mean editors would not recognise the file type. So, no syntax highlighting, completion, etc.
+
+Pro: very clean model interface.
+Con: using macros/preprocessing is very hard to debug.

@@ -1,14 +1,19 @@
-= Install Dependencies
+= Dependencies
 
 * The Rake::Builder build system:
- $ sudo gem install rake-builder
+ $ gem install rake-builder
 
 * Boost
+** Mac OS X with MacPorts:
+ $ sudo port install boost
+
+* googletest
+** http://code.google.com/p/googletest/
 
 = Install
 
- $ git clone XXXXXXXX
- $ cd active_record
+ $ git clone git://github.com/joeyates/cpp-active-record.git
+ $ cd cpp-active-record
 
 Create '.rake-builder':
 
