@@ -1,0 +1,57 @@
+= Getting started
+
+== Tables and Models
+
+- Create a class representing a table:
+  class Foo: public ActiveRecord::Base< Foo > {
+  };
+
+- Define 2 empty constructors:
+  ...
+  Foo() : ActiveRecord::Base< Foo >() {}
+  Foo( int id ) : ActiveRecord::Base< Foo >( id ) {}
+  ...
+
+- Define set_table_data() method describing the table
+  ...
+  static void set_table_data( TableData &td ) {
+    td.table_name = "foos";
+    td.fields.push_back( Field( "bar", ActiveRecord::text ) );
+    td.fields.push_back( Field( "baz", ActiveRecord::integer ) );
+    td.update_database = true;
+  }
+  ...
+
+- Tell the Model its own Name
+
+template <>
+string ActiveRecord::Base< Foo >::class_name = "Foo";
+
+== Connect
+
+  ActiveRecord::Connection connection;
+  connection.connect( options
+    ( "adapter", "sqlite" )
+    ( "database", "foo.sqlite3" ) );
+  Foo::setup( &connection );
+
+== Insert Data
+
+  Foo foo;
+  foo[ "bar" ] = "Hi";
+  foo[ "baz" ] = 42;
+  foo.save();
+
+== Retrieve Data
+
+- By id:
+  Foo foo( 1 );
+  cout << "Foo 1's bar: " << foo.text( "bar" ) << endl;
+
+- Via a query:
+  vector< Foo > foos = ActiveRecord::Query< Foo >()
+    .where( "bar = ?", "Hi" )
+    .where( "baz > ?", 41 )
+    .order( "bar" )
+    .limit( 5 )
+    .all();
