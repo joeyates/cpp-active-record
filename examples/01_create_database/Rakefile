@@ -1,0 +1,9 @@
+require 'rake/builder'
+
+Rake::Builder.new do |builder|
+  builder.target               = 'greetings'
+  builder.header_search_paths  = [ '../../include/active_record' ]
+  builder.objects_path         = '.'
+  builder.include_paths        = [ '.', '../../include' ]
+  builder.library_dependencies = [ 'sqlite3', 'active_record_sqlite' ]
+end
