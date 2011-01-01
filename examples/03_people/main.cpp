@@ -75,10 +75,10 @@ int main( int argc, const char *argv[] ) {
   int count = people.size();
   cout << "Result count: " << count << endl;
   for( int i = 0; i < count; ++i ) {
-    int id        = people[ i ].integer(" id" );
+    int id        = people[ i ].integer( " id" );
     int age       = people[ i ].integer( "age" );
-    double height = people[ i ].floating_point("height");
-    string name   = people[ i ].text("name");
+    double height = people[ i ].floating_point( "height" );
+    string name   = people[ i ].text( "name" );
     cout << name << " (" << id << "), age: " << age << ", height: " << height << endl;
   }
 }

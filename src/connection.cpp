@@ -5,45 +5,45 @@ namespace ActiveRecord {
 
 Connection::Connection() {}
 
-Connection::Connection(const Connection& other) {
+Connection::Connection( const Connection& other ) {
 }
 
-Connection Connection::operator=(const Connection& other) {
+Connection Connection::operator=( const Connection& other ) {
   return *this;
 }
 
-void Connection::connect(OptionsHash options) {
-  sqlite_initialize(options["database"]);
+void Connection::connect( OptionsHash options ) {
+  sqlite_initialize( options[ "database" ] );
 }
 
-bool Connection::execute(const string &query, const AttributeList &parameters) {
+bool Connection::execute( const string &query, const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = 0;
-  int prepare_result = sqlite3_prepare_v2(db_, query.c_str(), query.size(), &ppStmt, 0);
+  int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   // TODO: check prepare_result
-  bind_parameters(ppStmt, parameters);
-  sqlite3_step(ppStmt);
+  bind_parameters( ppStmt, parameters );
+  sqlite3_step( ppStmt );
   return true;
 }
 
-Row Connection::select_one(const string &query, const AttributeList &parameters) {
+Row Connection::select_one( const string &query, const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = 0;
-  int prepare_result = sqlite3_prepare_v2(db_, query.c_str(), query.size(), &ppStmt, 0);
+  int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   // TODO: check prepare_result
-  bind_parameters(ppStmt, parameters);
-  int step_result = sqlite3_step(ppStmt);
-  if (step_result != SQLITE_ROW)
+  bind_parameters( ppStmt, parameters );
+  int step_result = sqlite3_step( ppStmt );
+  if( step_result != SQLITE_ROW )
     throw "No data";
-  return Row(ppStmt);
+  return Row( ppStmt );
 }
 
-RowSet Connection::select_values(const string &query, const AttributeList &parameters) {
+RowSet Connection::select_values( const string &query, const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = 0;
-  int prepare_result = sqlite3_prepare_v2(db_, query.c_str(), query.size(), &ppStmt, 0);
+  int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   // TODO: check prepare_result
-  bind_parameters(ppStmt, parameters);
+  bind_parameters( ppStmt, parameters );
   RowSet results;
-  while (sqlite3_step(ppStmt) == SQLITE_ROW) {
-    results.push_back(Row(ppStmt));
+  while( sqlite3_step( ppStmt ) == SQLITE_ROW ) {
+    results.push_back( Row( ppStmt ) );
   }
   return results;
 }
@@ -51,31 +51,31 @@ RowSet Connection::select_values(const string &query, const AttributeList &param
 ////////////////////////////////////////
 // Private
 
-bool Connection::sqlite_initialize(string database_path_name) {
-  int nResult = sqlite3_open(database_path_name.c_str(), &db_);
-  if(nResult) {
-    fprintf(stderr, "Can't open database '%s': %s\n", database_path_name.c_str(), sqlite3_errmsg(db_));
-    sqlite3_close(db_);
+bool Connection::sqlite_initialize( string database_path_name ) {
+  int nResult = sqlite3_open( database_path_name.c_str(), &db_ );
+  if( nResult ) {
+    fprintf( stderr, "Can't open database '%s': %s\n", database_path_name.c_str(), sqlite3_errmsg( db_ ) );
+    sqlite3_close( db_ );
     return false;
   }
 }
 
-void Connection::bind_parameters(sqlite3_stmt *ppStmt, const AttributeList &parameters) {
-  for (int i = 0; i < parameters.size(); ++i) {
-    switch (parameters[i].which()) {
+void Connection::bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters ) {
+  for( int i = 0; i < parameters.size(); ++i ) {
+    switch( parameters[ i ].which() ) {
     case integer: {
-      int value = boost::get< int >(parameters[i]);
-      sqlite3_bind_int(ppStmt, i + 1, value);
+      int value = boost::get< int >( parameters[ i ] );
+      sqlite3_bind_int( ppStmt, i + 1, value );
       break;
     }
     case text: {
-      string value = boost::get< std::string >(parameters[i]);
-      sqlite3_bind_text(ppStmt, i + 1, value.c_str(), value.size(), 0);
+      string value = boost::get< std::string >( parameters[ i ] );
+      sqlite3_bind_text( ppStmt, i + 1, value.c_str(), value.size(), 0 );
       break;
     }
     case floating_point: {
-      double value = boost::get< double >(parameters[i]);
-      sqlite3_bind_double(ppStmt, i + 1, value);
+      double value = boost::get< double >( parameters[ i ] );
+      sqlite3_bind_double( ppStmt, i + 1, value );
       break;
     }
     default:

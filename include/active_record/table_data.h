@@ -12,7 +12,7 @@ class Connection;
 
 class Field {
  public:
-  Field(const string &name, ActiveRecord::Type type) : name_(name), type_(type) {}
+  Field( const string &name, ActiveRecord::Type type ) : name_( name ), type_( type ) {}
   inline const string& name() { return name_; }
   inline ActiveRecord::Type type() { return type_; }
  private:

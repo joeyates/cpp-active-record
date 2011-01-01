@@ -19,13 +19,13 @@ extern TableSet tables;
 template < class T >
 class Query {
  public:
-  Query() : limit_(INVALID_LIMIT) {};
-  Query(const Query< T > &other);
-  Query< T > operator=(const Query< T > &other);
+  Query() : limit_( INVALID_LIMIT ) {};
+  Query( const Query< T > &other );
+  Query< T > operator=( const Query< T > &other );
 
-  Query< T >  where(const string &condition, const Attribute &value);
-  Query< T >  order(string order);
-  Query< T >  limit(int limit);
+  Query< T >  where( const string &condition, const Attribute &value );
+  Query< T >  order( string order );
+  Query< T >  limit( int limit );
   // Results
   T         first();
   vector< T > all();
@@ -41,36 +41,36 @@ class Query {
 };
 
 template < class T >
-Query< T >::Query(const Query< T > &other) {
+Query< T >::Query( const Query< T > &other ) {
   conditions_ = other.conditions_;
   limit_      = other.limit_;
   orderings_  = other.orderings_;
 }
 
 template < class T >
-Query< T > Query< T >::operator=(const Query< T > &other) {
-  Query< T > result(other);
+Query< T > Query< T >::operator=( const Query< T > &other ) {
+  Query< T > result( other );
   return result;
 }
 
-// foo.where(options ("name = ?", "Joe"));
+// foo.where( options ( "name = ?", "Joe" ) );
 template < class T >
-Query< T > Query< T >::where(const string &condition, const Attribute &value) {
-  conditions_.push_back(AttributePair(condition, value));
+Query< T > Query< T >::where( const string &condition, const Attribute &value ) {
+  conditions_.push_back( AttributePair( condition, value ) );
   return *this;
 }
 
-// foo.limit(50);
+// foo.limit( 50 );
 template < class T >
-Query< T > Query< T >::limit(int limit) {
+Query< T > Query< T >::limit( int limit ) {
   limit_ = limit;
   return *this;
 }
 
-// foo.order("bar DESC");
+// foo.order( "bar DESC" );
 template < class T >
-Query< T > Query< T >::order(string order) {
-  orderings_.push_back(order);
+Query< T > Query< T >::order( string order ) {
+  orderings_.push_back( order );
   return *this;
 }
 
@@ -78,11 +78,11 @@ Query< T > Query< T >::order(string order) {
 template < class T >
 vector< T > Query< T >::all() {
   QueryParametersPair query = query_and_parameters();
-  RowSet rows = tables[T::class_name].connection->select_values(query.first, query.second);
+  RowSet rows = tables[ T::class_name ].connection->select_values( query.first, query.second );
   vector< T > results;
-  for (RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
-    T t(it->get_integer(tables[T::class_name].primary_key));
-    results.push_back(t);
+  for( RowSet::iterator it = rows.begin(); it != rows.end(); ++it ) {
+    T t( it->get_integer( tables[ T::class_name ].primary_key ) );
+    results.push_back( t );
   }
   return results;
 }
@@ -93,29 +93,29 @@ vector< T > Query< T >::all() {
 template < class T >
 QueryParametersPair Query< T >::condition_clause() {
   AttributeList parameters;
-  if (conditions_.size() == 0)
-    return QueryParametersPair("", parameters);
+  if( conditions_.size() == 0 )
+    return QueryParametersPair( "", parameters );
   stringstream ss;
   ss << " ";
-  for (AttributePairList::const_iterator it = conditions_.begin(); it != conditions_.end(); ++it) {
-    if (it == conditions_.begin())
+  for( AttributePairList::const_iterator it = conditions_.begin(); it != conditions_.end(); ++it ) {
+    if( it == conditions_.begin() )
       ss << "WHERE ";
     else
       ss << " AND ";
     ss << it->first;
-    parameters.push_back(it->second);
+    parameters.push_back( it->second );
   }
-  return QueryParametersPair(ss.str(), parameters);
+  return QueryParametersPair( ss.str(), parameters );
 }
 
 template < class T >
 string Query< T >::order_clause() {
-  if (orderings_.size() == 0)
+  if( orderings_.size() == 0 )
     return "";
   stringstream ss;
   ss << " ";
-  for (vector< string >::const_iterator it = orderings_.begin(); it != orderings_.end(); ++it) {
-    if (it == orderings_.begin())
+  for( vector< string >::const_iterator it = orderings_.begin(); it != orderings_.end(); ++it ) {
+    if( it == orderings_.begin() )
       ss << "ORDER BY ";
     else
       ss << ", ";
@@ -126,7 +126,7 @@ string Query< T >::order_clause() {
 
 template < class T >
 string Query< T >::limit_clause() {
-  if (limit_ == INVALID_LIMIT)
+  if( limit_ == INVALID_LIMIT )
     return "";
   stringstream ss;
   ss << " LIMIT " << limit_;
@@ -137,15 +137,15 @@ template < class T >
 QueryParametersPair Query< T >::query_and_parameters() {
   stringstream ss;
   ss << "SELECT ";
-  ss << tables[T::class_name].primary_key << " ";
+  ss << tables[ T::class_name ].primary_key << " ";
   ss << "FROM ";
-  ss << tables[T::class_name].table_name;
+  ss << tables[ T::class_name ].table_name;
   QueryParametersPair conditions = condition_clause();
   ss << conditions.first;
   ss << order_clause();
   ss << limit_clause();
   ss << ";";
-  return QueryParametersPair(ss.str(), conditions.second);
+  return QueryParametersPair( ss.str(), conditions.second );
 }
 
 } // namespace ActiveRecord
