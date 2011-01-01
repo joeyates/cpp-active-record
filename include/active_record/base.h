@@ -163,7 +163,6 @@ bool Base<T>::update() {
   ss << "SET " << columns.str() << " ";
   ss << "WHERE " << tables[T::class_name].primary_key << " = ?;";
   parameters.push_back(id());
-  cout << ss.str() << endl;
   return tables[T::class_name].connection->execute(ss.str(), parameters);
 }
 
