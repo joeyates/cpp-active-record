@@ -25,7 +25,7 @@ struct TableData {
   string        primary_key;
   string        table_name;
   bool          update_database; 
-  vector<Field> fields;
+  vector< Field > fields;
 };
 
 typedef map< string, TableData > TableSet;

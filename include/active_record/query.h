@@ -16,23 +16,23 @@ namespace ActiveRecord {
 
 extern TableSet tables;
 
-template <class T>
+template < class T >
 class Query {
  public:
   Query() : limit_(INVALID_LIMIT) {};
-  Query(const Query<T> &other);
-  Query<T> operator=(const Query<T> &other);
+  Query(const Query< T > &other);
+  Query< T > operator=(const Query< T > &other);
 
-  Query<T>  where(const string &condition, const Attribute &value);
-  Query<T>  order(string order);
-  Query<T>  limit(int limit);
+  Query< T >  where(const string &condition, const Attribute &value);
+  Query< T >  order(string order);
+  Query< T >  limit(int limit);
   // Results
   T         first();
-  vector<T> all();
+  vector< T > all();
  protected:
   AttributePairList  conditions_;
   int            limit_;
-  vector<string> orderings_;
+  vector< string > orderings_;
  private:
   QueryParametersPair condition_clause();
   string              order_clause();
@@ -40,46 +40,46 @@ class Query {
   QueryParametersPair query_and_parameters();
 };
 
-template <class T>
-Query<T>::Query(const Query<T> &other) {
+template < class T >
+Query< T >::Query(const Query< T > &other) {
   conditions_ = other.conditions_;
   limit_      = other.limit_;
   orderings_  = other.orderings_;
 }
 
-template <class T>
-Query<T> Query<T>::operator=(const Query<T> &other) {
-  Query<T> result(other);
+template < class T >
+Query< T > Query< T >::operator=(const Query< T > &other) {
+  Query< T > result(other);
   return result;
 }
 
 // foo.where(options ("name = ?", "Joe"));
-template <class T>
-Query<T> Query<T>::where(const string &condition, const Attribute &value) {
+template < class T >
+Query< T > Query< T >::where(const string &condition, const Attribute &value) {
   conditions_.push_back(AttributePair(condition, value));
   return *this;
 }
 
 // foo.limit(50);
-template <class T>
-Query<T> Query<T>::limit(int limit) {
+template < class T >
+Query< T > Query< T >::limit(int limit) {
   limit_ = limit;
   return *this;
 }
 
 // foo.order("bar DESC");
-template <class T>
-Query<T> Query<T>::order(string order) {
+template < class T >
+Query< T > Query< T >::order(string order) {
   orderings_.push_back(order);
   return *this;
 }
 
 // foo.all();
-template <class T>
-vector<T> Query<T>::all() {
+template < class T >
+vector< T > Query< T >::all() {
   QueryParametersPair query = query_and_parameters();
   RowSet rows = tables[T::class_name].connection->select_values(query.first, query.second);
-  vector<T> results;
+  vector< T > results;
   for (RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
     T t(it->get_integer(tables[T::class_name].primary_key));
     results.push_back(t);
@@ -90,8 +90,8 @@ vector<T> Query<T>::all() {
 /////////////////////////////////////////////
 // Private
 
-template <class T>
-QueryParametersPair Query<T>::condition_clause() {
+template < class T >
+QueryParametersPair Query< T >::condition_clause() {
   AttributeList parameters;
   if (conditions_.size() == 0)
     return QueryParametersPair("", parameters);
@@ -108,13 +108,13 @@ QueryParametersPair Query<T>::condition_clause() {
   return QueryParametersPair(ss.str(), parameters);
 }
 
-template <class T>
-string Query<T>::order_clause() {
+template < class T >
+string Query< T >::order_clause() {
   if (orderings_.size() == 0)
     return "";
   stringstream ss;
   ss << " ";
-  for (vector<string>::const_iterator it = orderings_.begin(); it != orderings_.end(); ++it) {
+  for (vector< string >::const_iterator it = orderings_.begin(); it != orderings_.end(); ++it) {
     if (it == orderings_.begin())
       ss << "ORDER BY ";
     else
@@ -124,8 +124,8 @@ string Query<T>::order_clause() {
   return ss.str();
 }
 
-template <class T>
-string Query<T>::limit_clause() {
+template < class T >
+string Query< T >::limit_clause() {
   if (limit_ == INVALID_LIMIT)
     return "";
   stringstream ss;
@@ -133,8 +133,8 @@ string Query<T>::limit_clause() {
   return ss.str();
 }
 
-template <class T>
-QueryParametersPair Query<T>::query_and_parameters() {
+template < class T >
+QueryParametersPair Query< T >::query_and_parameters() {
   stringstream ss;
   ss << "SELECT ";
   ss << tables[T::class_name].primary_key << " ";

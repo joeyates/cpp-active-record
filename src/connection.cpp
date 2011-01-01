@@ -64,17 +64,17 @@ void Connection::bind_parameters(sqlite3_stmt *ppStmt, const AttributeList &para
   for (int i = 0; i < parameters.size(); ++i) {
     switch (parameters[i].which()) {
     case integer: {
-      int value = boost::get<int>(parameters[i]);
+      int value = boost::get< int >(parameters[i]);
       sqlite3_bind_int(ppStmt, i + 1, value);
       break;
     }
     case text: {
-      string value = boost::get<std::string>(parameters[i]);
+      string value = boost::get< std::string >(parameters[i]);
       sqlite3_bind_text(ppStmt, i + 1, value.c_str(), value.size(), 0);
       break;
     }
     case floating_point: {
-      double value = boost::get<double>(parameters[i]);
+      double value = boost::get< double >(parameters[i]);
       sqlite3_bind_double(ppStmt, i + 1, value);
       break;
     }

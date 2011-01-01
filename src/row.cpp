@@ -23,11 +23,11 @@ Row::Row(sqlite3_stmt *pStmt) {
 }
 
 string Row::get_text(const string &name) {
-  return boost::get<string>(attributes_[name]);
+  return boost::get< string >(attributes_[name]);
 }
 
 int Row::get_integer(const string &name) {
-  return boost::get<int>(attributes_[name]);
+  return boost::get< int >(attributes_[name]);
 }
 
 } // namespace ActiveRecord
