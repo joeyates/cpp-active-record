@@ -21,23 +21,23 @@ class Query {
  public:
   Query() : limit_( INVALID_LIMIT ) {};
   Query( const Query< T > &other );
-  Query< T > operator=( const Query< T > &other );
+  Query< T >             operator=( const Query< T > &other );
 
-  Query< T >  where( const string &condition, const Attribute &value );
-  Query< T >  order( string order );
-  Query< T >  limit( int limit );
+  Query< T >             where( const string &condition, const Attribute &value );
+  Query< T >             order( string order );
+  Query< T >             limit( int limit );
   // Results
-  T         first();
-  vector< T > all();
+  T                      first();
+  vector< T >            all();
  protected:
-  AttributePairList  conditions_;
-  int            limit_;
-  vector< string > orderings_;
+  AttributePairList      conditions_;
+  int                    limit_;
+  vector< string >       orderings_;
  private:
-  QueryParametersPair condition_clause();
-  string              order_clause();
-  string              limit_clause();
-  QueryParametersPair query_and_parameters();
+  QueryParametersPair    condition_clause();
+  string                 order_clause();
+  string                 limit_clause();
+  QueryParametersPair    query_and_parameters();
 };
 
 template < class T >
@@ -53,7 +53,7 @@ Query< T > Query< T >::operator=( const Query< T > &other ) {
   return result;
 }
 
-// foo.where( options ( "name = ?", "Joe" ) );
+// foo.where( "name = ?", "Joe" );
 template < class T >
 Query< T > Query< T >::where( const string &condition, const Attribute &value ) {
   conditions_.push_back( AttributePair( condition, value ) );

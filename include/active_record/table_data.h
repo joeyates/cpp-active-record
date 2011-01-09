@@ -24,7 +24,7 @@ struct TableData {
   Connection *  connection;
   string        primary_key;
   string        table_name;
-  bool          update_database; 
+  bool          update_database;
   vector< Field > fields;
 };
 

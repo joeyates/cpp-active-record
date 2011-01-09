@@ -13,7 +13,6 @@ using namespace std;
 
 namespace ActiveRecord {
 
-
 // Options are for string only data
 typedef pair< string, string >                OptionPair;
 typedef map< string, string >                 OptionsHash;
@@ -43,7 +42,7 @@ namespace assign
 {
 
 template<>
-inline assign_detail::generic_list< ActiveRecord::OptionPair > 
+inline assign_detail::generic_list< ActiveRecord::OptionPair >
 list_of( const ActiveRecord::OptionPair &t ) {
   return assign_detail::generic_list< ActiveRecord::OptionPair >()( t );
 }
