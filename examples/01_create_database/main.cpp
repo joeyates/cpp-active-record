@@ -7,8 +7,7 @@ using namespace ActiveRecord;
 
 class Greeting: public ActiveRecord::Base< Greeting > {
  public:
-  Greeting() : ActiveRecord::Base< Greeting >() {}
-  Greeting( int id ) : ActiveRecord::Base< Greeting >( id ) {}
+  AR_CONSTRUCTORS( Greeting )
   static void set_table_data( TableData &td ) {
     td.table_name = "greetings";
     td.fields.push_back( Field( "salute",   ActiveRecord::text ) );

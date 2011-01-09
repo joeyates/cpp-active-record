@@ -8,6 +8,10 @@
 
 #define ACTIVE_RECORD_UNSAVED -1
 
+#define AR_CONSTRUCTORS( klass ) \
+  klass() : ActiveRecord::Base< klass >() {} \
+  klass( int id ) : ActiveRecord::Base< klass >( id ) {}
+
 namespace ActiveRecord {
 
 extern TableSet tables;

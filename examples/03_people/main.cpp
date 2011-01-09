@@ -6,10 +6,9 @@
 
 using namespace ActiveRecord;
 
-class Person: public ActiveRecord::Base< Person> {
+class Person: public ActiveRecord::Base< Person > {
  public:
-  Person() : ActiveRecord::Base< Person >() {} // Necessary
-  Person( int id ) : ActiveRecord::Base< Person >( id ) {} // Necessary
+  AR_CONSTRUCTORS( Person )
   // Callback to set table_name and override any defaults
   static void set_table_data( TableData &td ) {
     td.table_name = "people";
