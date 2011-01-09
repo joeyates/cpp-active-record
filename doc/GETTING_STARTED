@@ -8,18 +8,20 @@
 
 - Define 2 empty constructors:
   ...
-  Foo() : ActiveRecord::Base< Foo >() {}
-  Foo( int id ) : ActiveRecord::Base< Foo >( id ) {}
+  public:
+   Foo() : ActiveRecord::Base< Foo >() {}
+   Foo( int id ) : ActiveRecord::Base< Foo >( id ) {}
   ...
 
-- Define set_table_data() method describing the table
+- Define set_table_data() method describing the table:
   ...
-  static void set_table_data( TableData &td ) {
-    td.table_name = "foos";
-    td.fields.push_back( Field( "bar", ActiveRecord::text ) );
-    td.fields.push_back( Field( "baz", ActiveRecord::integer ) );
-    td.update_database = true;
-  }
+  public:
+    static void set_table_data( TableData &td ) {
+      td.table_name = "foos";
+      td.fields.push_back( Field( "bar", ActiveRecord::text ) );
+      td.fields.push_back( Field( "baz", ActiveRecord::integer ) );
+      td.update_database = true;
+    }
   ...
 
 - Tell the Model its own Name
