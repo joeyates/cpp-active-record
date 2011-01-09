@@ -9,6 +9,7 @@
 #include <boost/variant.hpp>
 #include <boost/assign/list_of.hpp>
 using namespace boost::assign;
+using namespace boost;
 using namespace std;
 
 namespace ActiveRecord {
@@ -31,6 +32,7 @@ typedef map< string, Attribute >              AttributeHash;
 typedef vector< Attribute >                   AttributeList;
 typedef vector< AttributePair >               AttributePairList;
 typedef pair< string, AttributeList >         QueryParametersPair;
+typedef assign_detail::generic_list< ActiveRecord::AttributePair > GenericAttributePairList;
 } // namespace ActiveRecord
 
 // Instantiate boost::assign::list_of for our option type
@@ -47,6 +49,12 @@ list_of( const ActiveRecord::OptionPair &t ) {
   return assign_detail::generic_list< ActiveRecord::OptionPair >()( t );
 }
 
+template<>
+inline ActiveRecord::GenericAttributePairList
+list_of( const ActiveRecord::AttributePair &t ) {
+  return ActiveRecord::GenericAttributePairList()( t );
+}
+
 }
 }
 
@@ -55,6 +63,10 @@ namespace ActiveRecord {
 // Define a method that takes a list of OptionPairs to define options
 inline boost::assign_detail::generic_list< ActiveRecord::OptionPair > options( const char * name, const char * value ) {
   return boost::assign::list_of( ActiveRecord::OptionPair( name, value ) );
+}
+
+inline ActiveRecord::GenericAttributePairList attributes( const char * name, const Attribute &value ) {
+  return boost::assign::list_of( ActiveRecord::AttributePair( name, value ) );
 }
 
 } // namespace ActiveRecord

@@ -39,7 +39,7 @@ int main( int argc, const char *argv[] ) {
   Person::setup( &connection ); // Must be called for each model
 
   // Insert data
-  Person joe, john, petra;
+  Person joe, john;
   joe[ "name" ]    = "Joe";
   joe[ "surname" ] = "Yates";
   joe[ "age" ]     = 45;
@@ -50,10 +50,11 @@ int main( int argc, const char *argv[] ) {
   john[ "age" ]     = 43;
   john[ "height" ]  = 1.90;
   john.save();
-  petra[ "name" ]    = "Petra";
-  petra[ "surname" ] = "Smith";
-  petra[ "age" ]     = 25;
-  petra[ "height" ]  = 1.70;
+  Person petra( attributes
+                ( "name",    "Petra" )
+                ( "surname", "Smith" )
+                ( "age",     25 )
+                ( "height",  1.70 ) );
   petra.save();
 
   // Load by id
