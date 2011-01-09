@@ -13,6 +13,8 @@ class Connection {
  public:
   Connection();
   void    connect( OptionsHash options );
+  void    begin_transaction();
+  void    commit();
   bool    execute( const string &query, const AttributeList &parameters = AttributeList() );
   Row     select_value( const string &query, const AttributeList &parameters = AttributeList() );
   Row     select_one( const string &query, const AttributeList &parameters = AttributeList() );

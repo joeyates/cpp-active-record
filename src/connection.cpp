@@ -16,6 +16,14 @@ void Connection::connect( OptionsHash options ) {
   sqlite_initialize( options[ "database" ] );
 }
 
+void Connection::begin_transaction() {
+  execute( "BEGIN TRANSACTION" );
+}
+
+void Connection::commit() {
+  execute( "COMMIT" );
+}
+
 bool Connection::execute( const string &query, const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
