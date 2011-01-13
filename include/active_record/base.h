@@ -16,7 +16,6 @@
 namespace ActiveRecord {
 
 extern TableSet tables;
-extern TypeNameMap type_name;
 
 /*
 GCC wants template instantiation in the same file as the declaration,
@@ -32,13 +31,13 @@ class Base {
     td.connection = connection;
     // Set defaults
     td.primary_key     = "id";
-    td.update_database = false;
+
     T::set_table_data( td );
+
     if( td.table_name.empty() )
       throw "set_table_data() must set the table name";
+    td.connection->add_table( td.table_name );
     tables[ T::class_name ] = td;
-    if( td.update_database )
-      update_database();
   }
   Base() : loaded_( false ) {
     attributes_[ tables[ T::class_name ].primary_key ] = ACTIVE_RECORD_UNSAVED;
@@ -101,21 +100,6 @@ class Base {
 
 /////////////////////////////////////////
 // Private
-
-// TODO: Handle alter table
-template < class T >
-void Base< T >::update_database() {
-  TableData td = tables[ T::class_name ];
-  stringstream ss;
-  ss << "CREATE TABLE IF NOT EXISTS " << td.table_name;
-  ss << " (";
-  ss << td.primary_key << " INTEGER PRIMARY KEY";
-  for( vector< Field >::iterator it = td.fields.begin(); it != td.fields.end(); ++it ) {
-    ss << ", " << it->name() << " " << type_name[ it->type() ];
-  }
-  ss << ");";
-  tables[ T::class_name ].connection->execute( ss.str() );
-}
 
 template < class T >
 bool Base< T >::load() {

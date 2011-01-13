@@ -13,6 +13,9 @@ class Connection {
  public:
   Connection();
   void    connect( OptionsHash options );
+  void    add_table( const string &table ) { tables_.push_back( table ); }
+  void    update_database();
+  void    update_table( const string &table );
   void    begin_transaction();
   void    commit();
   bool    execute( const string &query, const AttributeList &parameters = AttributeList() );
@@ -24,9 +27,11 @@ class Connection {
   Connection( const Connection& other );
   Connection operator=( const Connection& other );
  private:
-  bool    sqlite_initialize( string database_path_name );
-  void    bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters );
-  sqlite3 * db_;
+  bool      sqlite_initialize( string database_path_name );
+  void      bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters );
+ private:
+  vector< string > tables_;
+  sqlite3 *        db_;
 };
 
 } // namespace ActiveRecord

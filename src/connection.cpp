@@ -3,6 +3,8 @@
 
 namespace ActiveRecord {
 
+extern TypeNameMap type_name;
+
 Connection::Connection() {}
 
 Connection::Connection( const Connection& other ) {
@@ -14,6 +16,25 @@ Connection Connection::operator=( const Connection& other ) {
 
 void Connection::connect( OptionsHash options ) {
   sqlite_initialize( options[ "database" ] );
+}
+
+// TODO: Handle alter table
+void Connection::update_database() {
+  for( vector< string >::iterator it = tables_.begin(); it != tables_.end(); ++it )
+    update_table( *it );
+}
+
+void Connection::update_table( const string &table ) {
+  TableData td = tables[ table ];
+  stringstream ss;
+  ss << "CREATE TABLE IF NOT EXISTS " << td.table_name;
+  ss << " (";
+  ss << td.primary_key << " INTEGER PRIMARY KEY";
+  for( vector< Field >::iterator it = td.fields.begin(); it != td.fields.end(); ++it ) {
+    ss << ", " << it->name() << " " << type_name[ it->type() ];
+  }
+  ss << ");";
+  execute( ss.str() );
 }
 
 void Connection::begin_transaction() {
