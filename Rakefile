@@ -25,12 +25,13 @@ end
 Rake::Builder.new do | builder |
   builder.task_namespace       = :test
   builder.target               = 'active_record_test'
+  builder.architecture         = 'x86_64'
   builder.source_search_paths  = [ 'test' ]
   builder.header_search_paths  = [ 'test' ]
   builder.objects_path         = 'test/lib_objects'
   builder.include_paths        = [ 'include', 'test' ]
-  builder.library_dependencies = [ 'sqlite3', 'gtest', 'gtest_main', 'active_record_sqlite' ]
-  builder.library_paths        = [ 'objects' ]
-  builder.target_prerequisites = [ :'rake:build' ]
+  builder.library_dependencies = [ 'sqlite3', 'gtest', 'gtest_main', 'active_record_sqlite_x86_64' ]
+  builder.library_paths        = [ 'objects_x86_64' ]
+  builder.target_prerequisites = [ :'rake:x86_64' ]
   builder.default_task         = [ :run ]
 end

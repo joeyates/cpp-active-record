@@ -36,7 +36,7 @@ class Base {
 
     if( td.table_name.empty() )
       throw "set_table_data() must set the table name";
-    td.connection->add_table( td.table_name );
+    td.connection->add_class( T::class_name );
     tables[ T::class_name ] = td;
   }
   Base() : loaded_( false ) {

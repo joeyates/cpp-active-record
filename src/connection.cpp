@@ -4,6 +4,7 @@
 namespace ActiveRecord {
 
 extern TypeNameMap type_name;
+extern TableSet    tables;
 
 Connection::Connection() {}
 
@@ -20,12 +21,12 @@ void Connection::connect( OptionsHash options ) {
 
 // TODO: Handle alter table
 void Connection::update_database() {
-  for( vector< string >::iterator it = tables_.begin(); it != tables_.end(); ++it )
+  for( vector< string >::iterator it = klasses_.begin(); it != klasses_.end(); ++it )
     update_table( *it );
 }
 
-void Connection::update_table( const string &table ) {
-  TableData td = tables[ table ];
+void Connection::update_table( const string &klass ) {
+  TableData td = tables[ klass ];
   stringstream ss;
   ss << "CREATE TABLE IF NOT EXISTS " << td.table_name;
   ss << " (";

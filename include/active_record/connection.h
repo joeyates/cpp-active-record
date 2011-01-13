@@ -13,9 +13,9 @@ class Connection {
  public:
   Connection();
   void    connect( OptionsHash options );
-  void    add_table( const string &table ) { tables_.push_back( table ); }
+  void    add_class( const string &klass ) { klasses_.push_back( klass ); }
   void    update_database();
-  void    update_table( const string &table );
+  void    update_table( const string &klass );
   void    begin_transaction();
   void    commit();
   bool    execute( const string &query, const AttributeList &parameters = AttributeList() );
@@ -30,7 +30,7 @@ class Connection {
   bool      sqlite_initialize( string database_path_name );
   void      bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters );
  private:
-  vector< string > tables_;
+  vector< string > klasses_;
   sqlite3 *        db_;
 };
 

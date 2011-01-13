@@ -6,18 +6,16 @@
 
 using namespace ActiveRecord;
 
-class Person: public ActiveRecord::Base<Person> {
+class Person: public ActiveRecord::Base< Person > {
  public:
-  Person() : ActiveRecord::Base<Person>() {} // Necessary
-  Person(int id) : ActiveRecord::Base<Person>(id) {} // Necessary
+  AR_CONSTRUCTORS( Person )
   // Callback to set table_name and override any defaults
-  static void set_table_data(TableData& td) {
+  static void set_table_data( TableData &td ) {
     td.table_name = "people";
-    td.fields.push_back(Field("name", ActiveRecord::text));
-    td.fields.push_back(Field("surname", ActiveRecord::text));
-    td.fields.push_back(Field("age", ActiveRecord::integer));
-    td.fields.push_back(Field("height", ActiveRecord::floating_point));
-    td.update_database = true;
+    td.fields.push_back( Field( "name",    ActiveRecord::text ) );
+    td.fields.push_back( Field( "surname", ActiveRecord::text ) );
+    td.fields.push_back( Field( "age",     ActiveRecord::integer ) );
+    td.fields.push_back( Field( "height",  ActiveRecord::floating_point ) );
     //td.has_many("books");
   }
 };

@@ -8,8 +8,8 @@ string database_file = "./test.sqlite3";
 
 void connect_database() {
   string remove_database = "rm -f " + database_file;
-  system(remove_database.c_str());
-  connection.connect(options
-    ("adapter", "sqlite")
-    ("database", database_file));
+  system( remove_database.c_str() );
+  connection.connect( options
+                     ( "adapter", "sqlite" )
+                     ( "database", database_file ) );
 }
