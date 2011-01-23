@@ -10,11 +10,11 @@ class AttributeTest : public ::testing::Test {
   }
 };
 
-TEST_F( AttributeTest, Static ) {
+TEST_F( AttributeTest, SetSingly ) {
   Person joe;
-  joe["name"] = "Joe";
-  joe["surname"] = "Yates";
-  joe["age"] = 45;
-  joe["height"] = 1.80;
+  joe[ "name" ]    = "Joe";
+  joe[ "surname" ] = "Yates";
+  joe[ "age" ]     = 45;
+  joe[ "height" ]  = 1.80;
   EXPECT_TRUE( joe.save() );
 }
