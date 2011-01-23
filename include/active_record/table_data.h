@@ -13,8 +13,8 @@ class Connection;
 class Field {
  public:
   Field( const string &name, ActiveRecord::Type type ) : name_( name ), type_( type ) {}
-  inline const string& name() { return name_; }
-  inline ActiveRecord::Type type() { return type_; }
+  inline const string& name() const { return name_; }
+  inline ActiveRecord::Type type() const { return type_; }
  private:
   string name_;
   ActiveRecord::Type type_;
