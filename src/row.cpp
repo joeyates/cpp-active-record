@@ -22,6 +22,10 @@ Row::Row( sqlite3_stmt *pStmt ) {
   }
 }
 
+Type Row::get_type( const string &name ) {
+  return ActiveRecord::get_type( attributes_[ name ] );
+}
+
 string Row::get_text( const string &name ) {
   return boost::get< string >( attributes_[ name ] );
 }
