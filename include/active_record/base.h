@@ -28,9 +28,7 @@ class Base {
   static string class_name;
   static void setup( Connection * connection ) {
     TableData td;
-    td.connection = connection;
-    // Set defaults
-    td.primary_key     = "id";
+    td.connection  = connection;
 
     T::set_table_data( td );
 
