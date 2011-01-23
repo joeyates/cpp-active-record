@@ -20,10 +20,12 @@ typedef map< string, string >                 OptionsHash;
 
 // Attributes are typed
 enum Type {
+  unknown        = -1,
   integer        = 0,
   text           = 1,
   floating_point = 2
 };
+
 //define VARIANT_TYPES_BASE 1
 // N.B. boost::variant.which() returns a 0-based index into this type list
 typedef boost::variant< int, string, double > Attribute;
@@ -33,6 +35,10 @@ typedef vector< Attribute >                   AttributeList;
 typedef vector< AttributePair >               AttributePairList;
 typedef pair< string, AttributeList >         QueryParametersPair;
 typedef assign_detail::generic_list< ActiveRecord::AttributePair > GenericAttributePairList;
+
+Type get_type( const Attribute & attribute );
+Type to_type( const string &type_name );
+
 } // namespace ActiveRecord
 
 // Instantiate boost::assign::list_of for our option type
