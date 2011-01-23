@@ -13,11 +13,17 @@ class Connection {
  public:
   Connection();
   void    connect( OptionsHash options );
+  // Class-Table Mapping
   void    add_class( const string &klass ) { klasses_.push_back( klass ); }
+  // Data Definition / Database Structure
   void    update_database();
   void    update_table( const string &klass );
+  Schema  schema();
+  TableData table_data( const string &table_name );
+  // Transactions
   void    begin_transaction();
   void    commit();
+  // Queries
   bool    execute( const string &query, const AttributeList &parameters = AttributeList() );
   Row     select_value( const string &query, const AttributeList &parameters = AttributeList() );
   Row     select_one( const string &query, const AttributeList &parameters = AttributeList() );
