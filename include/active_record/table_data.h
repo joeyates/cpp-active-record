@@ -21,15 +21,21 @@ class Field {
 };
 
 struct TableData {
+  TableData() {
+    primary_key = "id";
+    timestamps  = false;
+  }
   Connection *  connection;
   string        primary_key;
   string        table_name;
+  bool          timestamps;
   vector< Field > fields;
 };
 
-typedef map< string, TableData > TableSet;
 typedef pair< ActiveRecord::Type, string > TypeNamePair;
-typedef map< ActiveRecord::Type, string > TypeNameMap;
+typedef map< ActiveRecord::Type, string >  TypeNameMap;
+typedef map< string, TableData >           TableSet;
+typedef map< string, TableData >           Schema;
 
 } // namespace ActiveRecord
 
