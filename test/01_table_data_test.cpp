@@ -12,6 +12,10 @@ class TableDataTest : public ::testing::Test {
   }
 };
 
+void assert_field_name( const TableData &td, int field_index, const string &name ) {
+  ASSERT_STREQ( td.fields[ field_index ].name().c_str(), name.c_str() );
+}
+
 TEST_F( TableDataTest, CreatesDatabase ) {
   TableData td;
   td.connection  = &connection;
@@ -45,9 +49,9 @@ TEST_F( TableDataTest, CreatesFields ) {
   Schema schema          = connection.schema();
   TableData people_table = schema[ "people" ];
   ASSERT_EQ( people_table.fields.size(), 3 );
-  ASSERT_STREQ( people_table.fields[ 0 ].name().c_str(), "id" );
-  ASSERT_STREQ( people_table.fields[ 1 ].name().c_str(), "name" );
-  ASSERT_STREQ( people_table.fields[ 2 ].name().c_str(), "surname" );
+  assert_field_name( people_table, 0, "id" );
+  assert_field_name( people_table, 1, "name" );
+  assert_field_name( people_table, 2, "surname" );
 }
 
 TEST_F( TableDataTest, PrimaryKeyField ) {
@@ -67,9 +71,9 @@ TEST_F( TableDataTest, PrimaryKeyField ) {
   Schema schema          = connection.schema();
   TableData people_table = schema[ "people" ];
   ASSERT_EQ( people_table.fields.size(), 3 );
-  ASSERT_STREQ( people_table.fields[ 0 ].name().c_str(), "hi" );
-  ASSERT_STREQ( people_table.fields[ 1 ].name().c_str(), "name" );
-  ASSERT_STREQ( people_table.fields[ 2 ].name().c_str(), "surname" );
+  assert_field_name( people_table, 0, "hi" );
+  assert_field_name( people_table, 1, "name" );
+  assert_field_name( people_table, 2, "surname" );
 }
 
 TEST_F( TableDataTest, Timestamps ) {
@@ -89,9 +93,9 @@ TEST_F( TableDataTest, Timestamps ) {
   Schema schema          = connection.schema();
   TableData people_table = schema[ "people" ];
   ASSERT_EQ( people_table.fields.size(), 5 );
-  ASSERT_STREQ( people_table.fields[ 0 ].name().c_str(), "id" );
-  ASSERT_STREQ( people_table.fields[ 1 ].name().c_str(), "name" );
-  ASSERT_STREQ( people_table.fields[ 2 ].name().c_str(), "surname" );
-  ASSERT_STREQ( people_table.fields[ 3 ].name().c_str(), "created_at" );
-  ASSERT_STREQ( people_table.fields[ 4 ].name().c_str(), "updated_at" );
+  assert_field_name( people_table, 0, "id" );
+  assert_field_name( people_table, 1, "name" );
+  assert_field_name( people_table, 2, "surname" );
+  assert_field_name( people_table, 3, "created_at" );
+  assert_field_name( people_table, 4, "updated_at" );
 }
