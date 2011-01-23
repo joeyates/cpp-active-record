@@ -34,6 +34,10 @@ void Connection::update_table( const string &klass ) {
   for( vector< Field >::iterator it = td.fields.begin(); it != td.fields.end(); ++it ) {
     ss << ", " << it->name() << " " << type_name[ it->type() ];
   }
+  if( td.timestamps ) {
+    ss << ", created_at TEXT";
+    ss << ", updated_at TEXT";
+  }
   ss << ");";
   execute( ss.str() );
 }
