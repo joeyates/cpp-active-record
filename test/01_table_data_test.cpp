@@ -3,14 +3,14 @@
 extern ActiveRecord::Connection connection;
 extern TableSet ActiveRecord::tables;
 
-class ConnectionTest : public ::testing::Test {
+class TableDataTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     connect_database();
   }
 };
 
-TEST_F( ConnectionTest, Static ) {
+TEST_F( TableDataTest, Static ) {
   TableData td;
   td.connection  = &connection;
   td.primary_key = "id";
