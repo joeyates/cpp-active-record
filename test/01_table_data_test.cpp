@@ -12,10 +12,6 @@ class TableDataTest : public ::testing::Test {
   }
 };
 
-void assert_field_name( const TableData &td, int field_index, const string &name ) {
-  ASSERT_STREQ( td.fields[ field_index ].name().c_str(), name.c_str() );
-}
-
 TEST_F( TableDataTest, CreatesDatabase ) {
   TableData td;
   td.connection  = &connection;
