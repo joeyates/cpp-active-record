@@ -20,7 +20,7 @@ TEST_F( SchemaTest, LoadsSchema ) {
   Schema schema       = connection.schema();
   TableData foo_table = schema[ "foo" ];
   ASSERT_EQ( foo_table.fields.size(), 3 );
-  assert_field_name( foo_table, 0, "bar" );
-  assert_field_name( foo_table, 1, "baz" );
-  assert_field_name( foo_table, 2, "qux" );
+  assert_field( foo_table, 0, "bar", ActiveRecord::integer );
+  assert_field( foo_table, 1, "baz", ActiveRecord::text );
+  assert_field( foo_table, 2, "qux", ActiveRecord::floating_point );
 }

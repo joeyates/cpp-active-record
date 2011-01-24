@@ -49,9 +49,9 @@ TEST_F( TableDataTest, CreatesFields ) {
   Schema schema          = connection.schema();
   TableData people_table = schema[ "people" ];
   ASSERT_EQ( people_table.fields.size(), 3 );
-  assert_field_name( people_table, 0, "id" );
-  assert_field_name( people_table, 1, "name" );
-  assert_field_name( people_table, 2, "surname" );
+  assert_field( people_table, 0, "id",      ActiveRecord::integer );
+  assert_field( people_table, 1, "name",    ActiveRecord::text );
+  assert_field( people_table, 2, "surname", ActiveRecord::text );
 }
 
 TEST_F( TableDataTest, PrimaryKeyField ) {
@@ -59,8 +59,7 @@ TEST_F( TableDataTest, PrimaryKeyField ) {
   td.connection  = &connection;
   td.primary_key = "hi";
   td.table_name  = "people";
-  td.fields.push_back( Field( "name",    ActiveRecord::text ) );
-  td.fields.push_back( Field( "surname", ActiveRecord::text ) );
+  td.fields.push_back( Field( "height",  ActiveRecord::floating_point ) );
 
   connection.add_class( "Person" );
   ActiveRecord::tables[ "Person" ] = td;
@@ -70,10 +69,9 @@ TEST_F( TableDataTest, PrimaryKeyField ) {
   // Tests: Check that we can call the primary key whatever we want
   Schema schema          = connection.schema();
   TableData people_table = schema[ "people" ];
-  ASSERT_EQ( people_table.fields.size(), 3 );
-  assert_field_name( people_table, 0, "hi" );
-  assert_field_name( people_table, 1, "name" );
-  assert_field_name( people_table, 2, "surname" );
+  ASSERT_EQ( people_table.fields.size(), 2 );
+  assert_field( people_table, 0, "hi",     ActiveRecord::integer );
+  assert_field( people_table, 1, "height", ActiveRecord::floating_point );
 }
 
 TEST_F( TableDataTest, Timestamps ) {
@@ -93,9 +91,9 @@ TEST_F( TableDataTest, Timestamps ) {
   Schema schema          = connection.schema();
   TableData people_table = schema[ "people" ];
   ASSERT_EQ( people_table.fields.size(), 5 );
-  assert_field_name( people_table, 0, "id" );
-  assert_field_name( people_table, 1, "name" );
-  assert_field_name( people_table, 2, "surname" );
-  assert_field_name( people_table, 3, "created_at" );
-  assert_field_name( people_table, 4, "updated_at" );
+  assert_field( people_table, 0, "id",         ActiveRecord::integer );
+  assert_field( people_table, 1, "name",       ActiveRecord::text );
+  assert_field( people_table, 2, "surname",    ActiveRecord::text );
+  assert_field( people_table, 3, "created_at", ActiveRecord::text );
+  assert_field( people_table, 4, "updated_at", ActiveRecord::text );
 }

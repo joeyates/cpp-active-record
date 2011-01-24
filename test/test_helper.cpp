@@ -20,3 +20,13 @@ void connect_database() {
 void assert_field_name( const TableData &td, int field_index, const string &name ) {
   ASSERT_STREQ( td.fields[ field_index ].name().c_str(), name.c_str() );
 }
+
+void assert_field_type( const TableData &td, int field_index, ActiveRecord::Type type ) {
+  ASSERT_EQ( td.fields[ field_index ].type(), type );
+}
+
+void assert_field( const TableData &td, int field_index, const string &name, ActiveRecord::Type type ) {
+  assert_field_name( td, field_index, name );
+  assert_field_type( td, field_index, type );
+}
+
