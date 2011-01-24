@@ -5,6 +5,7 @@
 #include "models.h"
 
 void connect_database();
+void delete_database();
 
 void assert_field_name( const TableData &td, int field_index, const string &name );
 

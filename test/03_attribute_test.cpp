@@ -5,8 +5,12 @@ extern ActiveRecord::Connection connection;
 class AttributeTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
+    delete_database();
     connect_database();
     Person::setup( &connection );
+  }
+  virtual void TearDown() {
+    delete_database();
   }
 };
 

@@ -6,9 +6,12 @@ string ActiveRecord::Base<Person>::class_name = "Person";
 ActiveRecord::Connection connection;
 string database_file = "./test.sqlite3";
 
-void connect_database() {
+void delete_database() {
   string remove_database = "rm -f " + database_file;
   system( remove_database.c_str() );
+}
+
+void connect_database() {
   connection.connect( options
                      ( "adapter", "sqlite" )
                      ( "database", database_file ) );

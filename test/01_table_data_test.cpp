@@ -8,7 +8,11 @@ extern string database_file;
 class TableDataTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
+    delete_database();
     connect_database();
+  }
+  virtual void TearDown() {
+    delete_database();
   }
 };
 
