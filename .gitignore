@@ -4,3 +4,5 @@
 libactive_record_sqlite.a
 *.sqlite3
 .rake-builder*
+objects_i386
+objects_x86_64
