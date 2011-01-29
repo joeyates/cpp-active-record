@@ -28,15 +28,19 @@ void Connection::connect( OptionsHash options )
 // TODO: Handle alter table
 void Connection::update_database()
 {
-  for( vector< string >::iterator it = klasses_.begin(); it != klasses_.end(); ++it )
-    update_table( *it );
+  for( vector< string >::iterator it = klasses_.begin(); it != klasses_.end(); ++it ) {
+    TableData td = tables[ *it ];
+    if( table_exists( td.table_name ) )
+      create_table( td );
+    else
+      update_table( td );
+  }
 }
 
-void Connection::update_table( const string &klass )
+void Connection::create_table( const TableData &td )
 {
-  TableData td = tables[ klass ];
   stringstream ss;
-  ss << "CREATE TABLE IF NOT EXISTS " << td.table_name;
+  ss << "CREATE TABLE " << td.table_name;
   ss << " (";
   ss << td.primary_key << " INTEGER PRIMARY KEY";
   for( vector< Field >::iterator it = td.fields.begin(); it != td.fields.end(); ++it ) {
@@ -50,16 +54,30 @@ void Connection::update_table( const string &klass )
   execute( ss.str() );
 }
 
+void Connection::create_table( const TableData &required )
+{
+  TableData existing = table_data( td.table_name );
+}
+
 Schema Connection::schema()
 {
   Schema s;
   RowSet rows = select_values( "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;" );
   for( RowSet::iterator it = rows.begin(); it != rows.end(); ++it ) {
-    Type type = it->get_type( "name" );
+    Type type    = it->get_type( "name" );
     string table = it->get_text( "name" );
-    s[ table ] = table_data( table );
+    s[ table ]   = table_data( table );
   }
   return s;
+}
+
+bool Connection::table_exists( const string &table_name )
+{
+  AttributeList parameters;
+  parameters.push_back( table_name );
+  RowSet rows = select_values( "SELECT name FROM sqlite_master WHERE type='table' AND name = ?;",
+                               parameters );
+  return ( rows.size() ? true : false );
 }
 
 TableData Connection::table_data( const string &table_name )
@@ -67,9 +85,9 @@ TableData Connection::table_data( const string &table_name )
   TableData td;
   stringstream row_query;
   row_query << "PRAGMA table_info( \"" << table_name << "\" );";
-  string query = row_query.str();
+  string query         = row_query.str();
   sqlite3_stmt *ppStmt = 0;
-  int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
+  int prepare_result   = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   while( sqlite3_step( ppStmt ) == SQLITE_ROW ) {
     // cid | name |    type | notnull | dflt_value | pk
     // 0   |  bar | INTEGER |       0 |            | 0

@@ -17,9 +17,11 @@ class Connection {
   void    add_class( const string &klass ) { klasses_.push_back( klass ); }
   // Data Definition / Database Structure
   void    update_database();
-  void    update_table( const string &klass );
+  void    create_table( const TableData &td );
+  void    update_table( const TableData &td );
   Schema  schema();
   TableData table_data( const string &table_name );
+  bool    table_exists( const string &table_name );
   // Transactions
   void    begin_transaction();
   void    commit();
