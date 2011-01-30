@@ -1,7 +1,7 @@
 #ifndef _ACTIVE_RECORD_CONNECTION_H_
 #define _ACTIVE_RECORD_CONNECTION_H_
 
-#include <active_record/types.h>
+#include <active_record/type.h>
 #include <active_record/row.h>
 #include <active_record/query.h>
 #include <cstdio>

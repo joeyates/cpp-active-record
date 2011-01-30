@@ -1,5 +1,4 @@
-#include <active_record/types.h>
-// include <active_record/table_data.h>
+#include <active_record/type.h>
 
 namespace ActiveRecord {
 
@@ -10,14 +9,18 @@ TypeNamePair( ActiveRecord::text, "TEXT" ),
 TypeNamePair( ActiveRecord::floating_point, "REAL" )
 };
 
+Type type_list[] =
+{
+integer,
+text,
+floating_point
+};
+
 TypeNameMap type_name( type_pairs, type_pairs + sizeof( type_pairs ) / sizeof( type_pairs[ 0 ] ) );
 
-Type index_to_type[] = { integer, text, floating_point };
-
-Type get_type( const Attribute & attribute )
+Type index_to_type( int index )
 {
-  int type_index = attribute.which();
-  return index_to_type[ type_index ];
+  type_list[ index ];
 }
 
 Type to_type( const string &type_name )
@@ -31,8 +34,5 @@ Type to_type( const string &type_name )
   else
     return ActiveRecord::unknown;
 }
-
-//std::basic_ostream< char, std::char_traits< char > >&
-//operator<<( std::basic_ostream< char, std::char_traits< char > > &ostream, NullType nt ) { return ostream; }
 
 } // namespace ActiveRecord

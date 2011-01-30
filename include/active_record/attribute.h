@@ -1,32 +1,12 @@
-#ifndef _ACTIVE_RECORD_TYPES_H_
-#define _ACTIVE_RECORD_TYPES_H_
+#ifndef _ACTIVE_RECORD_ATTRIBUTE_H_
+#define _ACTIVE_RECORD_ATTRIBUTE_H_
 
-#include <iostream> // For debugging
-#include <map>
-#include <string>
-#include <vector>
-#include <boost/assign.hpp>
-#include <boost/variant.hpp>
-#include <boost/assign/list_of.hpp>
+#include <active_record/type.h>
 using namespace boost::assign;
 using namespace boost;
-using namespace std;
 
 namespace ActiveRecord {
 
-// Options are for string only data
-typedef pair< string, string >                OptionPair;
-typedef map< string, string >                 OptionsHash;
-
-// Attributes are typed
-enum Type {
-  unknown        = -1,
-  integer        = 0,
-  text           = 1,
-  floating_point = 2
-};
-
-//define VARIANT_TYPES_BASE 1
 // N.B. boost::variant.which() returns a 0-based index into this type list
 typedef boost::variant< int, string, double > Attribute;
 typedef pair< string, Attribute >             AttributePair;
@@ -35,11 +15,8 @@ typedef vector< Attribute >                   AttributeList;
 typedef vector< AttributePair >               AttributePairList;
 typedef pair< string, AttributeList >         QueryParametersPair;
 typedef assign_detail::generic_list< ActiveRecord::AttributePair > GenericAttributePairList;
-typedef pair< ActiveRecord::Type, string >    TypeNamePair;
-typedef map< ActiveRecord::Type, string >     TypeNameMap;
 
 Type get_type( const Attribute & attribute );
-Type to_type( const string &type_name );
 
 } // namespace ActiveRecord
 
@@ -79,4 +56,4 @@ inline ActiveRecord::GenericAttributePairList attributes( const char * name, con
 
 } // namespace ActiveRecord
 
-#endif // ndef _ACTIVE_RECORD_TYPES_H_
+#endif // ndef _ACTIVE_RECORD_ATTRIBUTE_H_

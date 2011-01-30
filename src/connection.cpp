@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <active_record/connection.h>
 
 namespace ActiveRecord {
@@ -31,9 +32,9 @@ void Connection::update_database()
   for( vector< string >::iterator it = klasses_.begin(); it != klasses_.end(); ++it ) {
     Table td = tables[ *it ];
     if( table_exists( td.table_name ) )
-      create_table( td );
-    else
       update_table( td );
+    else
+      create_table( td );
   }
 }
 
@@ -57,12 +58,12 @@ void Connection::create_table( Table &td )
 void Connection::update_table( Table &required )
 {
   Table existing = table_data( required.table_name );
-  Fields missing     = required.fields - existing.fields;
-  Fields remove      = existing.fields - required.fields;
+  Fields missing = required.fields - existing.fields;
+  Fields remove  = existing.fields - required.fields;
   for( Fields::iterator it = missing.begin(); it != missing.end(); ++it )
-    add_field( required.table_name, *it );
+    existing.add_field( *it );
   for( Fields::iterator it = remove.begin(); it != remove.end(); ++it )
-    remove_field( required.table_name, *it );
+    existing.remove_field( *it );
 }
 
 Schema Connection::schema()
@@ -94,11 +95,13 @@ Table Connection::table_data( const string &table_name )
   sqlite3_stmt *ppStmt = 0;
   int prepare_result   = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   Table td;
+  td.table_name        = table_name;
+  td.connection        = this;
   while( sqlite3_step( ppStmt ) == SQLITE_ROW ) {
     // cid | name |    type | notnull | dflt_value | pk
     // 0   |  bar | INTEGER |       0 |            | 0
-    const char * name      = ( const char * ) sqlite3_column_text( ppStmt, 1 );
-    const char * type_name = ( const char * ) sqlite3_column_text( ppStmt, 2 );
+    const char * name       = ( const char * ) sqlite3_column_text( ppStmt, 1 );
+    const char * type_name  = ( const char * ) sqlite3_column_text( ppStmt, 2 );
     ActiveRecord::Type type = ActiveRecord::to_type( type_name );
     if( type == ActiveRecord::unknown )
       throw "Unknown type";

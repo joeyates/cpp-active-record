@@ -1,7 +1,8 @@
 #ifndef _ACTIVE_RECORD_BASE_H_
 #define _ACTIVE_RECORD_BASE_H_
 
-#include <active_record/types.h>
+#include <sstream>
+#include <active_record/type.h>
 #include <active_record/connection.h>
 #include <active_record/query.h>
 #include <active_record/table.h>

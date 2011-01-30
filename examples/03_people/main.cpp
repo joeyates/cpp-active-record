@@ -1,4 +1,4 @@
-#include <active_record/types.h>
+#include <active_record/type.h>
 #include <active_record/base.h>
 
 //////////////////////////////////////////////

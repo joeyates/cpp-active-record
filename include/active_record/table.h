@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <active_record/field.h>
-#include <active_record/types.h>
+#include <active_record/type.h>
 using namespace std;
 
 namespace ActiveRecord {
@@ -16,6 +16,8 @@ struct Table {
     primary_key = "id";
     timestamps  = false;
   }
+  void    add_field( const Field &field );
+  void    remove_field( const Field &field );
   Connection *  connection;
   string        primary_key;
   string        table_name;

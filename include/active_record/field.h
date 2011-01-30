@@ -1,6 +1,8 @@
 #ifndef _ACTIVE_RECORD_FIELD_H_
 #define _ACTIVE_RECORD_FIELD_H_
 
+#include <active_record/type.h>
+
 namespace ActiveRecord {
 
 class Field {

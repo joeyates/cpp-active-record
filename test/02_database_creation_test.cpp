@@ -26,7 +26,7 @@ TEST_F( TableTest, CreatesDatabase ) {
 
   connection.update_database();
 
-  // Tests: check the db file has been created and in non-zero in size
+  // Tests: check the db file has been created and is non-zero in size
   struct stat buffer;
   int status = lstat( database_file.c_str(), &buffer);
   ASSERT_EQ( status, 0 );

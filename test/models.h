@@ -1,7 +1,7 @@
 #ifndef _ACTIVE_RECORD_TESTS_MODELS_H_
 #define _ACTIVE_RECORD_TESTS_MODELS_H_
 
-#include <active_record/types.h>
+#include <active_record/type.h>
 #include <active_record/base.h>
 
 using namespace ActiveRecord;
@@ -10,7 +10,7 @@ class Person: public ActiveRecord::Base< Person > {
  public:
   AR_CONSTRUCTORS( Person )
   // Callback to set table_name and override any defaults
-  static void table() {
+  static Table table() {
     Table td;
     td.table_name = "people";
     td.fields.push_back( Field( "name",    ActiveRecord::text ) );

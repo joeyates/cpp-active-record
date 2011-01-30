@@ -1,7 +1,8 @@
 #ifndef _ACTIVE_RECORD_ROW_H_
 #define _ACTIVE_RECORD_ROW_H_
 
-#include <active_record/types.h>
+#include <active_record/type.h>
+#include <active_record/attribute.h>
 #include <sqlite3.h>
 
 namespace ActiveRecord {
