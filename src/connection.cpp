@@ -37,13 +37,13 @@ void Connection::update_database()
   }
 }
 
-void Connection::create_table( const TableData &td )
+void Connection::create_table( TableData &td )
 {
   stringstream ss;
   ss << "CREATE TABLE " << td.table_name;
   ss << " (";
   ss << td.primary_key << " INTEGER PRIMARY KEY";
-  for( vector< Field >::iterator it = td.fields.begin(); it != td.fields.end(); ++it ) {
+  for( Fields::const_iterator it = td.fields.begin(); it != td.fields.end(); ++it ) {
     ss << ", " << it->name() << " " << type_name[ it->type() ];
   }
   if( td.timestamps ) {
@@ -54,9 +54,15 @@ void Connection::create_table( const TableData &td )
   execute( ss.str() );
 }
 
-void Connection::create_table( const TableData &required )
+void Connection::update_table( TableData &required )
 {
-  TableData existing = table_data( td.table_name );
+  TableData existing = table_data( required.table_name );
+  Fields missing     = required.fields - existing.fields;
+  Fields remove      = existing.fields - required.fields;
+  for( Fields::iterator it = missing.begin(); it != missing.end(); ++it )
+    add_field( required.table_name, *it );
+  for( Fields::iterator it = remove.begin(); it != remove.end(); ++it )
+    remove_field( required.table_name, *it );
 }
 
 Schema Connection::schema()

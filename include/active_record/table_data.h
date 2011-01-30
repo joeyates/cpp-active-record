@@ -20,6 +20,26 @@ class Field {
   ActiveRecord::Type type_;
 };
 
+class Fields : public vector< Field > {
+ public:
+  Fields operator-( Fields &other ) {
+    Fields fields;
+    for( Fields::iterator it = this->begin(); it != this->end(); ++it ) {
+      if( ! other.has_field( it->name() ) )
+        fields.push_back( Field( it->name(), it->type() ) );
+    }
+    return fields;
+  }
+  bool has_field( const string &field_name ) {
+    for( Fields::iterator it = this->begin(); it != this->end(); ++it ) {
+      if( it->name() == field_name ) {
+        return true;
+      }
+    }
+    return false;
+  }
+};
+
 struct TableData {
   TableData() {
     primary_key = "id";
@@ -29,7 +49,7 @@ struct TableData {
   string        primary_key;
   string        table_name;
   bool          timestamps;
-  vector< Field > fields;
+  Fields        fields;
 };
 
 typedef pair< ActiveRecord::Type, string > TypeNamePair;
