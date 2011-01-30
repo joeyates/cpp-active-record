@@ -26,7 +26,6 @@ void Connection::connect( OptionsHash options )
 ////////////////////////////////////
 // Data Definition / Database Structure
 
-// TODO: Handle alter table
 void Connection::update_database()
 {
   for( TableSet::iterator it = tables.begin(); it != tables.end(); ++it ) {

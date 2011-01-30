@@ -2,6 +2,9 @@
 #define _ACTIVE_RECORD_ATTRIBUTE_H_
 
 #include <active_record/type.h>
+#include <boost/assign.hpp>
+#include <boost/variant.hpp>
+#include <boost/assign/list_of.hpp>
 using namespace boost::assign;
 using namespace boost;
 

@@ -5,9 +5,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <boost/assign.hpp>
-#include <boost/variant.hpp>
-#include <boost/assign/list_of.hpp>
 using namespace std;
 
 namespace ActiveRecord {
