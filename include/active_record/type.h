@@ -9,10 +9,6 @@ using namespace std;
 
 namespace ActiveRecord {
 
-// Options are for string only data
-typedef pair< string, string >                OptionPair;
-typedef map< string, string >                 OptionsHash;
-
 // Attributes are typed
 enum Type {
   unknown        = -1,
