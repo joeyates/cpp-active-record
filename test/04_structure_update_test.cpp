@@ -12,7 +12,7 @@ class StructureUpdateTest : public ::testing::Test {
     connect_database();
   }
   virtual void TearDown() {
-    // delete_database();
+    delete_database();
   }
 };
 
@@ -24,7 +24,6 @@ TEST_F( StructureUpdateTest, LoadsSchema ) {
   td.fields.push_back( Field( "baz", ActiveRecord::text ) );
   td.fields.push_back( Field( "qux", ActiveRecord::floating_point ) );
 
-  connection.add_class( "Foo" );
   ActiveRecord::tables[ "Foo" ] = td;
 
   connection.update_database();

@@ -29,12 +29,14 @@ void Connection::connect( OptionsHash options )
 // TODO: Handle alter table
 void Connection::update_database()
 {
-  for( vector< string >::iterator it = klasses_.begin(); it != klasses_.end(); ++it ) {
-    Table td = tables[ *it ];
-    if( table_exists( td.table_name ) )
-      update_table( td );
-    else
-      create_table( td );
+  for( TableSet::iterator it = tables.begin(); it != tables.end(); ++it ) {
+    Table td = it->second;
+    if( td.connection == this ) {
+      if( table_exists( td.table_name ) )
+        update_table( td );
+      else
+        create_table( td );
+    }
   }
 }
 

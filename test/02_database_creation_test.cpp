@@ -21,7 +21,6 @@ TEST_F( TableTest, CreatesDatabase ) {
   td.connection = &connection;
   td.table_name = "people";
 
-  connection.add_class( "Person" );
   ActiveRecord::tables[ "Person" ] = td;
 
   connection.update_database();
@@ -40,7 +39,6 @@ TEST_F( TableTest, CreatesFields ) {
   td.fields.push_back( Field( "name",    ActiveRecord::text ) );
   td.fields.push_back( Field( "surname", ActiveRecord::text ) );
 
-  connection.add_class( "Person" );
   ActiveRecord::tables[ "Person" ] = td;
 
   connection.update_database();
@@ -61,7 +59,6 @@ TEST_F( TableTest, PrimaryKeyField ) {
   td.table_name  = "people";
   td.fields.push_back( Field( "height",  ActiveRecord::floating_point ) );
 
-  connection.add_class( "Person" );
   ActiveRecord::tables[ "Person" ] = td;
 
   connection.update_database();
@@ -82,7 +79,6 @@ TEST_F( TableTest, Timestamps ) {
   td.fields.push_back( Field( "name",    ActiveRecord::text ) );
   td.fields.push_back( Field( "surname", ActiveRecord::text ) );
 
-  connection.add_class( "Person" );
   ActiveRecord::tables[ "Person" ] = td;
 
   connection.update_database();

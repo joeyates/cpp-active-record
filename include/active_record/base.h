@@ -33,7 +33,6 @@ class Base {
 
     if( td.table_name.empty() )
       throw "set the table name when returning Table";
-    connection->add_class( T::class_name );
     tables[ T::class_name ] = td;
   }
   Base() : loaded_( false ) {

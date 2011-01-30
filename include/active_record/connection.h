@@ -13,8 +13,6 @@ class Connection {
  public:
   Connection();
   void    connect( OptionsHash options );
-  // Class-Table Mapping
-  void    add_class( const string &klass ) { klasses_.push_back( klass ); }
   // Data Definition / Database Structure
   void    update_database();
   void    create_table( Table &td );
@@ -38,7 +36,6 @@ class Connection {
   bool      sqlite_initialize( string database_path_name );
   void      bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters );
  private:
-  vector< string > klasses_;
   sqlite3 *        db_;
 };
 
