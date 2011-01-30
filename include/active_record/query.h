@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <active_record/types.h>
-#include <active_record/table_data.h>
+#include <active_record/table.h>
 #include <active_record/row.h>
 #include <active_record/connection.h>
 using namespace std;

@@ -1,14 +1,7 @@
-#ifndef _ACTIVE_RECORD_TABLE_DATA_H_
-#define _ACTIVE_RECORD_TABLE_DATA_H_
-
-#include <string>
-#include <vector>
-#include <active_record/types.h>
-using namespace std;
+#ifndef _ACTIVE_RECORD_FIELD_H_
+#define _ACTIVE_RECORD_FIELD_H_
 
 namespace ActiveRecord {
-
-class Connection;
 
 class Field {
  public:
@@ -40,23 +33,6 @@ class Fields : public vector< Field > {
   }
 };
 
-struct TableData {
-  TableData() {
-    primary_key = "id";
-    timestamps  = false;
-  }
-  Connection *  connection;
-  string        primary_key;
-  string        table_name;
-  bool          timestamps;
-  Fields        fields;
-};
-
-typedef pair< ActiveRecord::Type, string > TypeNamePair;
-typedef map< ActiveRecord::Type, string >  TypeNameMap;
-typedef map< string, TableData >           TableSet;
-typedef map< string, TableData >           Schema;
-
 } // namespace ActiveRecord
 
-#endif // ndef _ACTIVE_RECORD_TABLE_DATA_H_
+#endif // ndef _ACTIVE_RECORD_FIELD_H_

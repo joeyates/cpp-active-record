@@ -4,7 +4,7 @@
 #include <active_record/types.h>
 #include <active_record/connection.h>
 #include <active_record/query.h>
-#include <active_record/table_data.h>
+#include <active_record/table.h>
 
 #define ACTIVE_RECORD_UNSAVED -1
 
@@ -27,14 +27,12 @@ class Base {
  public:
   static string class_name;
   static void setup( Connection * connection ) {
-    TableData td;
-    td.connection  = connection;
-
-    T::set_table_data( td );
+    Table td      = T::table();
+    td.connection = connection;
 
     if( td.table_name.empty() )
-      throw "set_table_data() must set the table name";
-    td.connection->add_class( T::class_name );
+      throw "set the table name when returning Table";
+    connection->add_class( T::class_name );
     tables[ T::class_name ] = td;
   }
   Base() : loaded_( false ) {

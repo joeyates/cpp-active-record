@@ -5,7 +5,7 @@ extern ActiveRecord::Connection connection;
 extern TableSet ActiveRecord::tables;
 extern string database_file;
 
-class TableDataTest : public ::testing::Test {
+class TableTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
@@ -16,10 +16,10 @@ class TableDataTest : public ::testing::Test {
   }
 };
 
-TEST_F( TableDataTest, CreatesDatabase ) {
-  TableData td;
-  td.connection  = &connection;
-  td.table_name  = "people";
+TEST_F( TableTest, CreatesDatabase ) {
+  Table td;
+  td.connection = &connection;
+  td.table_name = "people";
 
   connection.add_class( "Person" );
   ActiveRecord::tables[ "Person" ] = td;
@@ -33,8 +33,8 @@ TEST_F( TableDataTest, CreatesDatabase ) {
   ASSERT_GT( buffer.st_size, 0 );
 }
 
-TEST_F( TableDataTest, CreatesFields ) {
-  TableData td;
+TEST_F( TableTest, CreatesFields ) {
+  Table td;
   td.connection  = &connection;
   td.table_name  = "people";
   td.fields.push_back( Field( "name",    ActiveRecord::text ) );
@@ -46,16 +46,16 @@ TEST_F( TableDataTest, CreatesFields ) {
   connection.update_database();
 
   // Tests: Check for the fields in the schema
-  Schema schema          = connection.schema();
-  TableData people_table = schema[ "people" ];
+  Schema schema      = connection.schema();
+  Table people_table = schema[ "people" ];
   ASSERT_EQ( people_table.fields.size(), 3 );
   assert_field( people_table, 0, "id",      ActiveRecord::integer );
   assert_field( people_table, 1, "name",    ActiveRecord::text );
   assert_field( people_table, 2, "surname", ActiveRecord::text );
 }
 
-TEST_F( TableDataTest, PrimaryKeyField ) {
-  TableData td;
+TEST_F( TableTest, PrimaryKeyField ) {
+  Table td;
   td.connection  = &connection;
   td.primary_key = "hi";
   td.table_name  = "people";
@@ -67,15 +67,15 @@ TEST_F( TableDataTest, PrimaryKeyField ) {
   connection.update_database();
 
   // Tests: Check that we can call the primary key whatever we want
-  Schema schema          = connection.schema();
-  TableData people_table = schema[ "people" ];
+  Schema schema      = connection.schema();
+  Table people_table = schema[ "people" ];
   ASSERT_EQ( people_table.fields.size(), 2 );
   assert_field( people_table, 0, "hi",     ActiveRecord::integer );
   assert_field( people_table, 1, "height", ActiveRecord::floating_point );
 }
 
-TEST_F( TableDataTest, Timestamps ) {
-  TableData td;
+TEST_F( TableTest, Timestamps ) {
+  Table td;
   td.connection  = &connection;
   td.timestamps  = true;
   td.table_name  = "people";
@@ -88,8 +88,8 @@ TEST_F( TableDataTest, Timestamps ) {
   connection.update_database();
 
   // Tests: Check for the timestamp fields
-  Schema schema          = connection.schema();
-  TableData people_table = schema[ "people" ];
+  Schema schema      = connection.schema();
+  Table people_table = schema[ "people" ];
   ASSERT_EQ( people_table.fields.size(), 5 );
   assert_field( people_table, 0, "id",         ActiveRecord::integer );
   assert_field( people_table, 1, "name",       ActiveRecord::text );

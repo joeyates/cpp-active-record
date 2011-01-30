@@ -8,12 +8,13 @@ using namespace ActiveRecord;
 class Greeting: public ActiveRecord::Base< Greeting > {
  public:
   AR_CONSTRUCTORS( Greeting )
-  static void set_table_data( TableData &td ) {
+  static void table() {
+    Table td;
     td.table_name = "greetings";
     td.fields.push_back( Field( "salute",   ActiveRecord::text ) );
     td.fields.push_back( Field( "thing",    ActiveRecord::text ) );
     td.fields.push_back( Field( "language", ActiveRecord::text ) );
-    td.update_database = true;
+    return td;
   }
 };
 

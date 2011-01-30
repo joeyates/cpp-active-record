@@ -17,8 +17,8 @@ class SchemaTest : public ::testing::Test {
 };
 
 TEST_F( SchemaTest, LoadsSchema ) {
-  Schema schema       = connection.schema();
-  TableData foo_table = schema[ "foo" ];
+  Schema schema   = connection.schema();
+  Table foo_table = schema[ "foo" ];
   ASSERT_EQ( foo_table.fields.size(), 3 );
   assert_field( foo_table, 0, "bar", ActiveRecord::integer );
   assert_field( foo_table, 1, "baz", ActiveRecord::text );

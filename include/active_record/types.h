@@ -35,6 +35,8 @@ typedef vector< Attribute >                   AttributeList;
 typedef vector< AttributePair >               AttributePairList;
 typedef pair< string, AttributeList >         QueryParametersPair;
 typedef assign_detail::generic_list< ActiveRecord::AttributePair > GenericAttributePairList;
+typedef pair< ActiveRecord::Type, string >    TypeNamePair;
+typedef map< ActiveRecord::Type, string >     TypeNameMap;
 
 Type get_type( const Attribute & attribute );
 Type to_type( const string &type_name );

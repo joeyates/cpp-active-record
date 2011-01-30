@@ -1,5 +1,5 @@
 #include <active_record/types.h>
-#include <active_record/table_data.h>
+// include <active_record/table_data.h>
 
 namespace ActiveRecord {
 
