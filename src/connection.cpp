@@ -30,8 +30,8 @@ void Connection::update_database()
 {
   for( TableSet::iterator it = tables.begin(); it != tables.end(); ++it ) {
     Table td = it->second;
-    if( td.connection == this ) {
-      if( table_exists( td.table_name ) )
+    if( td.connection() == this ) {
+      if( table_exists( td.table_name() ) )
         update_table( td );
       else
         create_table( td );
@@ -42,13 +42,13 @@ void Connection::update_database()
 void Connection::create_table( Table &td )
 {
   stringstream ss;
-  ss << "CREATE TABLE " << td.table_name;
+  ss << "CREATE TABLE " << td.table_name();
   ss << " (";
-  ss << td.primary_key << " INTEGER PRIMARY KEY";
-  for( Fields::const_iterator it = td.fields.begin(); it != td.fields.end(); ++it ) {
+  ss << td.primary_key() << " INTEGER PRIMARY KEY";
+  for( Fields::const_iterator it = td.fields().begin(); it != td.fields().end(); ++it ) {
     ss << ", " << it->name() << " " << type_name[ it->type() ];
   }
-  if( td.timestamps ) {
+  if( td.timestamps() ) {
     ss << ", created_at TEXT";
     ss << ", updated_at TEXT";
   }
@@ -58,9 +58,9 @@ void Connection::create_table( Table &td )
 
 void Connection::update_table( Table &required )
 {
-  Table existing = table_data( required.table_name );
-  Fields missing = required.fields - existing.fields;
-  Fields remove  = existing.fields - required.fields;
+  Table existing = table_data( required.table_name() );
+  Fields missing = required.fields() - existing.fields();
+  Fields remove  = existing.fields() - required.fields();
   for( Fields::iterator it = missing.begin(); it != missing.end(); ++it )
     existing.add_field( *it );
   for( Fields::iterator it = remove.begin(); it != remove.end(); ++it )
@@ -95,9 +95,7 @@ Table Connection::table_data( const string &table_name )
   string query         = row_query.str();
   sqlite3_stmt *ppStmt = 0;
   int prepare_result   = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
-  Table td;
-  td.table_name        = table_name;
-  td.connection        = this;
+  Table td( this, table_name );
   while( sqlite3_step( ppStmt ) == SQLITE_ROW ) {
     // cid | name |    type | notnull | dflt_value | pk
     // 0   |  bar | INTEGER |       0 |            | 0
@@ -106,7 +104,7 @@ Table Connection::table_data( const string &table_name )
     ActiveRecord::Type type = ActiveRecord::to_type( type_name );
     if( type == ActiveRecord::unknown )
       throw "Unknown type";
-    td.fields.push_back( Field( name, type ) );
+    td.fields().push_back( Field( name, type ) );
   }
   return td;
 }

@@ -13,6 +13,7 @@ namespace ActiveRecord {
 class Connection {
  public:
   Connection();
+ public:
   void    connect( OptionsHash options );
   // Data Definition / Database Structure
   void    update_database();

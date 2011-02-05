@@ -28,13 +28,13 @@ class Base {
  public:
   static string class_name;
   static void setup( Connection * connection ) {
-    Table td      = T::table();
-    td.connection = connection;
+    Table td = T::table( connection );
 
-    if( td.table_name.empty() )
+    if( td.table_name().empty() )
       throw "set the table name when returning Table";
     tables[ T::class_name ] = td;
   }
+ public:
   Base() : loaded_( false ) {
     attributes_[ tables[ T::class_name ].primary_key ] = ACTIVE_RECORD_UNSAVED;
   }
@@ -46,6 +46,7 @@ class Base {
       attributes_[ it->first ] = it->second;
     attributes_[ tables[ T::class_name ].primary_key ] = ACTIVE_RECORD_UNSAVED;
   }
+ public:
   Attribute& operator[]( const string &name ) {
     return attributes_[ name ];
   }

@@ -10,19 +10,19 @@ extern TypeNameMap type_name;
 void Table::add_field( const Field &field )
 {
   stringstream ss;
-  ss << "ALTER TABLE " << table_name;
+  ss << "ALTER TABLE " << table_name_;
   ss << " ADD " << field.name() << " " << type_name[ field.type() ];
   ss << ";";
-  connection->execute( ss.str() );
+  connection_->execute( ss.str() );
 }
 
 void Table::remove_field( const Field &field )
 {
   stringstream ss;
-  ss << "ALTER TABLE " << table_name;
+  ss << "ALTER TABLE " << table_name_;
   ss << " REMOVE " << field.name();
   ss << ";";
-  connection->execute( ss.str() );
+  connection_->execute( ss.str() );
 }
 
 } // namespace ActiveRecord
