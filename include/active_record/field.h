@@ -7,8 +7,10 @@ namespace ActiveRecord {
 
 class Field {
  public:
-  Field( const string &name, ActiveRecord::Type type ) : name_( name ), type_( type ) {}
-  inline const string& name() const { return name_; }
+  Field( const string &name, ActiveRecord::Type type ) : name_( name ), type_( type )
+  {}
+ public:
+  inline const string&      name() const { return name_; }
   inline ActiveRecord::Type type() const { return type_; }
  private:
   string name_;
@@ -25,6 +27,8 @@ class Fields : public vector< Field > {
     }
     return fields;
   }
+
+ private:
   bool has_field( const string &field_name ) {
     for( Fields::iterator it = this->begin(); it != this->end(); ++it ) {
       if( it->name() == field_name ) {
