@@ -3,7 +3,7 @@
 extern ActiveRecord::Connection connection;
 extern string database_file;
 
-class TableDataTest : public ::testing::Test {
+class TableTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
   }
@@ -11,20 +11,20 @@ class TableDataTest : public ::testing::Test {
   }
 };
 
-TEST_F( TableDataTest, Defaults ) {
+TEST_F( TableTest, Defaults ) {
   Table table;
   ASSERT_EQ( "id",  table.primary_key() );
   ASSERT_EQ( false, table.timestamps() );
 }
 
-TEST_F( TableDataTest, Attributes ) {
+TEST_F( TableTest, Attributes ) {
   Table table( NULL, "foo" );
   ASSERT_EQ( "id",  table.primary_key() );
   ASSERT_EQ( false, table.timestamps() );
   ASSERT_EQ( "foo",  table.table_name() );
 }
 
-TEST_F( TableDataTest, Fields ) {
+TEST_F( TableTest, Fields ) {
   Table table( NULL, "foo" );
   table.fields().push_back( Field( "name", ActiveRecord::text ) );
 
