@@ -3,6 +3,7 @@
 
 #include <active_record/options.h>
 #include <active_record/type.h>
+#include <active_record/table_set.h>
 #include <active_record/row.h>
 #include <active_record/query.h>
 #include <cstdio>
@@ -11,16 +12,12 @@
 namespace ActiveRecord {
 
 class Connection {
+ friend class TableSet;
  public:
   Connection();
  public:
   void      connect( OptionsHash options );
-  // Data Definition / Database Structure
-  void      update_database();
-  void      create_table( Table &td );
-  void      update_table( Table &td );
-  TableSet  schema();
-  Table     table_data( const string &table_name );
+  // Database Structure
   bool      table_exists( const string &table_name );
   // Transactions
   void      begin_transaction();

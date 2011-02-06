@@ -17,7 +17,7 @@ class SchemaTest : public ::testing::Test {
 };
 
 TEST_F( SchemaTest, LoadsSchema ) {
-  TableSet schema = connection.schema();
+  TableSet schema = TableSet::schema( &connection );
   Table foo_table = schema[ "foo" ];
 
   ASSERT_EQ( foo_table.fields().size(), 3 );

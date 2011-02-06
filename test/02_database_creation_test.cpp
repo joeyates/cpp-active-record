@@ -23,10 +23,10 @@ TEST_F( TableTest, PrimaryKeyField ) {
 
   ActiveRecord::tables[ "Person" ] = td;
 
-  connection.update_database();
+  ActiveRecord::tables.update_database();
 
   // Tests: Check that we can call the primary key whatever we want
-  TableSet schema    = connection.schema();
+  TableSet schema    = TableSet::schema( &connection );
   Table people_table = schema[ "people" ];
   ASSERT_EQ( people_table.fields().size(), 2 );
   assert_field( people_table, 0, "hi",     ActiveRecord::integer );
@@ -41,10 +41,10 @@ TEST_F( TableTest, Timestamps ) {
 
   ActiveRecord::tables[ "Person" ] = td;
 
-  connection.update_database();
+  ActiveRecord::tables.update_database();
 
   // Tests: Check for the timestamp fields
-  TableSet schema    = connection.schema();
+  TableSet schema    = TableSet::schema( &connection );
   Table people_table = schema[ "people" ];
   ASSERT_EQ( people_table.fields().size(), 5 );
   assert_field( people_table, 0, "id",         ActiveRecord::integer );

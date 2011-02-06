@@ -23,62 +23,6 @@ void Connection::connect( OptionsHash options )
   sqlite_initialize( options[ "database" ] );
 }
 
-////////////////////////////////////
-// Data Definition / Database Structure
-
-void Connection::update_database()
-{
-  for( TableSet::iterator it = tables.begin(); it != tables.end(); ++it ) {
-    Table td = it->second;
-    if( td.connection() == this ) {
-      if( table_exists( td.table_name() ) )
-        update_table( td );
-      else
-        create_table( td );
-    }
-  }
-}
-
-void Connection::create_table( Table &td )
-{
-  stringstream ss;
-  ss << "CREATE TABLE " << td.table_name();
-  ss << " (";
-  ss << td.primary_key() << " INTEGER PRIMARY KEY";
-  for( Fields::const_iterator it = td.fields().begin(); it != td.fields().end(); ++it ) {
-    ss << ", " << it->name() << " " << type_name[ it->type() ];
-  }
-  if( td.timestamps() ) {
-    ss << ", created_at TEXT";
-    ss << ", updated_at TEXT";
-  }
-  ss << ");";
-  execute( ss.str() );
-}
-
-void Connection::update_table( Table &required )
-{
-  Table existing = table_data( required.table_name() );
-  Fields missing = required.fields() - existing.fields();
-  Fields remove  = existing.fields() - required.fields();
-  for( Fields::iterator it = missing.begin(); it != missing.end(); ++it )
-    existing.add_field( *it );
-  for( Fields::iterator it = remove.begin(); it != remove.end(); ++it )
-    existing.remove_field( *it );
-}
-
-TableSet Connection::schema()
-{
-  TableSet s;
-  RowSet rows = select_values( "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;" );
-  for( RowSet::iterator it = rows.begin(); it != rows.end(); ++it ) {
-    Type type    = it->get_type( "name" );
-    string table = it->get_text( "name" );
-    s[ table ]   = table_data( table );
-  }
-  return s;
-}
-
 bool Connection::table_exists( const string &table_name )
 {
   AttributeList parameters;
@@ -86,27 +30,6 @@ bool Connection::table_exists( const string &table_name )
   RowSet rows = select_values( "SELECT name FROM sqlite_master WHERE type='table' AND name = ?;",
                                parameters );
   return ( rows.size() ? true : false );
-}
-
-Table Connection::table_data( const string &table_name )
-{
-  stringstream row_query;
-  row_query << "PRAGMA table_info( \"" << table_name << "\" );";
-  string query         = row_query.str();
-  sqlite3_stmt *ppStmt = 0;
-  int prepare_result   = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
-  Table td( this, table_name );
-  while( sqlite3_step( ppStmt ) == SQLITE_ROW ) {
-    // cid | name |    type | notnull | dflt_value | pk
-    // 0   |  bar | INTEGER |       0 |            | 0
-    const char * name       = ( const char * ) sqlite3_column_text( ppStmt, 1 );
-    const char * type_name  = ( const char * ) sqlite3_column_text( ppStmt, 2 );
-    ActiveRecord::Type type = ActiveRecord::to_type( type_name );
-    if( type == ActiveRecord::unknown )
-      throw "Unknown type";
-    td.fields().push_back( Field( name, type ) );
-  }
-  return td;
 }
 
 //////////////////////////////////
