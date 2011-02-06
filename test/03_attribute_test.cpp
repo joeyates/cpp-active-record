@@ -1,17 +1,21 @@
 #include "test_helper.h"
 
-extern ActiveRecord::Connection connection;
+extern string database_file;
 
 class AttributeTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    connect_database();
+    connection.connect( options
+                        ( "adapter", "sqlite" )
+                        ( "database", database_file ) );
     Person::setup( &connection );
   }
   virtual void TearDown() {
     delete_database();
   }
+ protected:
+  Connection connection;
 };
 
 TEST_F( AttributeTest, SetSingly ) {

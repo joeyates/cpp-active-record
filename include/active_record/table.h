@@ -20,15 +20,15 @@ class Table {
     table_name_( table_name )
   {}
  public:
-  Connection * connection()                             { return connection_; }
-  void         primary_key( const string &primary_key ) { primary_key_ = primary_key; }
-  string       primary_key()                            { return primary_key_; }
-  void         timestamps( bool timestamps )            { timestamps_ = timestamps; }
-  bool         timestamps()                             { return timestamps_; }
-  string       table_name()                             { return table_name_; }
-  Fields &     fields()                                 { return fields_; }
-  void         add_field( const Field &field );
-  void         remove_field( const Field &field );
+  Connection *       connection() const                       { return connection_; }
+  void               primary_key( const string &primary_key ) { primary_key_ = primary_key; }
+  string             primary_key() const                      { return primary_key_; }
+  void               timestamps( bool timestamps )            { timestamps_ = timestamps; }
+  bool               timestamps() const                       { return timestamps_; }
+  string             table_name() const                       { return table_name_; }
+  Fields &           fields()                                 { return fields_; }
+  void               add_field( const Field &field );
+  void               remove_field( const Field &field );
  private:
   Connection * connection_;
   string       primary_key_;

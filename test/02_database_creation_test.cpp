@@ -1,29 +1,31 @@
 #include "test_helper.h"
 #include <sys/stat.h>
 
-extern ActiveRecord::Connection connection;
-extern TableSet ActiveRecord::tables;
 extern string database_file;
 
-class TableTest : public ::testing::Test {
+class DatabaseCreationTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    connect_database();
+    connection.connect( options
+                        ( "adapter", "sqlite" )
+                        ( "database", database_file ) );
   }
   virtual void TearDown() {
     delete_database();
   }
+ protected:
+  Connection connection;
 };
 
-TEST_F( TableTest, PrimaryKeyField ) {
+TEST_F( DatabaseCreationTest, PrimaryKeyField ) {
   Table td( &connection, "people" );
   td.primary_key( "hi" );
   td.fields().push_back( Field( "height",  ActiveRecord::floating_point ) );
 
-  ActiveRecord::tables[ "Person" ] = td;
-
-  ActiveRecord::tables.update_database();
+  TableSet tables;
+  tables[ "Person" ] = td;
+  tables.update_database();
 
   // Tests: Check that we can call the primary key whatever we want
   TableSet schema    = TableSet::schema( &connection );
@@ -33,15 +35,15 @@ TEST_F( TableTest, PrimaryKeyField ) {
   assert_field( people_table, 1, "height", ActiveRecord::floating_point );
 }
 
-TEST_F( TableTest, Timestamps ) {
+TEST_F( DatabaseCreationTest, Timestamps ) {
   Table td( &connection, "people" );
   td.timestamps( true );
   td.fields().push_back( Field( "name",    ActiveRecord::text ) );
   td.fields().push_back( Field( "surname", ActiveRecord::text ) );
 
-  ActiveRecord::tables[ "Person" ] = td;
-
-  ActiveRecord::tables.update_database();
+  TableSet tables;
+  tables[ "Person" ] = td;
+  tables.update_database();
 
   // Tests: Check for the timestamp fields
   TableSet schema    = TableSet::schema( &connection );

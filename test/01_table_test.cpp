@@ -30,3 +30,9 @@ TEST_F( TableTest, Fields ) {
 
   ASSERT_EQ( 1, table.fields().size() );
 }
+
+TEST_F( TableTest, AddFieldWithoutConnection ) {
+  Table table( NULL, "foo" );
+
+  ASSERT_THROW( table.add_field( Field( "bar", ActiveRecord::text ) ), char * );
+}

@@ -11,12 +11,6 @@ void delete_database() {
   system( remove_database.c_str() );
 }
 
-void connect_database() {
-  connection.connect( options
-                     ( "adapter", "sqlite" )
-                     ( "database", database_file ) );
-}
-
 void assert_file_exists( const string &file_name ) {
   struct stat buffer;
   int status = lstat( file_name.c_str(), &buffer);

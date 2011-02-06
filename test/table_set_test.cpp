@@ -46,11 +46,15 @@ class ReadSchemaTest : public ::testing::Test {
     delete_database();
     string create = "echo 'CREATE TABLE foo (bar INTEGER, baz TEXT, qux REAL);' | sqlite3 " + database_file + ";";
     system( create.c_str() );
-    connect_database();
+    connection.connect( options
+                        ( "adapter", "sqlite" )
+                        ( "database", database_file ) );
   }
   virtual void TearDown() {
     delete_database();
   }
+ protected:
+  Connection connection;
 };
 
 TEST_F( ReadSchemaTest, LoadsSchema ) {
@@ -69,11 +73,15 @@ class StructureUpdateTest : public ::testing::Test {
     delete_database();
     string create = "echo 'CREATE TABLE foo (bar INTEGER);' | sqlite3 " + database_file + ";";
     system( create.c_str() );
-    connect_database();
+    connection.connect( options
+                        ( "adapter", "sqlite" )
+                        ( "database", database_file ) );
   }
   virtual void TearDown() {
     delete_database();
   }
+ protected:
+  Connection connection;
 };
 
 TEST_F( StructureUpdateTest, AddsFields ) {
@@ -86,7 +94,7 @@ TEST_F( StructureUpdateTest, AddsFields ) {
   tables[ "Foo" ] = td;
   tables.update_database();
 
-  TableSet schema = connection.schema();
+  TableSet schema = TableSet::schema( &connection );
   Table foo_table = schema[ "foo" ];
   ASSERT_EQ( 4, foo_table.fields().size() );
   assert_field( foo_table, 1, "foo", ActiveRecord::integer );

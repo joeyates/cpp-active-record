@@ -9,6 +9,8 @@ extern TypeNameMap type_name;
 
 void Table::add_field( const Field &field )
 {
+  if( connection_ == NULL )
+    throw "No connection";
   stringstream ss;
   ss << "ALTER TABLE " << table_name_;
   ss << " ADD " << field.name() << " " << type_name[ field.type() ];
@@ -18,6 +20,8 @@ void Table::add_field( const Field &field )
 
 void Table::remove_field( const Field &field )
 {
+  if( connection_ == NULL )
+    throw "No connection";
   stringstream ss;
   ss << "ALTER TABLE " << table_name_;
   ss << " REMOVE " << field.name();
