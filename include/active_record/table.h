@@ -13,11 +13,9 @@ class Connection;
 
 class Table {
  public:
-  Table() :
-    primary_key_( "id"),
-    timestamps_( false )
-  {}
-  Table( Connection * connection, const string &table_name ) :
+  Table( Connection * connection = NULL, const string &table_name = "" ) :
+    primary_key_( "id" ),
+    timestamps_( false ),
     connection_( connection ),
     table_name_( table_name )
   {}
@@ -40,7 +38,6 @@ class Table {
 };
 
 typedef map< string, Table >               TableSet;
-typedef map< string, Table >               Schema;
 
 } // namespace ActiveRecord
 

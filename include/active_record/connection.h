@@ -14,23 +14,23 @@ class Connection {
  public:
   Connection();
  public:
-  void    connect( OptionsHash options );
+  void      connect( OptionsHash options );
   // Data Definition / Database Structure
-  void    update_database();
-  void    create_table( Table &td );
-  void    update_table( Table &td );
-  Schema  schema();
-  Table   table_data( const string &table_name );
-  bool    table_exists( const string &table_name );
+  void      update_database();
+  void      create_table( Table &td );
+  void      update_table( Table &td );
+  TableSet  schema();
+  Table     table_data( const string &table_name );
+  bool      table_exists( const string &table_name );
   // Transactions
-  void    begin_transaction();
-  void    commit();
+  void      begin_transaction();
+  void      commit();
   // Queries
-  bool    execute( const string &query, const AttributeList &parameters = AttributeList() );
-  Row     select_value( const string &query, const AttributeList &parameters = AttributeList() );
-  Row     select_one( const string &query, const AttributeList &parameters = AttributeList() );
-  RowSet  select_values( const string &query, const AttributeList &parameters = AttributeList() );
-  RowSet  select_all( const string &query, const AttributeList &parameters = AttributeList() );
+  bool      execute( const string &query, const AttributeList &parameters = AttributeList() );
+  Row       select_value( const string &query, const AttributeList &parameters = AttributeList() );
+  Row       select_one( const string &query, const AttributeList &parameters = AttributeList() );
+  RowSet    select_values( const string &query, const AttributeList &parameters = AttributeList() );
+  RowSet    select_all( const string &query, const AttributeList &parameters = AttributeList() );
  private:
   Connection( const Connection& other );
   Connection operator=( const Connection& other );

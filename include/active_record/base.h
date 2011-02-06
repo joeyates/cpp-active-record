@@ -36,15 +36,15 @@ class Base {
   }
  public:
   Base() : loaded_( false ) {
-    attributes_[ tables[ T::class_name ].primary_key ] = ACTIVE_RECORD_UNSAVED;
+    attributes_[ tables[ T::class_name ].primary_key() ] = ACTIVE_RECORD_UNSAVED;
   }
   Base( int id ) : loaded_( false ) {
-    attributes_[ tables[ T::class_name ].primary_key ] = id;
+    attributes_[ tables[ T::class_name ].primary_key() ] = id;
   }
   Base( GenericAttributePairList attributes ) : loaded_( false ) {
     for( GenericAttributePairList::iterator it = attributes.begin(); it != attributes.end(); ++it )
       attributes_[ it->first ] = it->second;
-    attributes_[ tables[ T::class_name ].primary_key ] = ACTIVE_RECORD_UNSAVED;
+    attributes_[ tables[ T::class_name ].primary_key() ] = ACTIVE_RECORD_UNSAVED;
   }
  public:
   Attribute& operator[]( const string &name ) {
@@ -88,7 +88,7 @@ class Base {
   bool          create();
   bool          update();
   inline int id() {
-    return boost::get< int >( attributes_[ tables[ T::class_name ].primary_key ] );
+    return boost::get< int >( attributes_[ tables[ T::class_name ].primary_key() ] );
   }
   inline bool   is_new() {
     return ( id() == ACTIVE_RECORD_UNSAVED )? true : false;
@@ -102,11 +102,11 @@ template < class T >
 bool Base< T >::load() {
   stringstream ss;
   ss << "SELECT * ";
-  ss << "FROM " << tables[ T::class_name ].table_name << " ";
+  ss << "FROM " << tables[ T::class_name ].table_name() << " ";
   ss << "WHERE ";
-  ss << tables[ T::class_name ].primary_key << " = ";
-  ss << attributes_[ tables[ T::class_name ].primary_key ];
-  Row row     = tables[ T::class_name ].connection->select_one( ss.str() );
+  ss << tables[ T::class_name ].primary_key() << " = ";
+  ss << attributes_[ tables[ T::class_name ].primary_key() ];
+  Row row     = tables[ T::class_name ].connection()->select_one( ss.str() );
   attributes_ = row.attributes();
   loaded_     = true;
   return true;
@@ -116,12 +116,12 @@ bool Base< T >::load() {
 template < class T >
 bool Base< T >::create() {
   stringstream ss;
-  ss << "INSERT INTO " << tables[ T::class_name ].table_name << " ";
+  ss << "INSERT INTO " << tables[ T::class_name ].table_name() << " ";
   bool          columns_added = false;
   stringstream  columns, placeholders;
   AttributeList parameters;
   for( AttributeHash::iterator it = attributes_.begin(); it != attributes_.end(); ++it ) {
-    if( it->first == tables[ T::class_name ].primary_key )
+    if( it->first == tables[ T::class_name ].primary_key() )
       continue;
     if( columns_added ) {
       columns      << ", ";
@@ -133,7 +133,7 @@ bool Base< T >::create() {
     columns_added = true;
   }
   ss << "(" << columns.str() << ") VALUES (" << placeholders.str() << ");";
-  return tables[ T::class_name ].connection->execute( ss.str(), parameters );
+  return tables[ T::class_name ].connection()->execute( ss.str(), parameters );
 }
 
 template < class T >
@@ -141,12 +141,12 @@ bool Base< T >::update() {
   if( !loaded_ )
     load();
   stringstream ss;
-  ss << "UPDATE " << tables[ T::class_name ].table_name << " ";
+  ss << "UPDATE " << tables[ T::class_name ].table_name() << " ";
   bool          columns_added = false;
   stringstream  columns;
   AttributeList parameters;
   for( AttributeHash::iterator it = attributes_.begin(); it != attributes_.end(); ++it ) {
-    if( it->first == tables[ T::class_name ].primary_key )
+    if( it->first == tables[ T::class_name ].primary_key() )
       continue;
     if( columns_added )
       columns << ", ";
@@ -155,9 +155,9 @@ bool Base< T >::update() {
     columns_added = true;
   }
   ss << "SET "   << columns.str() << " ";
-  ss << "WHERE " << tables[ T::class_name ].primary_key << " = ?;";
+  ss << "WHERE " << tables[ T::class_name ].primary_key() << " = ?;";
   parameters.push_back( id() );
-  return tables[ T::class_name ].connection->execute( ss.str(), parameters );
+  return tables[ T::class_name ].connection()->execute( ss.str(), parameters );
 }
 
 } // namespace ActiveRecord

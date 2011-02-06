@@ -67,9 +67,9 @@ void Connection::update_table( Table &required )
     existing.remove_field( *it );
 }
 
-Schema Connection::schema()
+TableSet Connection::schema()
 {
-  Schema s;
+  TableSet s;
   RowSet rows = select_values( "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;" );
   for( RowSet::iterator it = rows.begin(); it != rows.end(); ++it ) {
     Type type    = it->get_type( "name" );
