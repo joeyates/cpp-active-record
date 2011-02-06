@@ -37,8 +37,6 @@ class Table {
   Fields       fields_;
 };
 
-typedef map< string, Table >               TableSet;
-
 } // namespace ActiveRecord
 
 #endif // ndef _ACTIVE_RECORD_TABLE_H_

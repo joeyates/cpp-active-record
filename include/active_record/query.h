@@ -6,6 +6,7 @@
 #include <vector>
 #include <active_record/type.h>
 #include <active_record/table.h>
+#include <active_record/table_set.h>
 #include <active_record/row.h>
 #include <active_record/connection.h>
 using namespace std;
