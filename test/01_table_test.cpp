@@ -1,6 +1,5 @@
 #include "test_helper.h"
 
-extern ActiveRecord::Connection connection;
 extern string database_file;
 
 class TableTest : public ::testing::Test {
