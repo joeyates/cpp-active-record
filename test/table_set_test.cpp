@@ -71,11 +71,8 @@ class StructureUpdateTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    string create = "echo 'CREATE TABLE foo (bar INTEGER);' | sqlite3 " + database_file + ";";
-    system( create.c_str() );
-    connection.connect( options
-                        ( "adapter", "sqlite" )
-                        ( "database", database_file ) );
+    pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER);";
+    connect_database( connection, database_file );
   }
   virtual void TearDown() {
     delete_database();

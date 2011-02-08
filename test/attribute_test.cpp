@@ -6,9 +6,7 @@ class AttributeTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    connection.connect( options
-                        ( "adapter", "sqlite" )
-                        ( "database", database_file ) );
+    connect_database( connection, database_file );
     Person::setup( &connection );
   }
   virtual void TearDown() {
