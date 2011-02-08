@@ -25,3 +25,22 @@ TEST_F( ConnectionTest, ConnectExistingDatabase ) {
                       ( "adapter", "sqlite" )
                       ( "database", database_file ) );
 }
+
+class ConnectionQueryTest : public ::testing::Test {
+ protected:
+  virtual void TearDown() {
+    delete_database();
+  }
+ protected:
+  Connection connection;
+};
+
+TEST_F( ConnectionQueryTest, Execute ) {
+  connect_database( connection, database_file );
+  connection.execute( "CREATE TABLE foo (bar INTEGER);" );
+
+  assert_table_exists( database_file, "foo" );
+}
+
+// select_one
+// select_values

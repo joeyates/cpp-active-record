@@ -71,7 +71,7 @@ class StructureUpdateTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER);";
+    pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER);" );
     connect_database( connection, database_file );
   }
   virtual void TearDown() {
