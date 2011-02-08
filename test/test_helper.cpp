@@ -1,4 +1,6 @@
 #include "test_helper.h"
+#include <sstream>
+#include <stdio.h>
 
 template <>
 string ActiveRecord::Base<Person>::class_name = "Person";
@@ -20,6 +22,25 @@ void pipe_to_sqlite( const string &database_file, const string &command ) {
   stringstream ss;
   ss << "echo '" << command << "' | sqlite3 " << database_file << ";";
   system( ss.str().c_str() );
+}
+
+void assert_table_exists( const string &database_file, const string &table_name ) {
+  stringstream row_query;
+  row_query << "echo '";
+  row_query << "SELECT name FROM sqlite_master ";
+  row_query << "WHERE type=\"table\" AND name = \"" << table_name << "\";";
+  row_query << "' | sqlite3 " << database_file;
+  FILE *pipe = popen( row_query.str().c_str(), "r" );
+  if( !pipe )
+    throw "Failed to open pipe";
+
+  // We assume that any result means the table exists
+  bool found = false;
+  if( !feof( pipe ) ) {
+    found = true;
+  }
+  pclose( pipe );
+  ASSERT_TRUE( found );
 }
 
 void assert_file_exists( const string &file_name ) {

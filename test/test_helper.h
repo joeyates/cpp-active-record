@@ -1,16 +1,17 @@
 #ifndef _ACTIVE_RECORD_TEST_HELPER_H_
 #define _ACTIVE_RECORD_TEST_HELPER_H_
 
-#include <sstream>
 #include <gtest/gtest.h>
 #include "models.h"
 
 using namespace std;
 
-void connect_database( ActiveRecord::Connection &connection );
+void connect_database( Connection &connection, const string &database_file );
 void delete_database();
 
 void pipe_to_sqlite( const string &database_file, const string &command );
+
+void assert_table_exists( const string &database_file, const string &table );
 
 void assert_field_name( Table &td, int field_index, const string &name );
 void assert_field_type( Table &td, int field_index, ActiveRecord::Type type );
