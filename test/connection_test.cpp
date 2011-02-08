@@ -5,21 +5,23 @@ extern string database_file;
 
 class ConnectionTest : public ::testing::Test {
  protected:
-  virtual void SetUp() {
-    connection.connect( options
-                        ( "adapter", "sqlite" )
-                        ( "database", database_file ) );
-  }
   virtual void TearDown() {
     delete_database();
   }
- protected:
-  Connection connection;
 };
 
-TEST_F( ConnectionTest, Connect ) {
+TEST_F( ConnectionTest, ConnectNewDatabase ) {
+  Connection connection;
+  connection.connect( options
+                      ( "adapter", "sqlite" )
+                      ( "database", database_file ) );
   assert_file_exists( database_file );
 }
 
-// select_value
-// select_values
+TEST_F( ConnectionTest, ConnectExistingDatabase ) {
+  pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER);" );
+  Connection connection;
+  connection.connect( options
+                      ( "adapter", "sqlite" )
+                      ( "database", database_file ) );
+}

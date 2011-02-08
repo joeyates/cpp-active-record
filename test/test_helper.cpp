@@ -3,12 +3,23 @@
 template <>
 string ActiveRecord::Base<Person>::class_name = "Person";
 
-ActiveRecord::Connection connection;
 string database_file = "./test.sqlite3";
+
+void connect_database( ActiveRecord::Connection &connection, const string &database_file ) {
+  connection.connect( options
+                      ( "adapter", "sqlite" )
+                      ( "database", database_file ) );
+}
 
 void delete_database() {
   string remove_database = "rm -f " + database_file;
   system( remove_database.c_str() );
+}
+
+void pipe_to_sqlite( const string &database_file, const string &command ) {
+  stringstream ss;
+  ss << "echo '" << command << "' | sqlite3 " << database_file << ";";
+  system( ss.str().c_str() );
 }
 
 void assert_file_exists( const string &file_name ) {
