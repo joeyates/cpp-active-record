@@ -23,11 +23,11 @@ class Connection {
   void      begin_transaction();
   void      commit();
   // Queries
-  bool      execute( const string &query, const AttributeList &parameters = AttributeList() );
-  Row       select_value( const string &query, const AttributeList &parameters = AttributeList() );
-  Row       select_one( const string &query, const AttributeList &parameters = AttributeList() );
-  RowSet    select_values( const string &query, const AttributeList &parameters = AttributeList() );
-  RowSet    select_all( const string &query, const AttributeList &parameters = AttributeList() );
+  bool          execute( const string &query, const AttributeList &parameters = AttributeList() );
+  Attribute     select_value( const string &query, const AttributeList &parameters = AttributeList() );
+  AttributeList select_values( const string &query, const AttributeList &parameters = AttributeList() );
+  Row           select_one( const string &query, const AttributeList &parameters = AttributeList() );
+  RowSet        select_all( const string &query, const AttributeList &parameters = AttributeList() );
  private:
   Connection( const Connection& other );
   Connection operator=( const Connection& other );

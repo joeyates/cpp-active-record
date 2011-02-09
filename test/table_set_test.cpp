@@ -35,7 +35,7 @@ TEST_F( TableSetTest, UpdateDatabase ) {
 
   tables.update_database();
 
-  RowSet rows = connection.select_values( "SELECT sql FROM sqlite_master WHERE type='table';" );
+  RowSet rows = connection.select_all( "SELECT sql FROM sqlite_master WHERE type='table';" );
   ASSERT_EQ( 1, rows.size() );
   ASSERT_STREQ( "CREATE TABLE people (id INTEGER PRIMARY KEY, name TEXT, surname TEXT)", rows[ 0 ].get_text( "sql" ).c_str() );
 }

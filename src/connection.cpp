@@ -27,8 +27,8 @@ bool Connection::table_exists( const string &table_name )
 {
   AttributeList parameters;
   parameters.push_back( table_name );
-  RowSet rows = select_values( "SELECT name FROM sqlite_master WHERE type='table' AND name = ?;",
-                               parameters );
+  RowSet rows = select_all( "SELECT name FROM sqlite_master WHERE type='table' AND name = ?;",
+                            parameters );
   return ( rows.size() ? true : false );
 }
 
@@ -67,7 +67,7 @@ Row Connection::select_one( const string &query, const AttributeList &parameters
   return Row( ppStmt );
 }
 
-RowSet Connection::select_values( const string &query, const AttributeList &parameters )
+RowSet Connection::select_all( const string &query, const AttributeList &parameters )
 {
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
