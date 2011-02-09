@@ -49,7 +49,10 @@ bool Connection::execute( const string &query, const AttributeList &parameters )
 {
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
-  // TODO: check prepare_result
+  if( prepare_result != 0 ) {
+    cerr << "Query preparation failed" << endl;
+    throw "Query preparation failed";
+  }
   bind_parameters( ppStmt, parameters );
   sqlite3_step( ppStmt );
   return true;
@@ -59,7 +62,10 @@ Row Connection::select_one( const string &query, const AttributeList &parameters
 {
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
-  // TODO: check prepare_result
+  if( prepare_result != 0 ) {
+    cerr << "Query preparation failed" << endl;
+    throw "Query preparation failed";
+  }
   bind_parameters( ppStmt, parameters );
   int step_result = sqlite3_step( ppStmt );
   if( step_result != SQLITE_ROW ) {
@@ -73,7 +79,10 @@ RowSet Connection::select_all( const string &query, const AttributeList &paramet
 {
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
-  // TODO: check prepare_result
+  if( prepare_result != 0 ) {
+    cerr << "Query preparation failed" << endl;
+    throw "Query preparation failed";
+  }
   bind_parameters( ppStmt, parameters );
   RowSet results;
   while( sqlite3_step( ppStmt ) == SQLITE_ROW ) {
