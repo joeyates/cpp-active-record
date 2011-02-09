@@ -24,6 +24,8 @@ TEST_F( ConnectionTest, ConnectExistingDatabase ) {
   connection.connect( options
                       ( "adapter", "sqlite" )
                       ( "database", database_file ) );
+
+  // TODO: assert no error?
 }
 
 class ConnectionQueryTest : public ::testing::Test {
@@ -37,9 +39,21 @@ class ConnectionQueryTest : public ::testing::Test {
 
 TEST_F( ConnectionQueryTest, Execute ) {
   connect_database( connection, database_file );
+
   connection.execute( "CREATE TABLE foo (bar INTEGER);" );
 
   assert_table_exists( database_file, "foo" );
+}
+
+TEST_F( ConnectionQueryTest, SelectValue ) {
+  connect_database( connection, database_file );
+
+  connection.execute( "CREATE TABLE foo (bar INTEGER);" );
+  connection.execute( "INSERT INTO foo (bar) VALUES (42);" );
+
+  Row row = connection.select_one( "SELECT bar FROM foo;" );
+  int bar = row.get_integer( "bar" );
+  ASSERT_EQ( 42, bar );
 }
 
 // select_one
