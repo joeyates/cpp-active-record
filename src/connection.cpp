@@ -62,8 +62,10 @@ Row Connection::select_one( const string &query, const AttributeList &parameters
   // TODO: check prepare_result
   bind_parameters( ppStmt, parameters );
   int step_result = sqlite3_step( ppStmt );
-  if( step_result != SQLITE_ROW )
+  if( step_result != SQLITE_ROW ) {
+    cerr << "No data" << endl;
     throw "No data";
+  }
   return Row( ppStmt );
 }
 
@@ -112,8 +114,10 @@ void Connection::bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &par
       sqlite3_bind_double( ppStmt, i + 1, value );
       break;
     }
-    default:
+    default: {
+      cerr <<  "Type not implemented" << endl;
       throw "Type not implemented";
+    }
     }
   }
 }

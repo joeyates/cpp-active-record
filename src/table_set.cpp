@@ -32,8 +32,10 @@ Table TableSet::table_data( Connection * connection, const string &table_name )
     const char * name       = ( const char * ) sqlite3_column_text( ppStmt, 1 );
     const char * type_name  = ( const char * ) sqlite3_column_text( ppStmt, 2 );
     ActiveRecord::Type type = ActiveRecord::to_type( type_name );
-    if( type == ActiveRecord::unknown )
+    if( type == ActiveRecord::unknown ) {
+      cerr << "Unknown type: " << type_name << endl;
       throw "Unknown type";
+    }
     td.fields().push_back( Field( name, type ) );
   }
   return td;

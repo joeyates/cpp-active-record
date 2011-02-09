@@ -14,6 +14,8 @@ class TableSet : public map< string, Table > {
  public:
   // Data Definition / Database Structure
   void      update_database();
+ private:
+  void               assert_connection();
 };
 
 } // namespace ActiveRecord
