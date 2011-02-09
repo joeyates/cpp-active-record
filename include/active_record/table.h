@@ -30,6 +30,8 @@ class Table {
   void               add_field( const Field &field );
   void               remove_field( const Field &field );
  private:
+  void               assert_connection();
+ private:
   Connection * connection_;
   string       primary_key_;
   string       table_name_;
