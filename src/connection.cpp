@@ -50,7 +50,7 @@ bool Connection::execute( const string &query, const AttributeList &parameters )
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != 0 ) {
-    cerr << "Query preparation failed" << endl;
+    cerr << __FILE__ << "(" << __LINE__ << "): SQL error: '" << query << "'" << endl;
     throw "Query preparation failed";
   }
   bind_parameters( ppStmt, parameters );
@@ -63,8 +63,8 @@ Row Connection::select_one( const string &query, const AttributeList &parameters
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != 0 ) {
-    cerr << "Query preparation failed" << endl;
-    throw "Query preparation failed";
+    cerr << __FILE__ << "(" << __LINE__ << "): SQL error: '" << query << "'" << endl;
+    throw "select_one: Query preparation failed";
   }
   bind_parameters( ppStmt, parameters );
   int step_result = sqlite3_step( ppStmt );
@@ -80,8 +80,8 @@ RowSet Connection::select_all( const string &query, const AttributeList &paramet
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != 0 ) {
-    cerr << "Query preparation failed" << endl;
-    throw "Query preparation failed";
+    cerr << __FILE__ << "(" << __LINE__ << "): SQL error: '" << query << "'" << endl;
+    throw "select_all: Query preparation failed";
   }
   bind_parameters( ppStmt, parameters );
   RowSet results;
