@@ -30,8 +30,10 @@ class Base {
   static void setup( Connection * connection ) {
     Table td = T::table( connection );
 
-    if( td.table_name().empty() )
+    if( td.table_name().empty() ) {
+      cerr << __FILE__ << "(" << __LINE__ << "): set the table name when returning Table" << endl;
       throw "set the table name when returning Table";
+    }
     tables[ T::class_name ] = td;
   }
  public:
