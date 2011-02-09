@@ -17,15 +17,18 @@ void Table::add_field( const Field &field )
   connection_->execute( ss.str() );
 }
 
+/*
+SQLite does not implement DROP COLUMN - needs some loop jumping
 void Table::remove_field( const Field &field )
 {
   assert_connection();
   stringstream ss;
   ss << "ALTER TABLE " << table_name_;
-  ss << " REMOVE " << field.name();
+  ss << " DROP " << field.name();
   ss << ";";
   connection_->execute( ss.str() );
 }
+*/
 
 ////////////////////////////////
 // private

@@ -28,7 +28,7 @@ class Table {
   string             table_name() const                       { return table_name_; }
   Fields &           fields()                                 { return fields_; }
   void               add_field( const Field &field );
-  void               remove_field( const Field &field );
+  //void               remove_field( const Field &field );
  private:
   void               assert_connection();
  private:
