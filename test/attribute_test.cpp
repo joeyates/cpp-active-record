@@ -8,6 +8,7 @@ class AttributeTest : public ::testing::Test {
     delete_database();
     connect_database( connection, database_file );
     Person::setup( &connection );
+    ActiveRecord::tables.update_database();
   }
   virtual void TearDown() {
     delete_database();
