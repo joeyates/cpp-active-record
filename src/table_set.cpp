@@ -65,8 +65,11 @@ void TableSet::update_table( Table &required )
   Fields remove  = existing.fields() - required.fields();
   for( Fields::iterator it = missing.begin(); it != missing.end(); ++it )
     existing.add_field( *it );
-  for( Fields::iterator it = remove.begin(); it != remove.end(); ++it )
-    existing.remove_field( *it );
+  for( Fields::iterator it = remove.begin(); it != remove.end(); ++it ) {
+    cerr << __FILE__ << "(" << __LINE__ << "): Table::remove_field not yet implemented" << endl;
+    throw "Table::remove_field not yet implemented";
+    //existing.remove_field( *it );
+  }
 }
 
 ////////////////////////////////////
