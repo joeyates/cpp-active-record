@@ -6,7 +6,7 @@ TypeNamePair type_pairs[] =
 {
   TypeNamePair( ActiveRecord::integer,        "INTEGER" ),
   TypeNamePair( ActiveRecord::text,           "TEXT" ),
-  TypeNamePair( ActiveRecord::floating_point, "REAL" )
+  TypeNamePair( ActiveRecord::floating_point, "FLOAT" )
 };
 
 Type type_list[] =
@@ -29,7 +29,7 @@ Type to_type( const string &type_name )
     return ActiveRecord::integer;
   else if( type_name == "TEXT" )
     return ActiveRecord::text;
-  else if( type_name == "REAL" )
+  else if( type_name == "FLOAT" )
     return ActiveRecord::floating_point;
   else
     return ActiveRecord::unknown;

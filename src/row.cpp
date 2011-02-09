@@ -34,4 +34,8 @@ int Row::get_integer( const string &name ) {
   return boost::get< int >( attributes_[ name ] );
 }
 
+double Row::get_floating_point( const string &name ) {
+  return boost::get< double >( attributes_[ name ] );
+}
+
 } // namespace ActiveRecord
