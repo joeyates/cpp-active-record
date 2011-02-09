@@ -56,6 +56,20 @@ TEST_F( ConnectionQueryTest, SelectOne ) {
   ASSERT_EQ( 42, row.get_integer( "bar" ) );
 }
 
+TEST_F( ConnectionQueryTest, SelectOneWithParameters ) {
+  connect_database( connection, database_file );
+
+  connection.execute( "CREATE TABLE foo (bar INTEGER, baz TEXT);" );
+  connection.execute( "INSERT INTO foo (bar, baz) VALUES (42, 'hello');" );
+  connection.execute( "INSERT INTO foo (bar, baz) VALUES (13, 'ciao');" );
+
+  AttributeList params;
+  params.push_back( Attribute( 13 ) );
+  Row row = connection.select_one( "SELECT * FROM foo WHERE bar = ?;", params );
+
+  ASSERT_EQ( "ciao", row.get_text( "baz" ) );
+}
+
 TEST_F( ConnectionQueryTest, SelectAll ) {
   connect_database( connection, database_file );
 
