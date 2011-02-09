@@ -83,7 +83,7 @@ class StructureUpdateTest : public ::testing::Test {
 
 TEST_F( StructureUpdateTest, AddsFields ) {
   Table td( &connection, "foo" );
-  td.fields().push_back( Field( "foo", ActiveRecord::integer ) );
+  td.fields().push_back( Field( "bar", ActiveRecord::integer ) );
   td.fields().push_back( Field( "baz", ActiveRecord::text ) );
   td.fields().push_back( Field( "qux", ActiveRecord::floating_point ) );
 
@@ -93,8 +93,8 @@ TEST_F( StructureUpdateTest, AddsFields ) {
 
   TableSet schema = TableSet::schema( &connection );
   Table foo_table = schema[ "foo" ];
-  ASSERT_EQ( 4, foo_table.fields().size() );
-  assert_field( foo_table, 1, "foo", ActiveRecord::integer );
-  assert_field( foo_table, 2, "baz", ActiveRecord::text );
-  assert_field( foo_table, 3, "qux", ActiveRecord::floating_point );
+  ASSERT_EQ( 3, foo_table.fields().size() );
+  assert_field( foo_table, 0, "bar", ActiveRecord::integer );
+  assert_field( foo_table, 1, "baz", ActiveRecord::text );
+  assert_field( foo_table, 2, "qux", ActiveRecord::floating_point );
 }
