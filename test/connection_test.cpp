@@ -45,16 +45,26 @@ TEST_F( ConnectionQueryTest, Execute ) {
   assert_table_exists( database_file, "foo" );
 }
 
-TEST_F( ConnectionQueryTest, SelectValue ) {
+TEST_F( ConnectionQueryTest, SelectOne ) {
   connect_database( connection, database_file );
 
   connection.execute( "CREATE TABLE foo (bar INTEGER);" );
   connection.execute( "INSERT INTO foo (bar) VALUES (42);" );
 
   Row row = connection.select_one( "SELECT bar FROM foo;" );
-  int bar = row.get_integer( "bar" );
-  ASSERT_EQ( 42, bar );
+
+  ASSERT_EQ( 42, row.get_integer( "bar" ) );
 }
 
-// select_one
-// select_values
+TEST_F( ConnectionQueryTest, SelectAll ) {
+  connect_database( connection, database_file );
+
+  connection.execute( "CREATE TABLE foo (bar INTEGER);" );
+  connection.execute( "INSERT INTO foo (bar) VALUES (42);" );
+  connection.execute( "INSERT INTO foo (bar) VALUES (99);" );
+
+  RowSet rows = connection.select_all( "SELECT bar FROM foo ORDER BY bar;" );
+
+  ASSERT_EQ( 42, rows[ 0 ].get_integer( "bar" ) );
+  ASSERT_EQ( 99, rows[ 1 ].get_integer( "bar" ) );
+}
