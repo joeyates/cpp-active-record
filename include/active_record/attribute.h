@@ -35,12 +35,6 @@ namespace assign
 {
 
 template<>
-inline ActiveRecord::GenericAttributeList
-list_of( const ActiveRecord::Attribute &t ) {
-  return ActiveRecord::GenericAttributeList()( t );
-}
-
-template<>
 inline ActiveRecord::GenericAttributePairList
 list_of( const ActiveRecord::AttributePair &t ) {
   return ActiveRecord::GenericAttributePairList()( t );
@@ -50,13 +44,6 @@ list_of( const ActiveRecord::AttributePair &t ) {
 } // namespace boost
 
 namespace ActiveRecord {
-
-/*
- ( parameters 13 "hello" 15.5 )
-*/
-inline ActiveRecord::GenericAttributeList parameters( const Attribute &value ) {
-  return boost::assign::list_of( ActiveRecord::Attribute( value ) );
-}
 
 /*
  ( attributes ( "foo" 13 ) ( "bar" "hello" ) ( "baz" 15.5 ) )

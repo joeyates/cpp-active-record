@@ -151,4 +151,29 @@ QueryParametersPair Query< T >::query_and_parameters() {
 
 } // namespace ActiveRecord
 
+namespace boost
+{
+namespace assign
+{
+
+template<>
+inline ActiveRecord::GenericAttributeList
+list_of( const ActiveRecord::Attribute &t ) {
+  return ActiveRecord::GenericAttributeList()( t );
+}
+
+} // namespace assign
+} // namespace boost
+
+namespace ActiveRecord {
+
+/*
+ ( parameters 13 "hello" 15.5 )
+*/
+inline ActiveRecord::GenericAttributeList parameters( const Attribute &value ) {
+  return boost::assign::list_of( ActiveRecord::Attribute( value ) );
+}
+
+} // namespace ActiveRecord
+
 #endif // ndef _ACTIVE_RECORD_QUERY_H_
