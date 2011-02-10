@@ -1,5 +1,6 @@
 #include "test_helper.h"
 #include <sys/stat.h>
+#include <active_record/field.h>
 
 extern string database_file;
 
@@ -52,4 +53,14 @@ TEST_F( DatabaseCreationTest, Timestamps ) {
   assert_field( people_table, 2, "surname",    ActiveRecord::text );
   assert_field( people_table, 3, "created_at", ActiveRecord::text );
   assert_field( people_table, 4, "updated_at", ActiveRecord::text );
+}
+
+TEST_F( DatabaseCreationTest, FieldsAssignmentList ) {
+  Table td( &connection, "people" );
+  td.fields( fields
+             ( "a", ActiveRecord::integer )
+             ( "b", ActiveRecord::text )
+             ( "c", ActiveRecord::floating_point ) );
+
+  ASSERT_EQ( 3, td.fields().size() );
 }

@@ -2,6 +2,13 @@
 #define _ACTIVE_RECORD_FIELD_H_
 
 #include <active_record/type.h>
+#include <boost/assign.hpp>
+#include <boost/variant.hpp>
+#include <boost/assign/list_of.hpp>
+using namespace std;
+using namespace boost::assign;
+using namespace boost;
+
 
 namespace ActiveRecord {
 
@@ -18,6 +25,8 @@ class Field {
   string             name_;
   ActiveRecord::Type type_;
 };
+
+typedef assign_detail::generic_list< Field >  GenericFieldList;
 
 class Fields : public vector< Field > {
  public:
@@ -40,6 +49,30 @@ class Fields : public vector< Field > {
     return false;
   }
 };
+
+} // namespace ActiveRecord
+
+namespace boost
+{
+namespace assign
+{
+
+template<>
+inline assign_detail::generic_list< ActiveRecord::Field >
+list_of( const ActiveRecord::Field &f ) {
+  return assign_detail::generic_list< ActiveRecord::Field >()( f );
+}
+
+} // namespace boost
+} // namespace assign
+
+namespace ActiveRecord {
+
+// Define a method that takes a list of OptionPairs to define options
+inline assign_detail::generic_list< Field > fields( const char * name,
+                                                     ActiveRecord::Type type ) {
+  return assign::list_of( Field( name, type ) );
+}
 
 } // namespace ActiveRecord
 

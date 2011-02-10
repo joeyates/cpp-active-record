@@ -29,6 +29,10 @@ void Table::remove_field( const Field &field )
 }
 */
 
+void Table::fields( const GenericFieldList &f ) {
+  fields_.assign( f.begin(), f.end() );
+}
+
 ////////////////////////////////
 // private
 

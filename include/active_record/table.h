@@ -25,6 +25,7 @@ class Table {
   void               timestamps( bool timestamps )            { timestamps_ = timestamps; }
   bool               timestamps() const                       { return timestamps_; }
   string             table_name() const                       { return table_name_; }
+  void               fields( const GenericFieldList &f );
   Fields &           fields()                                 { return fields_; }
   void               add_field( const Field &field );
   //void               remove_field( const Field &field );
