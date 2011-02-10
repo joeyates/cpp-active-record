@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <active_record/connection.h>
+#include <active_record/exception.h>
 
 namespace ActiveRecord {
 
@@ -51,7 +52,7 @@ bool Connection::execute( const string &query, const AttributeList &parameters )
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != 0 ) {
     cerr << __FILE__ << "(" << __LINE__ << "): SQL error: '" << query << "'" << endl;
-    throw "Query preparation failed";
+    throw ActiveRecordException( "Query preparation failed" );
   }
   bind_parameters( ppStmt, parameters );
   sqlite3_step( ppStmt );

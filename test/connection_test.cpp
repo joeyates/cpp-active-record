@@ -1,4 +1,5 @@
 #include "test_helper.h"
+#include <active_record/exception.h>
 #include <active_record/table.h>
 
 extern string database_file;
@@ -21,11 +22,11 @@ TEST_F( ConnectionTest, ConnectNewDatabase ) {
 TEST_F( ConnectionTest, ConnectExistingDatabase ) {
   pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER);" );
   Connection connection;
-  connection.connect( options
-                      ( "adapter", "sqlite" )
-                      ( "database", database_file ) );
-
-  // TODO: assert no error?
+  ASSERT_NO_THROW( {
+      connection.connect( options
+                          ( "adapter", "sqlite" )
+                          ( "database", database_file ) );
+  } );
 }
 
 class ConnectionQueryTest : public ::testing::Test {
@@ -43,6 +44,12 @@ TEST_F( ConnectionQueryTest, Execute ) {
   connection.execute( "CREATE TABLE foo (bar INTEGER);" );
 
   assert_table_exists( database_file, "foo" );
+}
+
+TEST_F( ConnectionQueryTest, ExecuteBadSQL ) {
+  connect_database( connection, database_file );
+
+  ASSERT_THROW( connection.execute( "CREATE THING xxx" ), ActiveRecord::ActiveRecordException );
 }
 
 TEST_F( ConnectionQueryTest, SelectOne ) {
