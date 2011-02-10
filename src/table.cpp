@@ -7,8 +7,7 @@ namespace ActiveRecord {
 
 extern TypeNameMap type_name;
 
-void Table::add_field( const Field &field )
-{
+void Table::add_field( const Field &field ) {
   assert_connection();
   stringstream ss;
   ss << "ALTER TABLE " << table_name_;
@@ -33,8 +32,7 @@ void Table::remove_field( const Field &field )
 ////////////////////////////////
 // private
 
-void Table::assert_connection()
-{
+void Table::assert_connection() {
   if( connection_ != NULL )
     return;
   cerr <<  "No connection" << endl;

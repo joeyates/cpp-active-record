@@ -5,16 +5,16 @@ namespace ActiveRecord {
 
 class ActiveRecordException {
  public:
- ActiveRecordException( const string &message,
-                        const string &file = "",
-                        long         line  = -1 ) :
-  message_( message ), file_( file ), line_( line )
-    {}
+  ActiveRecordException( const string &message,
+                         const string &file = "",
+                         long         line  = -1 )
+    : message_( message ),
+      file_( file ),
+      line_( line ) {}
   string message()   const { return message_; }
   string file()      const { return file_; }
   long   line()      const { return line_; }
-  string to_string() const
-  {
+  string to_string() const {
     stringstream ss;
     if( file_.size() > 0 ) {
       ss << file_;
@@ -25,6 +25,7 @@ class ActiveRecordException {
     ss << message_;
     return ss.str();
   }
+
  private:
   string message_;
   string file_;

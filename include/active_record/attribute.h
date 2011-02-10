@@ -48,7 +48,8 @@ namespace ActiveRecord {
 /*
  ( attributes ( "foo" 13 ) ( "bar" "hello" ) ( "baz" 15.5 ) )
 */
-inline ActiveRecord::GenericAttributePairList attributes( const char * name, const Attribute &value ) {
+inline ActiveRecord::GenericAttributePairList attributes( const char * name,
+                                                          const Attribute &value ) {
   return boost::assign::list_of( ActiveRecord::AttributePair( name, value ) );
 }
 

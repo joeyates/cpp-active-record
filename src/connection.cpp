@@ -10,22 +10,17 @@ extern TableSet    tables;
 
 Connection::Connection() {}
 
-Connection::Connection( const Connection& other )
-{
-}
+Connection::Connection( const Connection& other ) {}
 
-Connection Connection::operator=( const Connection& other )
-{
+Connection Connection::operator=( const Connection& other ) {
   return *this;
 }
 
-void Connection::connect( OptionsHash options )
-{
+void Connection::connect( OptionsHash options ) {
   sqlite_initialize( options[ "database" ] );
 }
 
-bool Connection::table_exists( const string &table_name )
-{
+bool Connection::table_exists( const string &table_name ) {
   AttributeList parameters;
   parameters.push_back( table_name );
   RowSet rows = select_all( "SELECT name FROM sqlite_master WHERE type='table' AND name = ?;",
@@ -36,18 +31,16 @@ bool Connection::table_exists( const string &table_name )
 //////////////////////////////////
 // Transactions
 
-void Connection::begin_transaction()
-{
+void Connection::begin_transaction() {
   execute( "BEGIN TRANSACTION" );
 }
 
-void Connection::commit()
-{
+void Connection::commit() {
   execute( "COMMIT" );
 }
 
-bool Connection::execute( const string &query, const AttributeList &parameters )
-{
+bool Connection::execute( const string &query,
+                          const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != 0 ) {
@@ -59,8 +52,8 @@ bool Connection::execute( const string &query, const AttributeList &parameters )
   return true;
 }
 
-Row Connection::select_one( const string &query, const AttributeList &parameters )
-{
+Row Connection::select_one( const string &query,
+                            const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != 0 ) {
@@ -76,8 +69,8 @@ Row Connection::select_one( const string &query, const AttributeList &parameters
   return Row( ppStmt );
 }
 
-RowSet Connection::select_all( const string &query, const AttributeList &parameters )
-{
+RowSet Connection::select_all( const string &query,
+                               const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != 0 ) {
@@ -95,8 +88,7 @@ RowSet Connection::select_all( const string &query, const AttributeList &paramet
 ////////////////////////////////////////
 // Private
 
-bool Connection::sqlite_initialize( string database_path_name )
-{
+bool Connection::sqlite_initialize( string database_path_name ) {
   int nResult = sqlite3_open( database_path_name.c_str(), &db_ );
   if( nResult ) {
     fprintf( stderr, "Can't open database '%s': %s\n", database_path_name.c_str(), sqlite3_errmsg( db_ ) );
@@ -105,8 +97,8 @@ bool Connection::sqlite_initialize( string database_path_name )
   }
 }
 
-void Connection::bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters )
-{
+void Connection::bind_parameters( sqlite3_stmt *ppStmt,
+                                  const AttributeList &parameters ) {
   for( int i = 0; i < parameters.size(); ++i ) {
     switch( parameters[ i ].which() ) {
     case integer: {

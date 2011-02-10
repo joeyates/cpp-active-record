@@ -6,8 +6,7 @@ namespace ActiveRecord {
 
 extern TypeNameMap type_name;
 
-TableSet TableSet::schema( Connection * connection )
-{
+TableSet TableSet::schema( Connection * connection ) {
   TableSet s;
   RowSet rows = connection->select_all( "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;" );
   for( RowSet::iterator it = rows.begin(); it != rows.end(); ++it ) {
@@ -18,8 +17,8 @@ TableSet TableSet::schema( Connection * connection )
   return s;
 }
 
-Table TableSet::table_data( Connection * connection, const string &table_name )
-{
+Table TableSet::table_data( Connection * connection,
+                            const string &table_name ) {
   stringstream row_query;
   row_query << "PRAGMA table_info( \"" << table_name << "\" );";
   string query         = row_query.str();
@@ -41,8 +40,7 @@ Table TableSet::table_data( Connection * connection, const string &table_name )
   return td;
 }
 
-void TableSet::create_table( Table &td )
-{
+void TableSet::create_table( Table &td ) {
   stringstream ss;
   ss << "CREATE TABLE " << td.table_name();
   ss << " (";
@@ -58,8 +56,7 @@ void TableSet::create_table( Table &td )
   td.connection()->execute( ss.str() );
 }
 
-void TableSet::update_table( Table &required )
-{
+void TableSet::update_table( Table &required ) {
   Table existing = table_data( required.connection(), required.table_name() );
   Fields missing = required.fields() - existing.fields();
   Fields remove  = existing.fields() - required.fields();
@@ -75,8 +72,7 @@ void TableSet::update_table( Table &required )
 ////////////////////////////////////
 // Data Definition / Database Structure
 
-void TableSet::update_database()
-{
+void TableSet::update_database() {
   for( TableSet::iterator it = begin(); it != end(); ++it ) {
     Table td = it->second;
     if( td.connection()->table_exists( td.table_name() ) )

@@ -12,8 +12,8 @@ using namespace boost;
 namespace ActiveRecord {
 
 // Options are for string only data
-typedef pair< string, string >                OptionPair;
-typedef map< string, string >                 OptionsHash;
+typedef pair< string, string > OptionPair;
+typedef map< string, string >  OptionsHash;
 
 } // namespace ActiveRecord
 

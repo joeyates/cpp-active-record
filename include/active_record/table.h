@@ -13,13 +13,12 @@ class Connection;
 
 class Table {
  public:
-  Table( Connection * connection = NULL, const string &table_name = "" ) :
-    primary_key_( "id" ),
-    timestamps_( false ),
-    connection_( connection ),
-    table_name_( table_name )
-  {}
- public:
+  Table( Connection * connection = NULL, const string &table_name = "" )
+    : primary_key_( "id" ),
+      timestamps_( false ),
+      connection_( connection ),
+      table_name_( table_name ) {}
+
   Connection *       connection() const                       { return connection_; }
   void               primary_key( const string &primary_key ) { primary_key_ = primary_key; }
   string             primary_key() const                      { return primary_key_; }
@@ -29,9 +28,10 @@ class Table {
   Fields &           fields()                                 { return fields_; }
   void               add_field( const Field &field );
   //void               remove_field( const Field &field );
+
  private:
   void               assert_connection();
- private:
+
   Connection * connection_;
   string       primary_key_;
   string       table_name_;

@@ -36,7 +36,7 @@ class Base {
     }
     tables[ T::class_name ] = td;
   }
- public:
+
   Base() : loaded_( false ) {
     attributes_[ tables[ T::class_name ].primary_key() ] = ACTIVE_RECORD_UNSAVED;
   }
@@ -48,7 +48,7 @@ class Base {
       attributes_[ it->first ] = it->second;
     attributes_[ tables[ T::class_name ].primary_key() ] = ACTIVE_RECORD_UNSAVED;
   }
- public:
+
   Attribute& operator[]( const string &name ) {
     return attributes_[ name ];
   }
@@ -82,6 +82,7 @@ class Base {
     else
       return update();
   }
+
  private:
   static void   update_database();
   bool          loaded_;
@@ -89,10 +90,11 @@ class Base {
   bool          load();
   bool          create();
   bool          update();
+
   inline int id() {
     return boost::get< int >( attributes_[ tables[ T::class_name ].primary_key() ] );
   }
-  inline bool   is_new() {
+  inline bool is_new() {
     return ( id() == ACTIVE_RECORD_UNSAVED )? true : false;
   }
 };

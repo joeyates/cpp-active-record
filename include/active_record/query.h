@@ -30,10 +30,12 @@ class Query {
   // Results
   T                      first();
   vector< T >            all();
+
  protected:
   AttributePairList      conditions_;
   int                    limit_;
   vector< string >       orderings_;
+
  private:
   QueryParametersPair    condition_clause();
   string                 order_clause();

@@ -8,10 +8,11 @@ namespace ActiveRecord {
 class TableSet : public map< string, Table > {
  public:
   static TableSet  schema( Connection * connection );
-  static Table     table_data( Connection * connection, const string &table_name );
+  static Table     table_data( Connection * connection,
+                               const string &table_name );
   static void      create_table( Table &td );
   static void      update_table( Table &td );
- public:
+
   // Data Definition / Database Structure
   void      update_database();
 };
