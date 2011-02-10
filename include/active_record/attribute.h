@@ -19,6 +19,7 @@ typedef map< string, Attribute >              AttributeHash;
 typedef vector< Attribute >                   AttributeList;
 typedef vector< AttributePair >               AttributePairList;
 typedef pair< string, AttributeList >         QueryParametersPair;
+typedef assign_detail::generic_list< ActiveRecord::Attribute >     GenericAttributeList;
 typedef assign_detail::generic_list< ActiveRecord::AttributePair > GenericAttributePairList;
 
 Type get_type( const Attribute & attribute );
@@ -34,6 +35,12 @@ namespace assign
 {
 
 template<>
+inline ActiveRecord::GenericAttributeList
+list_of( const ActiveRecord::Attribute &t ) {
+  return ActiveRecord::GenericAttributeList()( t );
+}
+
+template<>
 inline ActiveRecord::GenericAttributePairList
 list_of( const ActiveRecord::AttributePair &t ) {
   return ActiveRecord::GenericAttributePairList()( t );
@@ -44,6 +51,16 @@ list_of( const ActiveRecord::AttributePair &t ) {
 
 namespace ActiveRecord {
 
+/*
+ ( parameters 13 "hello" 15.5 )
+*/
+inline ActiveRecord::GenericAttributeList parameters( const Attribute &value ) {
+  return boost::assign::list_of( ActiveRecord::Attribute( value ) );
+}
+
+/*
+ ( attributes ( "foo" 13 ) ( "bar" "hello" ) ( "baz" 15.5 ) )
+*/
 inline ActiveRecord::GenericAttributePairList attributes( const char * name, const Attribute &value ) {
   return boost::assign::list_of( ActiveRecord::AttributePair( name, value ) );
 }
