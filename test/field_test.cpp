@@ -37,7 +37,15 @@ TEST_F( FieldTest, SubtractsAccordingToName ) {
   ASSERT_STREQ( "b", ab[ 1 ].name().c_str() );
 }
 
-TEST_F( FieldTest, SubtractsAccordingToType ) {
+class FieldsTest : public ::testing::Test {
+ protected:
+  virtual void SetUp() {
+  }
+  virtual void TearDown() {
+  }
+};
+
+TEST_F( FieldsTest, DoesNotSubtractAccordingToType ) {
   Field i( "a", ActiveRecord::integer );
   Field t( "a", ActiveRecord::text );
   Field f( "a", ActiveRecord::floating_point );
@@ -52,6 +60,5 @@ TEST_F( FieldTest, SubtractsAccordingToType ) {
 
   Fields result = it - tf;
 
-  ASSERT_EQ( 1, result.size() );
-  ASSERT_EQ( ActiveRecord::integer, result[ 0 ].name().c_str() );
+  ASSERT_EQ( 0, result.size() );
 }
