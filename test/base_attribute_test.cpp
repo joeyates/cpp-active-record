@@ -92,3 +92,17 @@ TEST_F( BaseSaveTest, SaveWithNoData ) {
   ASSERT_TRUE( joe.save() );
   ASSERT_TRUE( joe.integer( "id" ) > 0 );
 }
+
+TEST_F( BaseSaveTest, SavedAttributes ) {
+  Person joe( attributes
+              ( "name", "Joe" )
+              ( "surname", "Yates" )
+              ( "age", 45 )
+              ( "height", 1.80 ) );
+  joe.save();
+
+  Person first( 1 );
+  assert_string( "Joe", first.text( "name" ) );
+  ASSERT_EQ( 45, joe.integer( "age" ) );
+  ASSERT_DOUBLE_EQ( 1.80, joe.floating_point( "height" ) );
+}
