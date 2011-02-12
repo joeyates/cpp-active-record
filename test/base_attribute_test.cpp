@@ -17,6 +17,12 @@ class BaseAttributeTest : public ::testing::Test {
   Connection connection;
 };
 
+TEST_F( BaseAttributeTest, Defaults ) {
+  Person joe;
+
+  ASSERT_EQ( -1, joe.integer( "id" ) );
+}
+
 TEST_F( BaseAttributeTest, SetSingly ) {
   Person joe;
   joe[ "name" ]    = "Joe";
@@ -24,7 +30,6 @@ TEST_F( BaseAttributeTest, SetSingly ) {
   joe[ "age" ]     = 45;
   joe[ "height" ]  = 1.80;
 
-  ASSERT_EQ( -1, joe.integer( "id" ) );
-  EXPECT_TRUE( joe.save() );
-  ASSERT_GT( 0, joe.integer( "id" ) );
+  ASSERT_TRUE( joe.save() );
+  ASSERT_TRUE( joe.integer( "id" ) > 0 );
 }
