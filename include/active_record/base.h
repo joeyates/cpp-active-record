@@ -136,7 +136,10 @@ bool Base< T >::create() {
     parameters.push_back( it->second );
     columns_added = true;
   }
-  ss << "(" << columns.str() << ") VALUES (" << placeholders.str() << ");";
+  if( columns_added )
+    ss << "(" << columns.str() << ") VALUES (" << placeholders.str() << ")";
+  else // Handle INSERT with no data
+    ss << "(" << tables[ T::class_name ].primary_key() << ") VALUES ( NULL )";
 
   long new_id = tables[ T::class_name ].connection()->insert( ss.str(), parameters );
   attributes_[ tables[ T::class_name ].primary_key() ] = ( int ) new_id;
