@@ -137,7 +137,11 @@ bool Base< T >::create() {
     columns_added = true;
   }
   ss << "(" << columns.str() << ") VALUES (" << placeholders.str() << ");";
-  return tables[ T::class_name ].connection()->execute( ss.str(), parameters );
+
+  long new_id = tables[ T::class_name ].connection()->insert( ss.str(), parameters );
+  attributes_[ tables[ T::class_name ].primary_key() ] = ( int ) new_id;
+
+  return true;
 }
 
 template < class T >
