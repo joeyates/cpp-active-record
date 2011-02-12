@@ -46,6 +46,12 @@ bool Connection::execute( const string &query,
   return true;
 }
 
+long Connection::insert( const string &query,
+                         const AttributeList &parameters = AttributeList() ) {
+  sqlite3_stmt *ppStmt = prepare( query, parameters );
+  return sqlite3_last_insert_rowid( db_ );
+}
+
 Row Connection::select_one( const string &query,
                             const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = prepare( query, parameters );

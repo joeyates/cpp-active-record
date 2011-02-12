@@ -25,6 +25,8 @@ class Connection {
   // Queries
   bool          execute( const string &query,
                          const AttributeList &parameters = AttributeList() );
+  long          insert( const string &query,
+                        const AttributeList &parameters = AttributeList() );
   Attribute     select_value( const string &query,
                               const AttributeList &parameters = AttributeList() );
   AttributeList select_values( const string &query,
