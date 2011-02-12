@@ -26,6 +26,10 @@ void pipe_to_sqlite( const string &database_file,
   system( ss.str().c_str() );
 }
 
+void assert_string( const string &expected, const string &supplied ) {
+  ASSERT_STREQ( expected.c_str(), supplied.c_str() );
+}
+
 void assert_table_exists( const string &database_file,
                           const string &table_name ) {
   stringstream row_query;

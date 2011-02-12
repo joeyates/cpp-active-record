@@ -11,6 +11,8 @@ void delete_database();
 
 void pipe_to_sqlite( const string &database_file, const string &command );
 
+void assert_string( const string &expected, const string &supplied );
+
 void assert_table_exists( const string &database_file, const string &table );
 
 void assert_field_name( Table &td, int field_index, const string &name );
