@@ -70,7 +70,7 @@ TEST_F( ConnectionQueryTest, SelectOneWithAttributes ) {
   connection.execute( "INSERT INTO foo (bar, baz) VALUES (42, 'hello');" );
   connection.execute( "INSERT INTO foo (bar, baz) VALUES (13, 'ciao');" );
 
-  Attributes params;
+  AttributeList params;
   params.push_back( Attribute( 13 ) );
   Row row = connection.select_one( "SELECT * FROM foo WHERE bar = ?;", params );
 

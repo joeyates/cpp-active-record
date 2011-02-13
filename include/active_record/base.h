@@ -123,7 +123,7 @@ bool Base< T >::create() {
   ss << "INSERT INTO " << tables[ T::class_name ].table_name() << " ";
   bool          columns_added = false;
   stringstream  columns, placeholders;
-  Attributes    parameters;
+  AttributeList parameters;
   for( AttributeHash::iterator it = attributes_.begin(); it != attributes_.end(); ++it ) {
     if( it->first == tables[ T::class_name ].primary_key() )
       continue;
@@ -155,7 +155,7 @@ bool Base< T >::update() {
   ss << "UPDATE " << tables[ T::class_name ].table_name() << " ";
   bool          columns_added = false;
   stringstream  columns;
-  Attributes    parameters;
+  AttributeList parameters;
   for( AttributeHash::iterator it = attributes_.begin(); it != attributes_.end(); ++it ) {
     if( it->first == tables[ T::class_name ].primary_key() )
       continue;

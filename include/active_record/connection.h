@@ -24,24 +24,24 @@ class Connection {
   void      commit();
   // Queries
   bool          execute( const string &query,
-                         const Attributes &parameters = Attributes() );
+                         const AttributeList &parameters = AttributeList() );
   long          insert( const string &query,
-                        const Attributes &parameters = Attributes() );
+                        const AttributeList &parameters = AttributeList() );
   Attribute     select_value( const string &query,
-                              const Attributes &parameters = Attributes() );
-  Attributes    select_values( const string &query,
-                               const Attributes &parameters = Attributes() );
+                              const AttributeList &parameters = AttributeList() );
+  AttributeList select_values( const string &query,
+                               const AttributeList &parameters = AttributeList() );
   Row           select_one( const string &query,
-                            const Attributes &parameters = Attributes() );
+                            const AttributeList &parameters = AttributeList() );
   RowSet        select_all( const string &query,
-                            const Attributes &parameters = Attributes() );
+                            const AttributeList &parameters = AttributeList() );
  private:
   Connection( const Connection& other );
   Connection operator=( const Connection& other );
 
   bool      sqlite_initialize( string database_path_name );
-  sqlite3_stmt * prepare( const string &query, const Attributes &parameters );
-  void      bind_parameters( sqlite3_stmt *ppStmt, const Attributes &parameters );
+  sqlite3_stmt * prepare( const string &query, const AttributeList &parameters );
+  void      bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters );
 
   sqlite3 *        db_;
 };

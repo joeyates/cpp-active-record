@@ -95,7 +95,7 @@ vector< T > Query< T >::all() {
 
 template < class T >
 QueryParametersPair Query< T >::condition_clause() {
-  Attributes parameters;
+  AttributeList parameters;
   if( conditions_.size() == 0 )
     return QueryParametersPair( "", parameters );
   stringstream ss;
@@ -159,9 +159,9 @@ namespace assign
 {
 
 template<>
-inline ActiveRecord::AttributeList
+inline assign_detail::generic_list< ActiveRecord::Attribute >
 list_of( const ActiveRecord::Attribute &t ) {
-  return ActiveRecord::AttributeList()( t );
+  return assign_detail::generic_list< ActiveRecord::Attribute >()( t );
 }
 
 } // namespace assign
@@ -172,7 +172,7 @@ namespace ActiveRecord {
 /*
  ( parameters 13 "hello" 15.5 )
 */
-inline ActiveRecord::AttributeList parameters( const Attribute &value ) {
+inline AttributeList parameters( const Attribute &value ) {
   return boost::assign::list_of( ActiveRecord::Attribute( value ) );
 }
 
