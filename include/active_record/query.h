@@ -159,9 +159,9 @@ namespace assign
 {
 
 template<>
-inline ActiveRecord::GenericAttributeList
+inline ActiveRecord::AttributeList
 list_of( const ActiveRecord::Attribute &t ) {
-  return ActiveRecord::GenericAttributeList()( t );
+  return ActiveRecord::AttributeList()( t );
 }
 
 } // namespace assign
@@ -172,7 +172,7 @@ namespace ActiveRecord {
 /*
  ( parameters 13 "hello" 15.5 )
 */
-inline ActiveRecord::GenericAttributeList parameters( const Attribute &value ) {
+inline ActiveRecord::AttributeList parameters( const Attribute &value ) {
   return boost::assign::list_of( ActiveRecord::Attribute( value ) );
 }
 
