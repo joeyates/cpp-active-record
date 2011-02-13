@@ -95,7 +95,7 @@ vector< T > Query< T >::all() {
 
 template < class T >
 QueryParametersPair Query< T >::condition_clause() {
-  AttributeList parameters;
+  Attributes parameters;
   if( conditions_.size() == 0 )
     return QueryParametersPair( "", parameters );
   stringstream ss;

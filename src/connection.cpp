@@ -21,7 +21,7 @@ void Connection::connect( OptionsHash options ) {
 }
 
 bool Connection::table_exists( const string &table_name ) {
-  AttributeList parameters;
+  Attributes parameters;
   parameters.push_back( table_name );
   RowSet rows = select_all( "SELECT name FROM sqlite_master WHERE type='table' AND name = ?;",
                             parameters );
@@ -40,21 +40,21 @@ void Connection::commit() {
 }
 
 bool Connection::execute( const string &query,
-                          const AttributeList &parameters ) {
+                          const Attributes &parameters ) {
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   sqlite3_step( ppStmt );
   return true;
 }
 
 long Connection::insert( const string &query,
-                         const AttributeList &parameters ) {
+                         const Attributes &parameters ) {
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   sqlite3_step( ppStmt );
   return sqlite3_last_insert_rowid( db_ );
 }
 
 Row Connection::select_one( const string &query,
-                            const AttributeList &parameters ) {
+                            const Attributes &parameters ) {
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   int step_result = sqlite3_step( ppStmt );
   if( step_result != SQLITE_ROW ) {
@@ -65,7 +65,7 @@ Row Connection::select_one( const string &query,
 }
 
 RowSet Connection::select_all( const string &query,
-                               const AttributeList &parameters ) {
+                               const Attributes &parameters ) {
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   RowSet results;
   while( sqlite3_step( ppStmt ) == SQLITE_ROW ) {
@@ -87,7 +87,7 @@ bool Connection::sqlite_initialize( string database_path_name ) {
 }
 
 sqlite3_stmt * Connection::prepare( const string &query,
-                                    const AttributeList &parameters ) {
+                                    const Attributes &parameters ) {
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != 0 ) {
@@ -99,7 +99,7 @@ sqlite3_stmt * Connection::prepare( const string &query,
 }
 
 void Connection::bind_parameters( sqlite3_stmt *ppStmt,
-                                  const AttributeList &parameters ) {
+                                  const Attributes &parameters ) {
   for( int i = 0; i < parameters.size(); ++i ) {
     switch( parameters[ i ].which() ) {
     case integer: {

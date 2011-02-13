@@ -16,9 +16,9 @@ namespace ActiveRecord {
 typedef boost::variant< int, string, double > Attribute;
 typedef pair< string, Attribute >             AttributePair;
 typedef map< string, Attribute >              AttributeHash;
-typedef vector< Attribute >                   AttributeList;
+typedef vector< Attribute >                   Attributes;
 typedef vector< AttributePair >               AttributePairList;
-typedef pair< string, AttributeList >         QueryParametersPair;
+typedef pair< string, Attributes >         QueryParametersPair;
 typedef assign_detail::generic_list< ActiveRecord::Attribute >     GenericAttributeList;
 typedef assign_detail::generic_list< ActiveRecord::AttributePair > GenericAttributePairList;
 

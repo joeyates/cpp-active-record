@@ -63,14 +63,14 @@ TEST_F( ConnectionQueryTest, SelectOne ) {
   ASSERT_EQ( 42, row.get_integer( "bar" ) );
 }
 
-TEST_F( ConnectionQueryTest, SelectOneWithAttributeList ) {
+TEST_F( ConnectionQueryTest, SelectOneWithAttributes ) {
   connect_database( connection, database_file );
 
   connection.execute( "CREATE TABLE foo (bar INTEGER, baz TEXT);" );
   connection.execute( "INSERT INTO foo (bar, baz) VALUES (42, 'hello');" );
   connection.execute( "INSERT INTO foo (bar, baz) VALUES (13, 'ciao');" );
 
-  AttributeList params;
+  Attributes params;
   params.push_back( Attribute( 13 ) );
   Row row = connection.select_one( "SELECT * FROM foo WHERE bar = ?;", params );
 
