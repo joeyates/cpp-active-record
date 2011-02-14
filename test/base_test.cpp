@@ -2,6 +2,25 @@
 
 extern string database_file;
 
+class NoTableNameModel: public ActiveRecord::Base< NoTableNameModel > {
+ public:
+  AR_CONSTRUCTORS( NoTableNameModel )
+  static Table table( Connection * connection ) {
+    Table td;
+    return td;
+  }
+};
+
+template <>
+string ActiveRecord::Base< NoTableNameModel >::class_name = "Foo";
+
+class BaseSetupTest : public ::testing::Test {
+};
+
+TEST_F( BaseSetupTest, NoTableName ) {
+  ASSERT_THROW( NoTableNameModel::setup( NULL ), ActiveRecord::ActiveRecordException );
+}
+
 class BaseAttributeTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
