@@ -19,6 +19,18 @@ void delete_database() {
   system( remove_database.c_str() );
 }
 
+string table_definition( Connection &connection, const string &table_name ) {
+  stringstream query;
+  query << "SELECT sql FROM sqlite_master ";
+  query << "WHERE type='table'";
+  query << "AND name='" << table_name << "'";
+  RowSet rows = connection.select_all( query.str() );
+  if( rows.size() == 0 )
+    return "";
+
+  return rows[ 0 ].get_text( "sql" );
+}
+
 void pipe_to_sqlite( const string &database_file,
                      const string &command ) {
   stringstream ss;

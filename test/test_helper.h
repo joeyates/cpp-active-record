@@ -8,6 +8,7 @@ using namespace std;
 
 void connect_database( Connection &connection, const string &database_file );
 void delete_database();
+string table_definition( Connection &connection, const string &table_name );
 
 void pipe_to_sqlite( const string &database_file, const string &command );
 
