@@ -63,6 +63,17 @@ TEST_F( ConnectionQueryTest, SelectOne ) {
   ASSERT_EQ( 42, row.get_integer( "bar" ) );
 }
 
+TEST_F( ConnectionQueryTest, SelectOneNoData ) {
+  connect_database( connection, database_file );
+
+  connection.execute( "CREATE TABLE foo (bar INTEGER);" );
+  connection.execute( "INSERT INTO foo (bar) VALUES (42);" );
+
+  Row row = connection.select_one( "SELECT * FROM foo WHERE bar = 13;" );
+
+  ASSERT_FALSE( row.has_data() );
+}
+
 TEST_F( ConnectionQueryTest, SelectOneWithAttributes ) {
   connect_database( connection, database_file );
 

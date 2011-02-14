@@ -9,7 +9,9 @@ namespace ActiveRecord {
 
 class Row {
  public:
+  Row() {};
   Row( sqlite3_stmt *ppStmt );
+  bool   has_data()                 { return attributes_.size() > 0; };
   Type   get_type( const string &name );
   bool   is_type( const string &name, Type type );
   string get_text( const string &name );

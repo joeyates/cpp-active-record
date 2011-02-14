@@ -58,8 +58,7 @@ Row Connection::select_one( const string &query,
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   int step_result = sqlite3_step( ppStmt );
   if( step_result != SQLITE_ROW ) {
-    cerr << "No data" << endl;
-    throw ActiveRecordException( "No data" );
+    return Row();
   }
   return Row( ppStmt );
 }

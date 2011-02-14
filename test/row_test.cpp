@@ -16,6 +16,12 @@ class RowTest : public ::testing::Test {
   sqlite3_stmt *ppStmt;
 };
 
+TEST_F( RowTest, Empty ) {
+  Row row;
+
+  ASSERT_FALSE( row.has_data() );
+}
+
 TEST_F( RowTest, GetType ) {
   char query[] = "SELECT * FROM foo";
   int prepare_result = sqlite3_prepare_v2( db, query, strlen(query), &ppStmt, 0 );
