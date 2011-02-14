@@ -43,8 +43,7 @@ class ReadSchemaTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    string create = "echo 'CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT);' | sqlite3 " + database_file + ";";
-    system( create.c_str() );
+    pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT)" );
     connection.connect( options
                         ( "adapter", "sqlite" )
                         ( "database", database_file ) );
