@@ -23,6 +23,16 @@ TEST_F( TableTest, Fields ) {
   ASSERT_EQ( 1, table.fields().size() );
 }
 
+TEST_F( TableTest, FieldsAssignmentList ) {
+  Table td( NULL, "people" );
+  td.fields( fields
+             ( "a", ActiveRecord::integer )
+             ( "b", ActiveRecord::text )
+             ( "c", ActiveRecord::floating_point ) );
+
+  ASSERT_EQ( 3, td.fields().size() );
+}
+
 TEST_F( TableTest, AddFieldWithoutConnection ) {
   Table table( NULL, "foo" );
 
