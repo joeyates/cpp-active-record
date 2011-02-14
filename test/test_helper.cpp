@@ -26,8 +26,27 @@ void pipe_to_sqlite( const string &database_file,
   system( ss.str().c_str() );
 }
 
-void assert_string( const string &expected, const string &supplied ) {
-  ASSERT_STREQ( expected.c_str(), supplied.c_str() );
+void assert_string( const string &expected, const string &actual ) {
+  ASSERT_STREQ( expected.c_str(), actual.c_str() );
+}
+
+void assert_attribute( const Attribute &expected, const Attribute &actual ) {
+  if( expected == actual )
+    return;
+  cout << "Actual: " << actual << endl;
+  cout << "Expected: " << expected << endl;
+  FAIL();
+}
+
+void assert_attribute_pair_list( const AttributePairList &expected,
+                                 const AttributePairList &actual ) {
+  ASSERT_EQ( expected.size(), actual.size() );
+  for( AttributePairList::const_iterator itexp = expected.begin(), itact = expected.begin();
+       itexp != expected.end();
+       ++itexp, ++itact ) {
+    assert_string( itexp->first, itact->first );
+    assert_attribute( itexp->second, itact->second );
+  }
 }
 
 void assert_table_exists( const string &database_file,
