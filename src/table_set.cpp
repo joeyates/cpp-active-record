@@ -1,4 +1,5 @@
 #include <active_record/table_set.h>
+#include <active_record/exception.h>
 #include <active_record/type.h>
 #include <active_record/connection.h>
 
@@ -33,7 +34,7 @@ Table TableSet::table_data( Connection * connection,
     ActiveRecord::Type type = ActiveRecord::to_type( type_name );
     if( type == ActiveRecord::unknown ) {
       cerr << "Unknown type: " << type_name << endl;
-      throw "Unknown type";
+      throw ActiveRecordException( "Unknown type" );
     }
     td.fields().push_back( Field( name, type ) );
   }
@@ -64,7 +65,7 @@ void TableSet::update_table( Table &required ) {
     existing.add_field( *it );
   for( Fields::iterator it = remove.begin(); it != remove.end(); ++it ) {
     cerr << __FILE__ << "(" << __LINE__ << "): Table::remove_field not yet implemented" << endl;
-    throw "Table::remove_field not yet implemented";
+    throw ActiveRecordException( "Table::remove_field not yet implemented" );
     //existing.remove_field( *it );
   }
 }

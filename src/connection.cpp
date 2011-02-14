@@ -59,7 +59,7 @@ Row Connection::select_one( const string &query,
   int step_result = sqlite3_step( ppStmt );
   if( step_result != SQLITE_ROW ) {
     cerr << "No data" << endl;
-    throw "No data";
+    throw ActiveRecordException( "No data" );
   }
   return Row( ppStmt );
 }
@@ -122,7 +122,7 @@ void Connection::bind_parameters( sqlite3_stmt *ppStmt,
     }
     default: {
       cerr <<  "Type not implemented" << endl;
-      throw "Type not implemented";
+      throw ActiveRecordException( "Type not implemented" );
     }
     }
     ++i;

@@ -26,5 +26,5 @@ TEST_F( TableTest, Fields ) {
 TEST_F( TableTest, AddFieldWithoutConnection ) {
   Table table( NULL, "foo" );
 
-  ASSERT_THROW( table.add_field( Field( "bar", ActiveRecord::text ) ), char * );
+  ASSERT_THROW( table.add_field( Field( "bar", ActiveRecord::text ) ), ActiveRecordException );
 }

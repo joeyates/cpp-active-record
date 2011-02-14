@@ -2,6 +2,7 @@
 #define _ACTIVE_RECORD_BASE_H_
 
 #include <sstream>
+#include <active_record/exception.h>
 #include <active_record/type.h>
 #include <active_record/connection.h>
 #include <active_record/query.h>
@@ -32,7 +33,7 @@ class Base {
 
     if( td.table_name().empty() ) {
       cerr << __FILE__ << "(" << __LINE__ << "): set the table name when returning Table" << endl;
-      throw "set the table name when returning Table";
+      throw ActiveRecordException( "set the table name when returning Table" );
     }
     tables[ T::class_name ] = td;
   }

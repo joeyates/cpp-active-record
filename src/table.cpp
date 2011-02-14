@@ -1,4 +1,5 @@
 #include <sstream>
+#include <active_record/exception.h>
 #include <active_record/table.h>
 #include <active_record/connection.h>
 using namespace std;
@@ -40,7 +41,7 @@ void Table::assert_connection() {
   if( connection_ != NULL )
     return;
   cerr <<  "No connection" << endl;
-  throw "No connection";
+  throw ActiveRecordException( "No connection" );
 }
 
 } // namespace ActiveRecord

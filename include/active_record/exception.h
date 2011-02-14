@@ -1,6 +1,11 @@
 #ifndef _ACTIVE_RECORD_EXCEPTION_H_
 #define _ACTIVE_RECORD_EXCEPTION_H_
 
+#include <string>
+#include <sstream>
+
+using namespace std;
+
 namespace ActiveRecord {
 
 class ActiveRecordException {
