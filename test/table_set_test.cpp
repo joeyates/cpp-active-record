@@ -88,12 +88,8 @@ TEST_F( TableSetCreateTableTest, PrimaryKeyField ) {
   tables[ "Person" ] = td;
   tables.update_database();
 
-  // Tests: Check that we can call the primary key whatever we want
-  TableSet schema    = TableSet::schema( &connection );
-  Table people_table = schema[ "people" ];
-  ASSERT_EQ( people_table.fields().size(), 2 );
-  assert_field( people_table, 0, "hi",     ActiveRecord::integer );
-  assert_field( people_table, 1, "height", ActiveRecord::floating_point );
+  string sql = table_definition( connection, "people" );
+  assert_string( "CREATE TABLE people (hi INTEGER PRIMARY KEY, height FLOAT)", sql );
 }
 
 TEST_F( TableSetCreateTableTest, Timestamps ) {
@@ -106,15 +102,8 @@ TEST_F( TableSetCreateTableTest, Timestamps ) {
   tables[ "Person" ] = td;
   tables.update_database();
 
-  // Tests: Check for the timestamp fields
-  TableSet schema    = TableSet::schema( &connection );
-  Table people_table = schema[ "people" ];
-  ASSERT_EQ( people_table.fields().size(), 5 );
-  assert_field( people_table, 0, "id",         ActiveRecord::integer );
-  assert_field( people_table, 1, "name",       ActiveRecord::text );
-  assert_field( people_table, 2, "surname",    ActiveRecord::text );
-  assert_field( people_table, 3, "created_at", ActiveRecord::text );
-  assert_field( people_table, 4, "updated_at", ActiveRecord::text );
+  string sql = table_definition( connection, "people" );
+  assert_string( "CREATE TABLE people (id INTEGER PRIMARY KEY, name TEXT, surname TEXT, created_at TEXT, updated_at TEXT)", sql );
 }
 
 class TableSetUpdateDatabaseTest : public ::testing::Test {
@@ -141,10 +130,6 @@ TEST_F( TableSetUpdateDatabaseTest, AddsFields ) {
   tables[ "Foo" ] = td;
   tables.update_database();
 
-  TableSet schema = TableSet::schema( &connection );
-  Table foo_table = schema[ "foo" ];
-  ASSERT_EQ( 3, foo_table.fields().size() );
-  assert_field( foo_table, 0, "bar", ActiveRecord::integer );
-  assert_field( foo_table, 1, "baz", ActiveRecord::text );
-  assert_field( foo_table, 2, "qux", ActiveRecord::floating_point );
+  string sql = table_definition( connection, "foo" );
+  assert_string( "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT)", sql );
 }
