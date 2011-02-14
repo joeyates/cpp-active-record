@@ -24,7 +24,7 @@ class ActiveRecordException {
     if( file_.size() > 0 ) {
       ss << file_;
       if( line_ > 0 )
-        ss << " (" << line_ << "): ";
+        ss << ":" << line_;
       ss << ": ";
     }
     ss << message_;
