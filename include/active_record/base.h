@@ -13,7 +13,7 @@
 #define AR_CONSTRUCTORS( klass ) \
   klass() : ActiveRecord::Base< klass >() {} \
   klass( int id ) : ActiveRecord::Base< klass >( id ) {} \
-  klass( GenericAttributePairList attributes ) : ActiveRecord::Base< klass >( attributes ) {}
+  klass( const GenericAttributePairList &attributes ) : ActiveRecord::Base< klass >( attributes ) {}
 
 namespace ActiveRecord {
 
@@ -44,8 +44,8 @@ class Base {
   Base( int id ) : loaded_( false ) {
     attributes_[ tables[ T::class_name ].primary_key() ] = id;
   }
-  Base( GenericAttributePairList attributes ) : loaded_( false ) {
-    for( GenericAttributePairList::iterator it = attributes.begin(); it != attributes.end(); ++it )
+  Base( const GenericAttributePairList &attributes ) : loaded_( false ) {
+    for( GenericAttributePairList::const_iterator it = attributes.begin(); it != attributes.end(); ++it )
       attributes_[ it->first ] = it->second;
     attributes_[ tables[ T::class_name ].primary_key() ] = ACTIVE_RECORD_UNSAVED;
   }
