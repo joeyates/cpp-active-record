@@ -1,5 +1,4 @@
 #include "test_helper.h"
-#include <list>
 
 class AttributeTest : public ::testing::Test {
 };
