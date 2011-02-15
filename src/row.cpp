@@ -1,5 +1,6 @@
-#include <iostream>
 #include <active_record/row.h>
+#include <active_record/exception.h>
+#include <sstream>
 
 namespace ActiveRecord {
 
@@ -17,8 +18,11 @@ Row::Row( sqlite3_stmt *pStmt ) {
       if ( value != 0 )
         attributes_[ name ] = value;
     }
-    else
-      cout << "ActiveRecord::Row: Unhandled data type: " << type << endl;
+    else {
+      stringstream error;
+      error << "Unhandled data type: " << type;
+      throw ActiveRecordException( error.str(), __FILE__, __LINE__ );
+    }
   }
 }
 

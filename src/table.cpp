@@ -9,7 +9,7 @@ namespace ActiveRecord {
 extern TypeNameMap type_name;
 
 void Table::add_field( const Field &field ) {
-  assert_connection();
+  assert_connection( __FILE__, __LINE__ );
   stringstream ss;
   ss << "ALTER TABLE " << table_name_;
   ss << " ADD " << field.name() << " " << type_name[ field.type() ];
@@ -37,11 +37,10 @@ void Table::fields( const GenericFieldList &f ) {
 ////////////////////////////////
 // private
 
-void Table::assert_connection() {
+void Table::assert_connection( const char * file, int line ) {
   if( connection_ != NULL )
     return;
-  cerr <<  "No connection" << endl;
-  throw ActiveRecordException( "No connection" );
+  throw ActiveRecordException( "No connection", file, line );
 }
 
 } // namespace ActiveRecord

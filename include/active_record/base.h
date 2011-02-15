@@ -32,8 +32,7 @@ class Base {
     Table td = T::table( connection );
 
     if( td.table_name().empty() ) {
-      cerr << __FILE__ << "(" << __LINE__ << "): set the table name when returning Table" << endl;
-      throw ActiveRecordException( "set the table name when returning Table" );
+      throw ActiveRecordException( "set the table name when returning Table", __FILE__, __LINE__ );
     }
     tables[ T::class_name ] = td;
   }

@@ -31,7 +31,7 @@ class Table {
   //void               remove_field( const Field &field );
 
  private:
-  void               assert_connection();
+  void               assert_connection( const char * file, int line );
 
   Connection * connection_;
   string       primary_key_;

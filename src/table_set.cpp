@@ -1,4 +1,5 @@
 #include <active_record/table_set.h>
+#include <sstream>
 #include <active_record/exception.h>
 #include <active_record/type.h>
 #include <active_record/connection.h>
@@ -33,8 +34,9 @@ Table TableSet::table_data( Connection * connection,
     const char * type_name  = ( const char * ) sqlite3_column_text( ppStmt, 2 );
     ActiveRecord::Type type = ActiveRecord::to_type( type_name );
     if( type == ActiveRecord::unknown ) {
-      cerr << "Unknown type: " << type_name << endl;
-      throw ActiveRecordException( "Unknown type" );
+      stringstream error;
+      error << "Unknown type: " << type_name;
+      throw ActiveRecordException( error.str(), __FILE__, __LINE__ );
     }
     td.fields().push_back( Field( name, type ) );
   }
@@ -64,8 +66,7 @@ void TableSet::update_table( Table &required ) {
   for( Fields::iterator it = missing.begin(); it != missing.end(); ++it )
     existing.add_field( *it );
   for( Fields::iterator it = remove.begin(); it != remove.end(); ++it ) {
-    cerr << __FILE__ << "(" << __LINE__ << "): Table::remove_field not yet implemented" << endl;
-    throw ActiveRecordException( "Table::remove_field not yet implemented" );
+    throw ActiveRecordException( "Table::remove_field not yet implemented", __FILE__, __LINE__ );
     //existing.remove_field( *it );
   }
 }

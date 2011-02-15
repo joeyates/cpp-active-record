@@ -1,6 +1,5 @@
-#include <iostream>
-#include <sstream>
 #include <active_record/connection.h>
+#include <sstream>
 #include <active_record/exception.h>
 
 namespace ActiveRecord {
@@ -79,10 +78,13 @@ RowSet Connection::select_all( const string &query,
 bool Connection::sqlite_initialize( string database_path_name ) {
   int nResult = sqlite3_open( database_path_name.c_str(), &db_ );
   if( nResult ) {
-    fprintf( stderr, "Can't open database '%s': %s\n", database_path_name.c_str(), sqlite3_errmsg( db_ ) );
+    stringstream error;
+    error << "Can't open database '" << database_path_name << "'";
+    error << sqlite3_errmsg( db_ );
     sqlite3_close( db_ );
-    return false;
+    throw ActiveRecordException( error.str(), __FILE__, __LINE__ );
   }
+  return true;
 }
 
 sqlite3_stmt * Connection::prepare( const string &query,
@@ -90,8 +92,9 @@ sqlite3_stmt * Connection::prepare( const string &query,
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != 0 ) {
-    cerr << __FILE__ << "(" << __LINE__ << "): SQL error: '" << query << "'" << endl;
-    throw ActiveRecordException( "Query preparation failed" );
+    stringstream error;
+    error << "SQL error: '" << query << "'";
+    throw ActiveRecordException( error.str(), __FILE__, __LINE__ );
   }
   bind_parameters( ppStmt, parameters );
   return ppStmt;
@@ -120,8 +123,7 @@ void Connection::bind_parameters( sqlite3_stmt *ppStmt,
       break;
     }
     default: {
-      cerr <<  "Type not implemented" << endl;
-      throw ActiveRecordException( "Type not implemented" );
+      throw ActiveRecordException( "Type not implemented", __FILE__, __LINE__ );
     }
     }
     ++i;
