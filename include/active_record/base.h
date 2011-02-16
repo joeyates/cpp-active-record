@@ -37,41 +37,34 @@ class Base {
     tables[ T::class_name ] = td;
   }
 
-  Base() : loaded_( false ) {
+  Base() : loaded_( true ) {
     attributes_[ tables[ T::class_name ].primary_key() ] = ACTIVE_RECORD_UNSAVED;
   }
   Base( int id ) : loaded_( false ) {
     attributes_[ tables[ T::class_name ].primary_key() ] = id;
   }
-  Base( const GenericAttributePairList &attributes ) : loaded_( false ) {
+  Base( const GenericAttributePairList &attributes ) : loaded_( true ) {
     for( GenericAttributePairList::const_iterator it = attributes.begin(); it != attributes.end(); ++it )
       attributes_[ it->first ] = it->second;
     attributes_[ tables[ T::class_name ].primary_key() ] = ACTIVE_RECORD_UNSAVED;
   }
 
   Attribute& operator[]( const string &name ) {
+    if( ! loaded_ )
+      load();
     return attributes_[ name ];
   }
   string text( const string &name ) {
-    if( is_new() )
-      return boost::get< string >( attributes_[ name ] );
-    // TODO: check type? ...or allow conversion
     if( ! loaded_ )
       load();
     return boost::get< string >( attributes_[ name ] );
   }
   int integer( const string &name ) {
-    if( is_new() )
-      return boost::get< int >( attributes_[ name ] );
-    // TODO: check type?
     if( ! loaded_ )
       load();
     return boost::get< int >( attributes_[ name ] );
   }
   double floating_point( const string &name ) {
-    if( is_new() )
-      return boost::get< double >( attributes_[ name ] );
-    // TODO: check type?
     if( ! loaded_ )
       load();
     return boost::get< double >( attributes_[ name ] );
