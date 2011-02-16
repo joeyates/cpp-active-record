@@ -4,9 +4,6 @@
 
 namespace ActiveRecord {
 
-extern TypeNameMap type_name;
-extern TableSet    tables;
-
 Connection::Connection() {}
 
 Connection::Connection( const Connection& other ) {}
