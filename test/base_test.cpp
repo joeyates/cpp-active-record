@@ -82,6 +82,15 @@ TEST_F( BaseLoadTest, Default ) {
   ASSERT_DOUBLE_EQ( 1.80, joe.floating_point( "height" ) );
 }
 
+TEST_F( BaseLoadTest, SquareBracketsOperator ) {
+  pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height) VALUES (\"Joe\", \"Yates\", 45, 1.80);" );
+  Person joe( 1 );
+
+  assert_attribute( "Joe", joe[ "name" ] );
+  assert_attribute( 45,    joe[ "age" ] );
+  assert_attribute( 1.80,  joe[ "height" ] );
+}
+
 class BaseSaveTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
