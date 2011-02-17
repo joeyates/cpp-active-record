@@ -75,6 +75,9 @@ class Base {
     else
       return update();
   }
+  inline int id() {
+    return boost::get< int >( attributes_[ tables[ T::class_name ].primary_key() ] );
+  }
 
  private:
   static void   update_database();
@@ -83,10 +86,6 @@ class Base {
   bool          load();
   bool          create();
   bool          update();
-
-  inline int id() {
-    return boost::get< int >( attributes_[ tables[ T::class_name ].primary_key() ] );
-  }
   inline bool is_new() {
     return ( id() == ACTIVE_RECORD_UNSAVED )? true : false;
   }
