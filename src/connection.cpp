@@ -90,7 +90,18 @@ sqlite3_stmt * Connection::prepare( const string &query,
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != 0 ) {
     stringstream error;
-    error << "SQL error: '" << query << "'";
+    error << "SQL error: \"" << sqlite3_errmsg( db_ ) << "\" ";
+    error << "in \"" << query << "\"";
+    bool added = false;
+    for( AttributeList::const_iterator it = parameters.begin(); it != parameters.end(); ++it ) {
+      error << ", ";
+      if( ! added )
+        error << "[";
+      error << *it;
+      added = true;
+    }
+    if( added )
+      error << "]";
     throw ActiveRecordException( error.str(), __FILE__, __LINE__ );
   }
   bind_parameters( ppStmt, parameters );
