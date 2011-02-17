@@ -88,9 +88,9 @@ sqlite3_stmt * Connection::prepare( const string &query,
                                     const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
-  if( prepare_result != 0 ) {
+  if( prepare_result != SQLITE_OK ) {
     stringstream error;
-    error << "SQL error: \"" << sqlite3_errmsg( db_ ) << "\" ";
+    error << "SQL error: \"" << sqlite_error( prepare_result ) << "\" ";
     error << "in \"" << query << "\"";
     bool added = false;
     for( AttributeList::const_iterator it = parameters.begin(); it != parameters.end(); ++it ) {
@@ -136,6 +136,42 @@ void Connection::bind_parameters( sqlite3_stmt *ppStmt,
     }
     ++i;
   }
+}
+
+string Connection::sqlite_error( int error_code ) {
+  string error;
+  switch( error_code ) {
+  case SQLITE_ERROR:      error = "SQL error or missing database";               break;
+  case SQLITE_INTERNAL:   error = "Internal logic error in SQLite";              break;
+  case SQLITE_PERM:       error = "Access permission denied";                    break;
+  case SQLITE_ABORT:      error = "Callback routine requested an abort";         break;
+  case SQLITE_BUSY:       error = "The database file is locked";                 break;
+  case SQLITE_LOCKED:     error = "A table in the database is locked";           break;
+  case SQLITE_NOMEM:      error = "A malloc() failed";                           break;
+  case SQLITE_READONLY:   error = "Attempt to write a readonly database";        break;
+  case SQLITE_INTERRUPT:  error = "Operation terminated by sqlite3_interrupt()"; break;
+  case SQLITE_IOERR:      error = "Some kind of disk I/O error occurred";        break;
+  case SQLITE_CORRUPT:    error = "The database disk image is malformed";        break;
+  case SQLITE_NOTFOUND:   error = "Unknown opcode in sqlite3_file_control()";    break;
+  case SQLITE_FULL:       error = "Insertion failed because database is full";   break;
+  case SQLITE_CANTOPEN:   error = "Unable to open the database file";            break;
+  case SQLITE_PROTOCOL:   error = "Database lock protocol error";                break;
+  case SQLITE_EMPTY:      error = "Database is empty";                           break;
+  case SQLITE_SCHEMA:     error = "The database schema changed";                 break;
+  case SQLITE_TOOBIG:     error = "String or BLOB exceeds size limit";           break;
+  case SQLITE_CONSTRAINT: error = "Abort due to constraint violation";           break;
+  case SQLITE_MISMATCH:   error = "Data type mismatch";                          break;
+  case SQLITE_MISUSE:     error = "Library used incorrectly";                    break;
+  case SQLITE_NOLFS:      error = "Uses OS features not supported on host";      break;
+  case SQLITE_AUTH:       error = "Authorization denied";                        break;
+  case SQLITE_FORMAT:     error = "Auxiliary database format error";             break;
+  case SQLITE_RANGE:      error = "2nd parameter to sqlite3_bind out of range";  break;
+  case SQLITE_NOTADB:     error = "File opened that is not a database file";     break;
+  case SQLITE_ROW:        error = "sqlite3_step() has another row ready";        break;
+  case SQLITE_DONE:       error = "sqlite3_step() has finished executing";       break;
+  default:                error = "Unknown error";                               break;
+  }
+  return error;
 }
 
 } // namespace ActiveRecord

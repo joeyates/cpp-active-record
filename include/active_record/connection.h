@@ -39,9 +39,10 @@ class Connection {
   Connection( const Connection& other );
   Connection operator=( const Connection& other );
 
-  bool      sqlite_initialize( string database_path_name );
+  bool           sqlite_initialize( string database_path_name );
+  static string  sqlite_error( int error_code );
   sqlite3_stmt * prepare( const string &query, const AttributeList &parameters );
-  void      bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters );
+  void           bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters );
 
   sqlite3 *        db_;
 };
