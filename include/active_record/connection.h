@@ -15,6 +15,7 @@ class Connection {
  friend class TableSet;
  public:
   Connection();
+  ~Connection();
 
   void      connect( OptionsHash options );
   // Database Structure

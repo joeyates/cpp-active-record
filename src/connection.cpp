@@ -4,9 +4,16 @@
 
 namespace ActiveRecord {
 
-Connection::Connection() {}
+Connection::Connection() : db_( NULL) {}
 
 Connection::Connection( const Connection& other ) {}
+
+Connection::~Connection() {
+  if( db_ != NULL) {
+    sqlite3_close( db_ );
+    db_ = NULL;
+  }
+}
 
 Connection Connection::operator=( const Connection& other ) {
   return *this;
@@ -39,6 +46,7 @@ bool Connection::execute( const string &query,
                           const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   sqlite3_step( ppStmt );
+  sqlite3_finalize( ppStmt );
   return true;
 }
 
@@ -46,6 +54,7 @@ long Connection::insert( const string &query,
                          const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   sqlite3_step( ppStmt );
+  sqlite3_finalize( ppStmt );
   return sqlite3_last_insert_rowid( db_ );
 }
 
@@ -56,7 +65,9 @@ Row Connection::select_one( const string &query,
   if( step_result != SQLITE_ROW ) {
     return Row();
   }
-  return Row( ppStmt );
+  Row row( ppStmt );
+  sqlite3_finalize( ppStmt );
+  return row;
 }
 
 RowSet Connection::select_all( const string &query,
@@ -66,6 +77,7 @@ RowSet Connection::select_all( const string &query,
   while( sqlite3_step( ppStmt ) == SQLITE_ROW ) {
     results.push_back( Row( ppStmt ) );
   }
+  sqlite3_finalize( ppStmt );
   return results;
 }
 
