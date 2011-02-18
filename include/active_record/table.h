@@ -27,6 +27,7 @@ class Table {
   string             table_name() const                       { return table_name_; }
   void               fields( const GenericFieldList &f );
   Fields &           fields()                                 { return fields_; }
+  void               has_many( const string &association )    { has_many_[ association ] = 1; }
   void               add_field( const Field &field );
   //void               remove_field( const Field &field );
 
@@ -38,6 +39,7 @@ class Table {
   string       table_name_;
   bool         timestamps_;
   Fields       fields_;
+  map< string, int > has_many_;
 };
 
 } // namespace ActiveRecord

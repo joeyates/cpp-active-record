@@ -58,6 +58,8 @@ TEST_F( BaseAttributeTest, SettingAttributesUsingAttributesMethod ) {
   ASSERT_DOUBLE_EQ( 1.80, joe.floating_point( "height" ) );
 }
 
+// TODO: Setting incorrect attributes raises error
+
 class BaseLoadTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
