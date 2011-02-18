@@ -8,6 +8,7 @@ class QueryTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
+    ActiveRecord::tables.clear();
     connect_database( connection, database_file );
     Person::setup( &connection );
     ActiveRecord::tables.update_database();

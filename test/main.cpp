@@ -7,10 +7,9 @@ int main( int argc, char **argv ) {
   try {
     result = RUN_ALL_TESTS();
   }
-  catch( ActiveRecord::ActiveRecordException e) {
+  catch( ActiveRecord::ActiveRecordException e ) {
     cout << "Test raised an unexpected exception:" << endl;
     cout << e.to_string() << endl;
-    result = -1;
   }
   return result;
 }
