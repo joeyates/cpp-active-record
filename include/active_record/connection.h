@@ -3,6 +3,7 @@
 
 #include <active_record/options.h>
 #include <active_record/type.h>
+#include <active_record/table.h>
 #include <active_record/table_set.h>
 #include <active_record/row.h>
 #include <active_record/query.h>
@@ -11,13 +12,21 @@
 
 namespace ActiveRecord {
 
+class Table;
+
 class Connection {
- friend class TableSet;
  public:
   Connection();
   ~Connection();
 
   void      connect( OptionsHash options );
+  bool      connected()              { db_ != NULL ? true : false; }
+
+  // Tables/Models
+  void          set_table( const string &class_name, const Table &table );
+  Table &       get_table( const string &class_name );
+  void          update_database();
+
   // Database Structure
   bool      table_exists( const string &table_name );
   // Transactions
@@ -46,6 +55,7 @@ class Connection {
   void           bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters );
 
   sqlite3 *        db_;
+  TableSet         tables_;
 };
 
 } // namespace ActiveRecord

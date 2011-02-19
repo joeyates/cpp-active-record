@@ -1,4 +1,5 @@
 #include <active_record/row.h>
+#include <active_record/type.h>
 #include <active_record/exception.h>
 #include <sstream>
 
@@ -45,6 +46,19 @@ int Row::get_integer( const string &name ) {
 
 double Row::get_floating_point( const string &name ) {
   return boost::get< double >( attributes_[ name ] );
+}
+
+const string Row::to_string() {
+  stringstream row;
+  row << "{" << endl;
+  for( AttributeHash::const_iterator it = attributes_.begin();
+       it != attributes_.end();
+       ++it ) {
+    row << it->first << ": ";
+    row << it->second << endl;
+  }
+  row << "}" << endl;
+  return row.str();
 }
 
 } // namespace ActiveRecord
