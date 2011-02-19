@@ -29,6 +29,9 @@ class Base {
  public:
   static string class_name;
   static void setup( Connection * connection ) {
+    if( connection == NULL )
+      throw ActiveRecordException( "connection is NULL", __FILE__, __LINE__ );
+
     Table td = T::table( connection );
 
     if( td.table_name().empty() ) {
