@@ -98,6 +98,8 @@ bool Connection::sqlite_initialize( string database_path_name ) {
 
 sqlite3_stmt * Connection::prepare( const string &query,
                                     const AttributeList &parameters ) {
+  if( db_ == NULL )
+    throw ActiveRecordException( "Database not connected", __FILE__, __LINE__ );
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != SQLITE_OK ) {
