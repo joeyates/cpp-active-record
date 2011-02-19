@@ -53,22 +53,22 @@ class Base {
   }
 
   Attribute& operator[]( const string &name ) {
-    if( ! loaded_ )
+    if( needs_load() )
       load();
     return attributes_[ name ];
   }
   string text( const string &name ) {
-    if( ! loaded_ )
+    if( needs_load() )
       load();
     return boost::get< string >( attributes_[ name ] );
   }
   int integer( const string &name ) {
-    if( ! loaded_ )
+    if( needs_load() )
       load();
     return boost::get< int >( attributes_[ name ] );
   }
   double floating_point( const string &name ) {
-    if( ! loaded_ )
+    if( needs_load() )
       load();
     return boost::get< double >( attributes_[ name ] );
   }
@@ -92,6 +92,10 @@ class Base {
   inline bool is_new() {
     return ( id() == ACTIVE_RECORD_UNSAVED )? true : false;
   }
+  inline bool needs_load() {
+    return ( id() != ACTIVE_RECORD_UNSAVED && ! loaded_ )? true : false;
+  }
+
 };
 
 /////////////////////////////////////////
