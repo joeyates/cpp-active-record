@@ -13,7 +13,11 @@ using namespace std;
 
 #define INVALID_LIMIT -1
 
-namespace ActiveRecord {
+#define QUERY_METHODS( klass ) \
+namespace ActiveRecord { \
+template<> std::vector< klass > Query< klass >::all(); \
+template<> QueryParametersPair  Query< klass >::query_and_parameters(); \
+}
 
 extern TableSet tables;
 
@@ -77,19 +81,6 @@ Query< T > Query< T >::order( string order ) {
   return *this;
 }
 
-// foo.all();
-template < class T >
-vector< T > Query< T >::all() {
-  QueryParametersPair query = query_and_parameters();
-  RowSet rows = tables[ T::class_name ].connection()->select_all( query.first, query.second );
-  vector< T > results;
-  for( RowSet::iterator it = rows.begin(); it != rows.end(); ++it ) {
-    T t( it->get_integer( tables[ T::class_name ].primary_key() ) );
-    results.push_back( t );
-  }
-  return results;
-}
-
 /////////////////////////////////////////////
 // Private
 
@@ -134,21 +125,6 @@ string Query< T >::limit_clause() {
   stringstream ss;
   ss << " LIMIT " << limit_;
   return ss.str();
-}
-
-template < class T >
-QueryParametersPair Query< T >::query_and_parameters() {
-  stringstream ss;
-  ss << "SELECT ";
-  ss << tables[ T::class_name ].primary_key() << " ";
-  ss << "FROM ";
-  ss << tables[ T::class_name ].table_name();
-  QueryParametersPair conditions = condition_clause();
-  ss << conditions.first;
-  ss << order_clause();
-  ss << limit_clause();
-  ss << ";";
-  return QueryParametersPair( ss.str(), conditions.second );
 }
 
 } // namespace ActiveRecord
