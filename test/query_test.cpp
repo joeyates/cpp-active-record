@@ -1,17 +1,18 @@
 #include "test_helper.h"
-
 #include <active_record/query.h>
 
 extern string database_file;
+namespace ActiveRecord {
+extern Connection connection;
+}
 
 class QueryTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    ActiveRecord::tables.clear();
-    connect_database( connection, database_file );
-    Person::setup( &connection );
-    ActiveRecord::tables.update_database();
+    connect_database( ActiveRecord::connection, database_file );
+    Person::setup( &ActiveRecord::connection );
+    ActiveRecord::connection.update_database();
     pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height) VALUES (\"Joe\", \"Yates\", 45, 1.80);" );
     pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height) VALUES (\"Joe\", \"Smith\", 45, 1.80);" );
     pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height) VALUES (\"John\", \"Smith\", 67, 1.80);" );
@@ -20,8 +21,6 @@ class QueryTest : public ::testing::Test {
   virtual void TearDown() {
     delete_database();
   }
- protected:
-  Connection connection;
 };
 
 TEST_F( QueryTest, All ) {

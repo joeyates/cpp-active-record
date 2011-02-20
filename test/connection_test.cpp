@@ -1,6 +1,7 @@
 #include "test_helper.h"
 #include <active_record/exception.h>
 #include <active_record/table.h>
+#include <active_record/query.h>
 
 extern string database_file;
 

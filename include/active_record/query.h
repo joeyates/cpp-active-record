@@ -13,13 +13,7 @@ using namespace std;
 
 #define INVALID_LIMIT -1
 
-#define QUERY_METHODS( klass ) \
-namespace ActiveRecord { \
-template<> std::vector< klass > Query< klass >::all(); \
-template<> QueryParametersPair  Query< klass >::query_and_parameters(); \
-}
-
-extern TableSet tables;
+namespace ActiveRecord {
 
 template < class T >
 class Query {
@@ -80,9 +74,14 @@ Query< T > Query< T >::order( string order ) {
   orderings_.push_back( order );
   return *this;
 }
-
-/////////////////////////////////////////////
-// Private
+template < class T >
+string Query< T >::limit_clause() {
+  if( limit_ == INVALID_LIMIT )
+    return "";
+  stringstream ss;
+  ss << " LIMIT " << limit_;
+  return ss.str();
+}
 
 template < class T >
 QueryParametersPair Query< T >::condition_clause() {
@@ -103,6 +102,39 @@ QueryParametersPair Query< T >::condition_clause() {
 }
 
 template < class T >
+QueryParametersPair Query< T >::query_and_parameters() {
+  Table t = ActiveRecord::connection.get_table( T::class_name );
+  stringstream ss;
+  ss << "SELECT ";
+  ss << t.primary_key() << " ";
+  ss << "FROM ";
+  ss << t.table_name();
+  QueryParametersPair conditions = condition_clause();
+  ss << conditions.first;
+  ss << order_clause();
+  ss << limit_clause();
+  ss << ";";
+  return QueryParametersPair( ss.str(), conditions.second );
+}
+
+template < class T >
+vector< T > Query< T >::all() {
+  QueryParametersPair query = query_and_parameters();
+  RowSet rows               = connection.select_all( query.first, query.second );
+  Table t                   = connection.get_table( T::class_name );
+  string primary_key        = t.primary_key();
+  vector< T > results;
+  for( RowSet::iterator it = rows.begin(); it != rows.end(); ++it ) {
+    T record( it->get_integer( primary_key ) );
+    results.push_back( record );
+  }
+  return results;
+}
+
+/////////////////////////////////////////////
+// Private
+
+template < class T >
 string Query< T >::order_clause() {
   if( orderings_.size() == 0 )
     return "";
@@ -115,15 +147,6 @@ string Query< T >::order_clause() {
       ss << ", ";
     ss << *it;
   }
-  return ss.str();
-}
-
-template < class T >
-string Query< T >::limit_clause() {
-  if( limit_ == INVALID_LIMIT )
-    return "";
-  stringstream ss;
-  ss << " LIMIT " << limit_;
   return ss.str();
 }
 

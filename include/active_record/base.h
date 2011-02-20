@@ -3,21 +3,19 @@
 
 #include <sstream>
 #include <active_record/exception.h>
-#include <active_record/type.h>
 #include <active_record/connection.h>
-#include <active_record/query.h>
 #include <active_record/table.h>
 
 #define ACTIVE_RECORD_UNSAVED -1
 
 #define AR_CONSTRUCTORS( klass ) \
-  klass() : ActiveRecord::Base< klass >() {} \
+  klass() : ActiveRecord::Base< klass >( ACTIVE_RECORD_UNSAVED ) {} \
   klass( int id ) : ActiveRecord::Base< klass >( id ) {} \
   klass( const GenericAttributePairList &attributes ) : ActiveRecord::Base< klass >( attributes ) {}
 
 namespace ActiveRecord {
 
-extern TableSet tables;
+extern Connection connection;
 
 /*
 GCC wants template instantiation in the same file as the declaration,
@@ -28,28 +26,17 @@ template < class T >
 class Base {
  public:
   static string class_name;
-  static void setup( Connection * connection ) {
-    if( connection == NULL )
-      throw ActiveRecordException( "connection is NULL", __FILE__, __LINE__ );
+  static void setup( Connection * connection );
 
-    Table td = T::table( connection );
-
-    if( td.table_name().empty() ) {
-      throw ActiveRecordException( "set the table name when returning Table", __FILE__, __LINE__ );
-    }
-    tables[ T::class_name ] = td;
-  }
-
-  Base() : loaded_( true ) {
-    attributes_[ tables[ T::class_name ].primary_key() ] = ACTIVE_RECORD_UNSAVED;
-  }
-  Base( int id ) : loaded_( false ) {
-    attributes_[ tables[ T::class_name ].primary_key() ] = id;
+  Base( int id = ACTIVE_RECORD_UNSAVED ) : loaded_( false ) {
+    prepare();
+    attributes_[ primary_key_ ] = id;
   }
   Base( const GenericAttributePairList &attributes ) : loaded_( true ) {
+    prepare();
     for( GenericAttributePairList::const_iterator it = attributes.begin(); it != attributes.end(); ++it )
       attributes_[ it->first ] = it->second;
-    attributes_[ tables[ T::class_name ].primary_key() ] = ACTIVE_RECORD_UNSAVED;
+    attributes_[ primary_key_ ] = ACTIVE_RECORD_UNSAVED;
   }
 
   Attribute& operator[]( const string &name ) {
@@ -79,13 +66,15 @@ class Base {
       return update();
   }
   inline int id() {
-    return boost::get< int >( attributes_[ tables[ T::class_name ].primary_key() ] );
+    return boost::get< int >( attributes_[ primary_key_ ] );
   }
 
  private:
-  static void   update_database();
   bool          loaded_;
   AttributeHash attributes_;
+  string        primary_key_;
+  string        table_name_;
+
   bool          load();
   bool          create();
   bool          update();
@@ -95,8 +84,22 @@ class Base {
   inline bool needs_load() {
     return ( id() != ACTIVE_RECORD_UNSAVED && ! loaded_ )? true : false;
   }
+  void prepare();
 
 };
+
+template < class T >
+void Base< T >::setup( Connection * connection ) {
+  if( connection == NULL )
+    throw ActiveRecordException( "connection is NULL", __FILE__, __LINE__ );
+
+  Table td = T::table( connection );
+
+  if( td.table_name().empty() ) {
+    throw ActiveRecordException( "set the table name when returning Table", __FILE__, __LINE__ );
+    }
+  connection->set_table( T::class_name, td );
+}
 
 /////////////////////////////////////////
 // Private
@@ -105,11 +108,12 @@ template < class T >
 bool Base< T >::load() {
   stringstream ss;
   ss << "SELECT * ";
-  ss << "FROM " << tables[ T::class_name ].table_name() << " ";
+  ss << "FROM " << table_name_ << " ";
   ss << "WHERE ";
-  ss << tables[ T::class_name ].primary_key() << " = ";
-  ss << attributes_[ tables[ T::class_name ].primary_key() ];
-  Row row     = tables[ T::class_name ].connection()->select_one( ss.str() );
+  ss << primary_key_ << " = ";
+  ss << attributes_[ primary_key_ ];
+
+  Row row     = connection.select_one( ss.str() );
   attributes_ = row.attributes();
   loaded_     = true;
   return true;
@@ -119,12 +123,12 @@ bool Base< T >::load() {
 template < class T >
 bool Base< T >::create() {
   stringstream ss;
-  ss << "INSERT INTO " << tables[ T::class_name ].table_name() << " ";
+  ss << "INSERT INTO " << table_name_ << " ";
   bool          columns_added = false;
   stringstream  columns, placeholders;
   AttributeList parameters;
   for( AttributeHash::iterator it = attributes_.begin(); it != attributes_.end(); ++it ) {
-    if( it->first == tables[ T::class_name ].primary_key() )
+    if( it->first == primary_key_ )
       continue;
     if( columns_added ) {
       columns      << ", ";
@@ -138,10 +142,10 @@ bool Base< T >::create() {
   if( columns_added )
     ss << "(" << columns.str() << ") VALUES (" << placeholders.str() << ")";
   else // Handle INSERT with no data
-    ss << "(" << tables[ T::class_name ].primary_key() << ") VALUES ( NULL )";
+    ss << "(" << primary_key_ << ") VALUES ( NULL )";
 
-  long new_id = tables[ T::class_name ].connection()->insert( ss.str(), parameters );
-  attributes_[ tables[ T::class_name ].primary_key() ] = ( int ) new_id;
+  long new_id = connection.insert( ss.str(), parameters );
+  attributes_[ primary_key_ ] = ( int ) new_id;
 
   return true;
 }
@@ -151,12 +155,12 @@ bool Base< T >::update() {
   if( !loaded_ )
     load();
   stringstream ss;
-  ss << "UPDATE " << tables[ T::class_name ].table_name() << " ";
+  ss << "UPDATE " << table_name_ << " ";
   bool          columns_added = false;
   stringstream  columns;
   AttributeList parameters;
   for( AttributeHash::iterator it = attributes_.begin(); it != attributes_.end(); ++it ) {
-    if( it->first == tables[ T::class_name ].primary_key() )
+    if( it->first == primary_key_ )
       continue;
     if( columns_added )
       columns << ", ";
@@ -165,9 +169,16 @@ bool Base< T >::update() {
     columns_added = true;
   }
   ss << "SET "   << columns.str() << " ";
-  ss << "WHERE " << tables[ T::class_name ].primary_key() << " = ?;";
+  ss << "WHERE " << primary_key_ << " = ?;";
   parameters.push_back( id() );
-  return tables[ T::class_name ].connection()->execute( ss.str(), parameters );
+  return connection.execute( ss.str(), parameters );
+}
+
+template < class T >
+void Base< T >::prepare() {
+  Table t      = connection.get_table( T::class_name );
+  primary_key_ = t.primary_key();
+  table_name_  = t.table_name();
 }
 
 } // namespace ActiveRecord

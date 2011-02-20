@@ -6,6 +6,8 @@
 
 using namespace ActiveRecord;
 
+//namespace ActiveRecord {
+
 class Person: public ActiveRecord::Base< Person > {
  public:
   AR_CONSTRUCTORS( Person )
@@ -18,5 +20,7 @@ class Person: public ActiveRecord::Base< Person > {
     return td;
   }
 };
+
+//}
 
 #endif // ndef _ACTIVE_RECORD_TESTS_MODELS_H_
