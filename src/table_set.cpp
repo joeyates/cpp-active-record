@@ -12,7 +12,6 @@ TableSet TableSet::schema( Connection * connection ) {
   TableSet s;
   RowSet rows = connection->select_all( "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;" );
   for( RowSet::iterator it = rows.begin(); it != rows.end(); ++it ) {
-    Type type    = it->get_type( "name" );
     string table = it->get_text( "name" );
     s[ table ]   = table_data( connection, table );
   }
