@@ -6,7 +6,6 @@
 #include <active_record/table.h>
 #include <active_record/table_set.h>
 #include <active_record/row.h>
-#include <active_record/query.h>
 #include <cstdio>
 #include <sqlite3.h>
 
