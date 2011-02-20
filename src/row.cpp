@@ -10,7 +10,13 @@ Row::Row( sqlite3_stmt *pStmt ) {
   for( int i = 0; i < count; ++i ) {
     string name = sqlite3_column_name( pStmt, i );
     const char * type = sqlite3_column_decltype( pStmt, i );
-    if( strcasecmp( type, "INTEGER" ) == 0 ) {
+    if( type == NULL ) {
+      // http://www.sqlite.org/capi3ref.html#sqlite3_column_decltype
+      // expression or subquery - skip
+      const char * value = ( const char * ) sqlite3_column_text( pStmt, i );
+      if ( value != 0 )
+        attributes_[ name ] = value;
+    } else if( strcasecmp( type, "INTEGER" ) == 0 ) {
       attributes_[ name ] = sqlite3_column_int( pStmt, i );
     } else if( strcasecmp( type, "FLOAT" ) == 0 ) {
       attributes_[ name ] = sqlite3_column_double( pStmt, i );
