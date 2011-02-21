@@ -30,6 +30,13 @@ TEST_F( QueryTest, All ) {
   ASSERT_EQ( 4, people.size() );
 }
 
+TEST_F( QueryTest, First ) {
+  Query< Person > query;
+  Person person = query.first();
+
+  assert_attribute( "Joe", person[ "name" ] );
+}
+
 TEST_F( QueryTest, Where ) {
   Query< Person > query;
   query.where( "surname = ?", "Smith" );

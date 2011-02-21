@@ -131,6 +131,20 @@ vector< T > Query< T >::all() {
   return results;
 }
 
+template < class T >
+T Query< T >::first() {
+  QueryParametersPair query = query_and_parameters();
+  Row row                   = connection.select_one( query.first, query.second );
+  if( ! row.has_data() )
+    throw ActiveRecordException( "No data", __FILE__, __LINE__ );
+
+  Table t                   = connection.get_table( T::class_name );
+  string primary_key        = t.primary_key();
+  T record( row.get_integer( primary_key ) );
+
+  return record;
+}
+
 /////////////////////////////////////////////
 // Private
 
