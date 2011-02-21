@@ -37,6 +37,12 @@ TEST_F( QueryTest, First ) {
   assert_attribute( "Joe", person[ "name" ] );
 }
 
+TEST_F( QueryTest, FirstNoData ) {
+  Query< Person > query;
+
+  ASSERT_THROW( query.where( "age = ?", 99 ).first(), ActiveRecordException );
+}
+
 TEST_F( QueryTest, Where ) {
   Query< Person > query;
   query.where( "surname = ?", "Smith" );
