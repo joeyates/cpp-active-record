@@ -19,8 +19,23 @@ Connection Connection::operator=( const Connection& other ) {
   return *this;
 }
 
+// Connection
+
 void Connection::connect( OptionsHash options ) {
   sqlite_initialize( options[ "database" ] );
+}
+
+// Tables
+void Connection::set_table( const string &class_name, const Table &table ) {
+  tables_[ class_name ] = table;
+}
+
+Table & Connection::get_table( const string &class_name ) {
+  return tables_[ class_name ];
+}
+
+void Connection::update_database() {
+  tables_.update_database();
 }
 
 bool Connection::table_exists( const string &table_name ) {
@@ -98,6 +113,8 @@ bool Connection::sqlite_initialize( string database_path_name ) {
 
 sqlite3_stmt * Connection::prepare( const string &query,
                                     const AttributeList &parameters ) {
+  if( db_ == NULL )
+    throw ActiveRecordException( "Database not connected", __FILE__, __LINE__ );
   sqlite3_stmt *ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2( db_, query.c_str(), query.size(), &ppStmt, 0 );
   if( prepare_result != SQLITE_OK ) {

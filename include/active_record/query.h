@@ -15,8 +15,6 @@ using namespace std;
 
 namespace ActiveRecord {
 
-extern TableSet tables;
-
 template < class T >
 class Query {
  public:
@@ -76,22 +74,14 @@ Query< T > Query< T >::order( string order ) {
   orderings_.push_back( order );
   return *this;
 }
-
-// foo.all();
 template < class T >
-vector< T > Query< T >::all() {
-  QueryParametersPair query = query_and_parameters();
-  RowSet rows = tables[ T::class_name ].connection()->select_all( query.first, query.second );
-  vector< T > results;
-  for( RowSet::iterator it = rows.begin(); it != rows.end(); ++it ) {
-    T t( it->get_integer( tables[ T::class_name ].primary_key() ) );
-    results.push_back( t );
-  }
-  return results;
+string Query< T >::limit_clause() {
+  if( limit_ == INVALID_LIMIT )
+    return "";
+  stringstream ss;
+  ss << " LIMIT " << limit_;
+  return ss.str();
 }
-
-/////////////////////////////////////////////
-// Private
 
 template < class T >
 QueryParametersPair Query< T >::condition_clause() {
@@ -112,6 +102,53 @@ QueryParametersPair Query< T >::condition_clause() {
 }
 
 template < class T >
+QueryParametersPair Query< T >::query_and_parameters() {
+  Table t = ActiveRecord::connection.get_table( T::class_name );
+  stringstream ss;
+  ss << "SELECT ";
+  ss << t.primary_key() << " ";
+  ss << "FROM ";
+  ss << t.table_name();
+  QueryParametersPair conditions = condition_clause();
+  ss << conditions.first;
+  ss << order_clause();
+  ss << limit_clause();
+  ss << ";";
+  return QueryParametersPair( ss.str(), conditions.second );
+}
+
+template < class T >
+vector< T > Query< T >::all() {
+  QueryParametersPair query = query_and_parameters();
+  RowSet rows               = connection.select_all( query.first, query.second );
+  Table t                   = connection.get_table( T::class_name );
+  string primary_key        = t.primary_key();
+  vector< T > results;
+  for( RowSet::iterator it = rows.begin(); it != rows.end(); ++it ) {
+    T record( it->get_integer( primary_key ) );
+    results.push_back( record );
+  }
+  return results;
+}
+
+template < class T >
+T Query< T >::first() {
+  QueryParametersPair query = query_and_parameters();
+  Row row                   = connection.select_one( query.first, query.second );
+  if( ! row.has_data() )
+    throw ActiveRecordException( "No data", __FILE__, __LINE__ );
+
+  Table t                   = connection.get_table( T::class_name );
+  string primary_key        = t.primary_key();
+  T record( row.get_integer( primary_key ) );
+
+  return record;
+}
+
+/////////////////////////////////////////////
+// Private
+
+template < class T >
 string Query< T >::order_clause() {
   if( orderings_.size() == 0 )
     return "";
@@ -125,30 +162,6 @@ string Query< T >::order_clause() {
     ss << *it;
   }
   return ss.str();
-}
-
-template < class T >
-string Query< T >::limit_clause() {
-  if( limit_ == INVALID_LIMIT )
-    return "";
-  stringstream ss;
-  ss << " LIMIT " << limit_;
-  return ss.str();
-}
-
-template < class T >
-QueryParametersPair Query< T >::query_and_parameters() {
-  stringstream ss;
-  ss << "SELECT ";
-  ss << tables[ T::class_name ].primary_key() << " ";
-  ss << "FROM ";
-  ss << tables[ T::class_name ].table_name();
-  QueryParametersPair conditions = condition_clause();
-  ss << conditions.first;
-  ss << order_clause();
-  ss << limit_clause();
-  ss << ";";
-  return QueryParametersPair( ss.str(), conditions.second );
 }
 
 } // namespace ActiveRecord

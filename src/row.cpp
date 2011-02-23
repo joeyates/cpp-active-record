@@ -1,4 +1,5 @@
 #include <active_record/row.h>
+#include <active_record/type.h>
 #include <active_record/exception.h>
 #include <sstream>
 
@@ -9,7 +10,13 @@ Row::Row( sqlite3_stmt *pStmt ) {
   for( int i = 0; i < count; ++i ) {
     string name = sqlite3_column_name( pStmt, i );
     const char * type = sqlite3_column_decltype( pStmt, i );
-    if( strcasecmp( type, "INTEGER" ) == 0 ) {
+    if( type == NULL ) {
+      // http://www.sqlite.org/capi3ref.html#sqlite3_column_decltype
+      // expression or subquery - skip
+      const char * value = ( const char * ) sqlite3_column_text( pStmt, i );
+      if ( value != 0 )
+        attributes_[ name ] = value;
+    } else if( strcasecmp( type, "INTEGER" ) == 0 ) {
       attributes_[ name ] = sqlite3_column_int( pStmt, i );
     } else if( strcasecmp( type, "FLOAT" ) == 0 ) {
       attributes_[ name ] = sqlite3_column_double( pStmt, i );
@@ -45,6 +52,19 @@ int Row::get_integer( const string &name ) {
 
 double Row::get_floating_point( const string &name ) {
   return boost::get< double >( attributes_[ name ] );
+}
+
+const string Row::to_string() {
+  stringstream row;
+  row << "{" << endl;
+  for( AttributeHash::const_iterator it = attributes_.begin();
+       it != attributes_.end();
+       ++it ) {
+    row << it->first << ": ";
+    row << it->second << endl;
+  }
+  row << "}" << endl;
+  return row.str();
 }
 
 } // namespace ActiveRecord

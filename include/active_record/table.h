@@ -14,10 +14,10 @@ class Connection;
 class Table {
  public:
   Table( Connection * connection = NULL, const string &table_name = "" )
-    : primary_key_( "id" ),
-      timestamps_( false ),
-      connection_( connection ),
-      table_name_( table_name ) {}
+    : connection_( connection ),
+      table_name_( table_name ),
+      primary_key_( "id" ),
+      timestamps_( false ) {}
 
   Connection *       connection() const                       { return connection_; }
   void               primary_key( const string &primary_key ) { primary_key_ = primary_key; }
@@ -35,8 +35,8 @@ class Table {
   void               assert_connection( const char * file, int line );
 
   Connection * connection_;
-  string       primary_key_;
   string       table_name_;
+  string       primary_key_;
   bool         timestamps_;
   Fields       fields_;
   map< string, int > has_many_;

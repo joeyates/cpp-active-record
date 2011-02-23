@@ -1,7 +1,7 @@
-#include <sstream>
-#include <active_record/exception.h>
 #include <active_record/table.h>
+#include <active_record/exception.h>
 #include <active_record/connection.h>
+#include <sstream>
 using namespace std;
 
 namespace ActiveRecord {
@@ -18,7 +18,7 @@ void Table::add_field( const Field &field ) {
 }
 
 /*
-SQLite does not implement DROP COLUMN - needs some loop jumping
+SQLite does not implement DROP COLUMN - needs some hoop jumping
 void Table::remove_field( const Field &field )
 {
   assert_connection();

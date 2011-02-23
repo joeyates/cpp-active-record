@@ -17,6 +17,7 @@ class Row {
   string get_text( const string &name );
   int    get_integer( const string &name );
   double get_floating_point( const string &name );
+  const string         to_string();
   const AttributeHash& attributes() { return attributes_; };
 
  private:

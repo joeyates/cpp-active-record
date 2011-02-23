@@ -2,6 +2,9 @@
 #include <active_record/table.h>
 
 extern string database_file;
+namespace ActiveRecord {
+extern Connection connection;
+}
 
 class TableSetTest : public ::testing::Test {
  protected:
@@ -44,19 +47,17 @@ class ReadSchemaTest : public ::testing::Test {
   virtual void SetUp() {
     delete_database();
     pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT);" );
-    connection.connect( options
-                        ( "adapter", "sqlite" )
-                        ( "database", database_file ) );
+    ActiveRecord::connection.connect( options
+                                      ( "adapter", "sqlite" )
+                                      ( "database", database_file ) );
   }
   virtual void TearDown() {
     delete_database();
   }
- protected:
-  Connection connection;
 };
 
 TEST_F( ReadSchemaTest, LoadsSchema ) {
-  TableSet schema = TableSet::schema( &connection );
+  TableSet schema = TableSet::schema( &ActiveRecord::connection );
   Table foo_table = schema[ "foo" ];
 
   ASSERT_EQ( foo_table.fields().size(), 3 );
@@ -69,17 +70,15 @@ class TableSetCreateTableTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    connect_database( connection, database_file );
+    connect_database( ActiveRecord::connection, database_file );
   }
   virtual void TearDown() {
     delete_database();
   }
- protected:
-  Connection connection;
 };
 
 TEST_F( TableSetCreateTableTest, PrimaryKeyField ) {
-  Table td( &connection, "people" );
+  Table td( &ActiveRecord::connection, "people" );
   td.primary_key( "hi" );
   td.fields().push_back( Field( "height",  ActiveRecord::floating_point ) );
 
@@ -92,7 +91,7 @@ TEST_F( TableSetCreateTableTest, PrimaryKeyField ) {
 }
 
 TEST_F( TableSetCreateTableTest, Timestamps ) {
-  Table td( &connection, "people" );
+  Table td( &ActiveRecord::connection, "people" );
   td.timestamps( true );
   td.fields().push_back( Field( "name",    ActiveRecord::text ) );
   td.fields().push_back( Field( "surname", ActiveRecord::text ) );
@@ -110,17 +109,15 @@ class TableSetUpdateDatabaseTest : public ::testing::Test {
   virtual void SetUp() {
     delete_database();
     pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER);" );
-    connect_database( connection, database_file );
+    connect_database( ActiveRecord::connection, database_file );
   }
   virtual void TearDown() {
     delete_database();
   }
- protected:
-  Connection connection;
 };
 
 TEST_F( TableSetUpdateDatabaseTest, AddsFields ) {
-  Table td( &connection, "foo" );
+  Table td( &ActiveRecord::connection, "foo" );
   td.fields().push_back( Field( "bar", ActiveRecord::integer ) );
   td.fields().push_back( Field( "baz", ActiveRecord::text ) );
   td.fields().push_back( Field( "qux", ActiveRecord::floating_point ) );

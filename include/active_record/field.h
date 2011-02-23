@@ -9,7 +9,6 @@ using namespace std;
 using namespace boost::assign;
 using namespace boost;
 
-
 namespace ActiveRecord {
 
 class Field {

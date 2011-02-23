@@ -5,6 +5,8 @@
 
 namespace ActiveRecord {
 
+class Connection;
+
 class TableSet : public map< string, Table > {
  public:
   static TableSet  schema( Connection * connection );
