@@ -19,7 +19,7 @@ class Connection {
   ~Connection();
 
   void      connect( OptionsHash options );
-  bool      connected()              { db_ != NULL ? true : false; }
+  bool      connected()              { return db_ != NULL ? true : false; }
 
   // Tables/Models
   void          set_table( const string &class_name, const Table &table );
