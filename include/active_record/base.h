@@ -12,8 +12,7 @@
 #define ACTIVE_RECORD_UNSAVED -1
 
 #define AR_CONSTRUCTORS( klass ) \
-  klass() : ActiveRecord::Base< klass >( ACTIVE_RECORD_UNSAVED ) {} \
-  klass( int id ) : ActiveRecord::Base< klass >( id ) {} \
+  klass( int id = ACTIVE_RECORD_UNSAVED ) : ActiveRecord::Base< klass >( id ) {} \
   klass( const GenericAttributePairList &attributes ) : ActiveRecord::Base< klass >( attributes ) {}
 
 #define HAS_MANY( association )
