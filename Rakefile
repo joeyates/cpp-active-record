@@ -42,7 +42,7 @@ Rake::Builder.new do | builder |
   builder.architecture         = 'x86_64'
   builder.source_search_paths  = [ 'test/base_associations_test.cpp', 'test/test_helper.cpp', 'test/main.cpp' ]
   builder.header_search_paths  = [ 'test' ]
-  builder.objects_path         = 'test/single_test'
+  builder.objects_path         = 'test/objects_single_test'
   builder.include_paths        = [ 'include', 'test' ]
   builder.library_dependencies = [ 'sqlite3', 'gtest', 'active_record_sqlite_x86_64' ]
   builder.library_paths        = [ 'objects_x86_64' ]
