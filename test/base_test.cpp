@@ -69,6 +69,19 @@ TEST_F( BaseAttributeTest, SettingAttributesUsingAttributesMethod ) {
   ASSERT_DOUBLE_EQ( 1.80, joe.floating_point( "height" ) );
 }
 
+TEST_F( BaseAttributeTest, SettingAttributesAfterConstruction ) {
+  Person joe;
+  ASSERT_NO_THROW( joe.init( attributes
+                             ( "name", "Joe" )
+                             ( "surname", "Yates" )
+                             ( "age", 45 )
+                             ( "height", 1.80 ) ) );
+
+  assert_string( "Joe", joe.text( "name" ) );
+  ASSERT_EQ( 45, joe.integer( "age" ) );
+  ASSERT_DOUBLE_EQ( 1.80, joe.floating_point( "height" ) );
+}
+
 // TODO: Setting incorrect attributes raises error
 
 class BaseLoadTest : public ::testing::Test {
