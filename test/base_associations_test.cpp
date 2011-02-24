@@ -35,6 +35,11 @@ class Book: public ActiveRecord::Base< Book > {
 template <>
 string ActiveRecord::Base<Book>::class_name = "Book";
 
+namespace ActiveRecord {
+template< class Library > template< class Book >
+vector< Book > ActiveRecord::Base< Library >::many();
+}
+
 class HasManyAssociationTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
@@ -43,40 +48,36 @@ class HasManyAssociationTest : public ::testing::Test {
     Library::setup( &connection );
     Book::setup( &connection );
     connection.update_database();
+
+    Library british( attributes
+                     ( "name", "The British Library" ) );
+    british.save();
+
+    Book lindisfarne( attributes
+                      ( "title", "The Lindisfarne Gospels" )
+                      ( "library_id", british.id() ) );
+    lindisfarne.save();
+
+    Book codex_arundel( attributes
+                        ( "title", "The Codex Arudel" )
+                        ( "library_id", british.id() ) );
+    codex_arundel.save();
+
+    Library nazionale( attributes
+                       ( "name", "La biblioteca nazionale" ) );
+    nazionale.save();
+
+    Book galileiana( attributes
+                     ( "title", "Collezione galileiana" )
+                     ( "library_id", nazionale.id() ) );
+    galileiana.save();
   }
   virtual void TearDown() {
     delete_database();
   }
 };
 
-namespace ActiveRecord {
-template< class Library > template< class Book >
-vector< Book > ActiveRecord::Base< Library >::many();
-}
-
-TEST_F( HasManyAssociationTest, Save ) {
-  Library british( attributes
-                   ( "name", "The British Library" ) );
-  british.save();
-
-  Book lindisfarne( attributes
-                    ( "title", "The Lindisfarne Gospels" )
-                    ( "library_id", british.id() ) );
-  lindisfarne.save();
-
-  Book codex_arundel( attributes
-                      ( "title", "The Codex Arudel" )
-                      ( "library_id", british.id() ) );
-  codex_arundel.save();
-
-  Library nazionale( attributes
-                     ( "name", "La biblioteca nazionale" ) );
-  nazionale.save();
-
-  Book galileiana( attributes
-                   ( "title", "Collezione galileiana" )
-                   ( "library_id", nazionale.id() ) );
-  galileiana.save();
+TEST_F( HasManyAssociationTest, Default ) {
 
   vector< Book > books = british.many< Book >();
 
