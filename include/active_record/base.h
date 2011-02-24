@@ -37,15 +37,25 @@ class Base {
   static void setup( Connection * connection );
 
   // Constructors
-  Base( int id = ACTIVE_RECORD_UNSAVED ) : loaded_( false ) {
+  Base( int id = ACTIVE_RECORD_UNSAVED ) {
     prepare();
     attributes_[ primary_key_ ] = id;
   }
-  Base( const GenericAttributePairList &attributes ) : loaded_( true ) {
+  Base( const GenericAttributePairList &attributes ) {
     prepare();
-    for( GenericAttributePairList::const_iterator it = attributes.begin(); it != attributes.end(); ++it )
+    init( attributes );
+  }
+
+  // Initialization
+  void init( const GenericAttributePairList &attributes ) {
+    for( GenericAttributePairList::const_iterator it = attributes.begin();
+         it != attributes.end();
+         ++it ) {
       attributes_[ it->first ] = it->second;
+    }
+
     attributes_[ primary_key_ ] = ACTIVE_RECORD_UNSAVED;
+    loaded_                     = true;
   }
 
   // Attributes
@@ -203,6 +213,7 @@ bool Base< T >::update() {
 
 template < class T >
 void Base< T >::prepare() {
+  loaded_        = false;
   Table t        = connection.get_table( T::class_name );
   primary_key_   = t.primary_key();
   table_name_    = t.table_name();
