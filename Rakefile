@@ -35,3 +35,17 @@ Rake::Builder.new do | builder |
   builder.target_prerequisites = [ :'rake:x86_64' ]
   builder.default_task         = [ :run ]
 end
+
+Rake::Builder.new do | builder |
+  builder.task_namespace       = :single_test
+  builder.target               = 'single_test'
+  builder.architecture         = 'x86_64'
+  builder.source_search_paths  = [ 'test/base_associations_test.cpp', 'test/test_helper.cpp', 'test/main.cpp' ]
+  builder.header_search_paths  = [ 'test' ]
+  builder.objects_path         = 'test/single_test'
+  builder.include_paths        = [ 'include', 'test' ]
+  builder.library_dependencies = [ 'sqlite3', 'gtest', 'active_record_sqlite_x86_64' ]
+  builder.library_paths        = [ 'objects_x86_64' ]
+  builder.target_prerequisites = [ :'rake:x86_64' ]
+  builder.default_task         = [ :run ]
+end
