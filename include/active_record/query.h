@@ -15,6 +15,8 @@ using namespace std;
 
 namespace ActiveRecord {
 
+extern Connection connection;
+
 template < class T >
 class Query {
  public:

@@ -1,9 +1,12 @@
 #ifndef _ACTIVE_RECORD_BASE_H_
 #define _ACTIVE_RECORD_BASE_H_
 
+#include <algorithm>
 #include <sstream>
+#include <string>
 #include <active_record/exception.h>
 #include <active_record/connection.h>
+#include <active_record/query.h>
 #include <active_record/table.h>
 
 #define ACTIVE_RECORD_UNSAVED -1
@@ -48,6 +51,15 @@ class Base {
       load();
     return attributes_[ name ];
   }
+  template< class T1 >
+  vector< T1 > many() {
+    Query< T1 > query;
+    Table t1 = connection.get_table( T1::class_name );
+    string primary_key = t1.primary_key();
+    stringstream where;
+    where << singular_name_ << "_id = ?";
+    return query.where( where.str(), id() ).all();
+  }
   string text( const string &name ) {
     if( needs_load() )
       load();
@@ -78,6 +90,7 @@ class Base {
   AttributeHash attributes_;
   string        primary_key_;
   string        table_name_;
+  string        singular_name_;
 
   bool          load();
   bool          create();
@@ -180,9 +193,11 @@ bool Base< T >::update() {
 
 template < class T >
 void Base< T >::prepare() {
-  Table t      = connection.get_table( T::class_name );
-  primary_key_ = t.primary_key();
-  table_name_  = t.table_name();
+  Table t        = connection.get_table( T::class_name );
+  primary_key_   = t.primary_key();
+  table_name_    = t.table_name();
+  singular_name_ = T::class_name;
+  std::transform( singular_name_.begin(), singular_name_.end(), singular_name_.begin(), ::tolower );
 }
 
 } // namespace ActiveRecord

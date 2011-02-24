@@ -2,6 +2,10 @@
 
 extern string database_file;
 
+namespace ActiveRecord {
+extern Connection connection;
+}
+
 class Library: public ActiveRecord::Base< Library > {
  public:
   AR_CONSTRUCTORS( Library )
@@ -35,19 +39,20 @@ class HasManyAssociationTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    ActiveRecord::tables.clear();
     connect_database( connection, database_file );
     Library::setup( &connection );
     Book::setup( &connection );
-    ActiveRecord::tables.update_database();
+    connection.update_database();
   }
   virtual void TearDown() {
     delete_database();
   }
- protected:
-  Connection connection;
 };
 
+namespace ActiveRecord {
+template< class Library > template< class Book >
+vector< Book > ActiveRecord::Base< Library >::many();
+}
 
 TEST_F( HasManyAssociationTest, Save ) {
   Library british( attributes
@@ -64,5 +69,16 @@ TEST_F( HasManyAssociationTest, Save ) {
                       ( "library_id", british.id() ) );
   codex_arundel.save();
 
-  vector< Book > books = british.many( "books" );
+  Library nazionale( attributes
+                     ( "name", "La biblioteca nazionale" ) );
+  nazionale.save();
+
+  Book galileiana( attributes
+                   ( "title", "Collezione galileiana" )
+                   ( "library_id", nazionale.id() ) );
+  galileiana.save();
+
+  vector< Book > books = british.many< Book >();
+
+  ASSERT_EQ( 2, books.size() );
 }
