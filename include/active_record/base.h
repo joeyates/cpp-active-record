@@ -32,9 +32,11 @@ so all of the code is here.
 template < class T >
 class Base {
  public:
+  // Static members
   static string class_name;
   static void setup( Connection * connection );
 
+  // Constructors
   Base( int id = ACTIVE_RECORD_UNSAVED ) : loaded_( false ) {
     prepare();
     attributes_[ primary_key_ ] = id;
@@ -46,19 +48,11 @@ class Base {
     attributes_[ primary_key_ ] = ACTIVE_RECORD_UNSAVED;
   }
 
+  // Attributes
   Attribute& operator[]( const string &name ) {
     if( needs_load() )
       load();
     return attributes_[ name ];
-  }
-  template< class T1 >
-  vector< T1 > many() {
-    Query< T1 > query;
-    Table t1 = connection.get_table( T1::class_name );
-    string primary_key = t1.primary_key();
-    stringstream where;
-    where << singular_name_ << "_id = ?";
-    return query.where( where.str(), id() ).all();
   }
   string text( const string &name ) {
     if( needs_load() )
@@ -75,6 +69,19 @@ class Base {
       load();
     return boost::get< double >( attributes_[ name ] );
   }
+
+  // Associations
+  template< class T1 >
+  vector< T1 > many() {
+    Query< T1 > query;
+    Table t1 = connection.get_table( T1::class_name );
+    string primary_key = t1.primary_key();
+    stringstream where;
+    where << singular_name_ << "_id = ?";
+    return query.where( where.str(), id() ).all();
+  }
+
+  // Other
   bool save() {
     if( is_new() )
       return create();
@@ -86,12 +93,14 @@ class Base {
   }
 
  private:
+  // Member variables
   bool          loaded_;
   AttributeHash attributes_;
   string        primary_key_;
   string        table_name_;
   string        singular_name_;
 
+  // Load/save
   bool          load();
   bool          create();
   bool          update();
@@ -101,8 +110,9 @@ class Base {
   inline bool needs_load() {
     return ( id() != ACTIVE_RECORD_UNSAVED && ! loaded_ )? true : false;
   }
-  void prepare();
 
+  // Setup
+  void prepare();
 };
 
 template < class T >
