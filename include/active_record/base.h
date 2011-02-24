@@ -15,10 +15,6 @@
   klass( int id = ACTIVE_RECORD_UNSAVED ) : ActiveRecord::Base< klass >( id ) {} \
   klass( const GenericAttributePairList &attributes ) : ActiveRecord::Base< klass >( attributes ) {}
 
-#define HAS_MANY( association )
-#define HAS_MANY_THROUGH( association, through )
-#define HAS_ONE( association )
-
 namespace ActiveRecord {
 
 extern Connection connection;
