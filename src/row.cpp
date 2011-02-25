@@ -54,7 +54,7 @@ double Row::get_floating_point( const string &name ) {
   return boost::get< double >( attributes_[ name ] );
 }
 
-const string Row::to_string() {
+string Row::to_string() const {
   stringstream row;
   row << "{" << endl;
   for( AttributeHash::const_iterator it = attributes_.begin();
@@ -65,6 +65,11 @@ const string Row::to_string() {
   }
   row << "}" << endl;
   return row.str();
+}
+
+ostream & operator<<( ostream &cout, const ActiveRecord::Row &row ) {
+  cout << row.to_string();
+  return cout;
 }
 
 } // namespace ActiveRecord

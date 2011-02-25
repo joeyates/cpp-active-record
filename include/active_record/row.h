@@ -8,6 +8,7 @@
 namespace ActiveRecord {
 
 class Row {
+  friend ostream & operator<<( ostream &cout, const Row &row );
  public:
   Row() {};
   Row( sqlite3_stmt *ppStmt );
@@ -17,7 +18,7 @@ class Row {
   string get_text( const string &name );
   int    get_integer( const string &name );
   double get_floating_point( const string &name );
-  const string         to_string();
+  string to_string() const;
   const AttributeHash& attributes() { return attributes_; };
 
  private:
