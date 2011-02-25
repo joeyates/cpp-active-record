@@ -26,58 +26,58 @@ so all of the code is here.
 
 template < class T >
 class Base {
+  enum state { blank, prepared, unsaved, loaded };
  public:
   // Static members
   static string class_name;
   static void setup( Connection * connection );
 
   // Constructors
-  Base( int id = ACTIVE_RECORD_UNSAVED ) {
-    prepare();
-    attributes_[ primary_key_ ] = id;
+  Base( int id = ACTIVE_RECORD_UNSAVED ) : state_( blank ) {
+    id_ = id;
   }
-  Base( const GenericAttributePairList &attributes ) {
-    prepare();
+  Base( const GenericAttributePairList &attributes ) : state_( blank ) {
+    id_ = ACTIVE_RECORD_UNSAVED;
     init( attributes );
   }
 
   // Initialization
   void init( const GenericAttributePairList &attributes ) {
+    ensure_prepared();
+
     for( GenericAttributePairList::const_iterator it = attributes.begin();
          it != attributes.end();
          ++it ) {
       attributes_[ it->first ] = it->second;
     }
 
-    attributes_[ primary_key_ ] = ACTIVE_RECORD_UNSAVED;
-    loaded_                     = true;
+    state_ = unsaved;
   }
 
   // Attributes
   Attribute& operator[]( const string &name ) {
-    if( needs_load() )
-      load();
+    load_unless_new();
     return attributes_[ name ];
   }
   string text( const string &name ) {
-    if( needs_load() )
-      load();
+    load_unless_new();
     return boost::get< string >( attributes_[ name ] );
   }
   int integer( const string &name ) {
-    if( needs_load() )
-      load();
+    load_unless_new();
     return boost::get< int >( attributes_[ name ] );
   }
   double floating_point( const string &name ) {
-    if( needs_load() )
-      load();
+    load_unless_new();
     return boost::get< double >( attributes_[ name ] );
   }
 
   // Associations
   template< class T1 >
-  vector< T1 > many() {
+  vector< T1 > has_many() {
+    if( state_ < loaded )
+      throw ActiveRecordException( "Instance not loaded", __FILE__, __LINE__ );
+
     Query< T1 > query;
     Table t1 = connection.get_table( T1::class_name );
     string primary_key = t1.primary_key();
@@ -88,33 +88,50 @@ class Base {
 
   // Other
   bool save() {
-    if( is_new() )
+    ensure_prepared();
+    if( id_ == ACTIVE_RECORD_UNSAVED )
       return create();
     else
       return update();
   }
   inline int id() {
-    return boost::get< int >( attributes_[ primary_key_ ] );
+    return id_;
+  }
+  bool has_data() {
+    return ( attributes_.size() > 0 ) ? true : false;
   }
 
  private:
   // Member variables
-  bool          loaded_;
+  state         state_;
   AttributeHash attributes_;
+  int           id_;
   string        primary_key_;
   string        table_name_;
   string        singular_name_;
+
+  // State
+  void ensure_prepared() {
+    if( state_ < prepared )
+      prepare();
+  }
+  void load_unless_new() {
+    ensure_prepared();
+    if( id() == ACTIVE_RECORD_UNSAVED )
+      return;
+    ensure_loaded();
+  }
+  void ensure_loaded() {
+    ensure_prepared();
+    if( state_ == loaded )
+      return;
+    load();
+  }
 
   // Load/save
   bool          load();
   bool          create();
   bool          update();
-  inline bool is_new() {
-    return ( id() == ACTIVE_RECORD_UNSAVED )? true : false;
-  }
-  inline bool needs_load() {
-    return ( id() != ACTIVE_RECORD_UNSAVED && ! loaded_ )? true : false;
-  }
 
   // Setup
   void prepare();
@@ -142,12 +159,16 @@ bool Base< T >::load() {
   ss << "SELECT * ";
   ss << "FROM " << table_name_ << " ";
   ss << "WHERE ";
-  ss << primary_key_ << " = ";
-  ss << attributes_[ primary_key_ ];
+  ss << primary_key_ << " = ?";
+  AttributeList parameters;
+  parameters.push_back( id() );
 
-  Row row     = connection.select_one( ss.str() );
+  Row row = connection.select_one( ss.str(), parameters );
+  if( ! row.has_data() )
+    throw ActiveRecordException( "Record not found", __FILE__, __LINE__ );
+
   attributes_ = row.attributes();
-  loaded_     = true;
+  state_      = loaded;
   return true;
 }
 
@@ -176,16 +197,15 @@ bool Base< T >::create() {
   else // Handle INSERT with no data
     ss << "(" << primary_key_ << ") VALUES ( NULL )";
 
-  long new_id = connection.insert( ss.str(), parameters );
-  attributes_[ primary_key_ ] = ( int ) new_id;
+  id_    = ( int ) connection.insert( ss.str(), parameters );
+  state_ = loaded;
 
   return true;
 }
 
 template < class T >
 bool Base< T >::update() {
-  if( !loaded_ )
-    load();
+  ensure_loaded();
   stringstream ss;
   ss << "UPDATE " << table_name_ << " ";
   bool          columns_added = false;
@@ -206,14 +226,20 @@ bool Base< T >::update() {
   return connection.execute( ss.str(), parameters );
 }
 
+// State
+
 template < class T >
 void Base< T >::prepare() {
-  loaded_        = false;
+  if( state_ >= prepared )
+    return;
+  if( T::class_name.empty() )
+    return;
   Table t        = connection.get_table( T::class_name );
   primary_key_   = t.primary_key();
   table_name_    = t.table_name();
   singular_name_ = T::class_name;
   std::transform( singular_name_.begin(), singular_name_.end(), singular_name_.begin(), ::tolower );
+  state_         = prepared;
 }
 
 } // namespace ActiveRecord
