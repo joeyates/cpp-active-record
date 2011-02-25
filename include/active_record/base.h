@@ -80,10 +80,22 @@ class Base {
 
     Query< T1 > query;
     Table t1 = connection.get_table( T1::class_name );
-    string primary_key = t1.primary_key();
     stringstream where;
     where << singular_name_ << "_id = ?";
     return query.where( where.str(), id() ).all();
+  }
+
+  template< class T1 >
+  T1 belongs_to() {
+    if( state_ < loaded )
+      throw ActiveRecordException( "Instance not loaded", __FILE__, __LINE__ );
+
+    Query< T1 > query;
+    Table t1 = connection.get_table( T1::class_name );
+    string primary_key = t1.primary_key();
+    stringstream where;
+    where << primary_key << " = ?";
+    return query.where( where.str(), id() ).first();
   }
 
   // Other

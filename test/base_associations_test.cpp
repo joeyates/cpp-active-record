@@ -38,7 +38,7 @@ template< class Library > template< class Book >
 vector< Book > ActiveRecord::Base< Library >::has_many();
 }
 
-class HasManyAssociationTest : public ::testing::Test {
+class AssociationTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
@@ -80,8 +80,7 @@ class HasManyAssociationTest : public ::testing::Test {
   Book    galileiana;
 };
 
-TEST_F( HasManyAssociationTest, Default ) {
-
+TEST_F( AssociationTest, HasMany ) {
   vector< Book > books = british_library.has_many< Book >();
 
   ASSERT_EQ( 2, books.size() );
@@ -93,6 +92,17 @@ template< class Book > template< class Library >
 vector< Library > ActiveRecord::Base< Book >::has_many();
 }
 
-TEST_F( HasManyAssociationTest, IncorrectAssociation ) {
+TEST_F( AssociationTest, HasManyIncorrectAssociation ) {
   ASSERT_THROW( vector< Library > books = lindisfarne.has_many< Library >(), ActiveRecordException );
+}
+
+namespace ActiveRecord {
+template< class Book > template< class Library >
+Library ActiveRecord::Base< Book >::belongs_to();
+}
+
+TEST_F( AssociationTest, BelongsTo ) {
+  Library owner = lindisfarne.belongs_to< Library >();
+
+  ASSERT_EQ( british_library.id(), owner.id() );
 }
