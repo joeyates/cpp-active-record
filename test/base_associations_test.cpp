@@ -9,11 +9,9 @@ extern Connection connection;
 class Library: public ActiveRecord::Base< Library > {
  public:
   AR_CONSTRUCTORS( Library )
-  HAS_MANY( books )
   static Table table( Connection * connection ) {
     Table td( connection, "libraries" );
     td.fields().push_back( Field( "name", ActiveRecord::text ) );
-    td.has_many( "books" );
     return td;
   }
 };
