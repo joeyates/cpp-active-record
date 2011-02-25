@@ -49,27 +49,20 @@ class AssociationTest : public ::testing::Test {
     connection.update_database();
 
     british_library.init( attributes
-                          ( "name", "The British Library" ) );
-    british_library.save();
-
+                          ( "name", "The British Library" ) ).save();
     lindisfarne.init( attributes
                       ( "title", "The Lindisfarne Gospels" )
-                      ( "library_id", british_library.id() ) );
-    lindisfarne.save();
-
+                      ( "library_id", british_library.id() ) ).save();
     codex_arundel.init( attributes
                         ( "title", "The Codex Arudel" )
-                        ( "library_id", british_library.id() ) );
-    codex_arundel.save();
+                        ( "library_id", british_library.id() ) ).save();
 
     nazionale.init( attributes
-                    ( "name", "La biblioteca nazionale" ) );
-    nazionale.save();
+                    ( "name", "La biblioteca nazionale" ) ).save();
 
     galileiana.init( attributes
                      ( "title", "Collezione galileiana" )
-                     ( "library_id", nazionale.id() ) );
-    galileiana.save();
+                     ( "library_id", nazionale.id() ) ).save();
   }
   virtual void TearDown() {
     delete_database();

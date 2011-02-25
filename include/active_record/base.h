@@ -42,7 +42,7 @@ class Base {
   }
 
   // Initialization
-  void init( const GenericAttributePairList &attributes ) {
+  Base& init( const GenericAttributePairList &attributes ) {
     ensure_prepared();
 
     for( GenericAttributePairList::const_iterator it = attributes.begin();
