@@ -35,7 +35,7 @@ string ActiveRecord::Base<Book>::class_name = "Book";
 
 namespace ActiveRecord {
 template< class Library > template< class Book >
-vector< Book > ActiveRecord::Base< Library >::many();
+vector< Book > ActiveRecord::Base< Library >::has_many();
 }
 
 class HasManyAssociationTest : public ::testing::Test {
@@ -47,25 +47,25 @@ class HasManyAssociationTest : public ::testing::Test {
     Book::setup( &connection );
     connection.update_database();
 
-    Library british( attributes
-                     ( "name", "The British Library" ) );
-    british.save();
+    british_library.init( attributes
+                          ( "name", "The British Library" ) );
+    british_library.save();
 
-    Book lindisfarne( attributes
+    lindisfarne.init( attributes
                       ( "title", "The Lindisfarne Gospels" )
-                      ( "library_id", british.id() ) );
+                      ( "library_id", british_library.id() ) );
     lindisfarne.save();
 
-    Book codex_arundel( attributes
+    codex_arundel.init( attributes
                         ( "title", "The Codex Arudel" )
-                        ( "library_id", british.id() ) );
+                        ( "library_id", british_library.id() ) );
     codex_arundel.save();
 
-    Library nazionale( attributes
-                       ( "name", "La biblioteca nazionale" ) );
+    nazionale.init( attributes
+                    ( "name", "La biblioteca nazionale" ) );
     nazionale.save();
 
-    Book galileiana( attributes
+    galileiana.init( attributes
                      ( "title", "Collezione galileiana" )
                      ( "library_id", nazionale.id() ) );
     galileiana.save();
@@ -73,11 +73,26 @@ class HasManyAssociationTest : public ::testing::Test {
   virtual void TearDown() {
     delete_database();
   }
+  Library british_library;
+  Library nazionale;
+  Book    lindisfarne;
+  Book    codex_arundel;
+  Book    galileiana;
 };
 
 TEST_F( HasManyAssociationTest, Default ) {
 
-  vector< Book > books = british.many< Book >();
+  vector< Book > books = british_library.has_many< Book >();
 
   ASSERT_EQ( 2, books.size() );
+}
+
+// Wrong association
+namespace ActiveRecord {
+template< class Book > template< class Library >
+vector< Library > ActiveRecord::Base< Book >::has_many();
+}
+
+TEST_F( HasManyAssociationTest, IncorrectAssociation ) {
+  ASSERT_THROW( vector< Library > books = lindisfarne.has_many< Library >(), ActiveRecordException );
 }
