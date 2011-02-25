@@ -8,9 +8,8 @@ using namespace ActiveRecord;
 class Greeting: public ActiveRecord::Base< Greeting > {
  public:
   AR_CONSTRUCTORS( Greeting )
-  static void table() {
-    Table td;
-    td.table_name = "greetings";
+  static Table table( Connection * connection ) {
+    Table td( connection, "greetings" );
     td.fields() = fields
                   ( "salute",   ActiveRecord::text )
                   ( "thing",    ActiveRecord::text )
@@ -22,6 +21,8 @@ class Greeting: public ActiveRecord::Base< Greeting > {
 template <>
 string ActiveRecord::Base< Greeting >::class_name = "Greeting";
 
+extern ActiveRecord::Connection ActiveRecord::connection;
+
 //////////////////////////////////////////////
 
 #include <active_record/connection.h>
@@ -29,22 +30,26 @@ string ActiveRecord::Base< Greeting >::class_name = "Greeting";
 #include <iostream>
 
 int main( int argc, const char *argv[] ) {
+  string database_file   = "greetings.sqlite3";
+  string remove_database = "rm -f " + database_file;
+  system( remove_database.c_str() );
   // Prepare
-  ActiveRecord::Connection connection;
   connection.connect( options
-    ( "adapter", "sqlite" )
-    ( "database", "greetings.sqlite3" ) );
+                      ( "adapter", "sqlite" )
+                      ( "database", database_file ) );
   Greeting::setup( &connection );
+  connection.update_database();
 
   // Insert data
-  Greeting hello, ciao;
-  hello[ "salute" ]   = "Hello";
-  hello[ "thing" ]    = "World";
-  hello[ "language" ] = "English";
+  Greeting hello( attributes
+                  ( "salute", "Hello" )
+                  ( "thing", "World" )
+                  ( "language", "English" ) );
   hello.save();
-  ciao[ "salute" ]   = "Ciao";
-  ciao[ "thing" ]    = "Mondo";
-  ciao[ "language" ] = "Italian";
+  Greeting ciao( attributes
+                 ( "salute", "Ciao" )
+                 ( "thing", "Mondo" )
+                 ( "language", "Italian" ) );
   ciao.save();
 
   vector< Greeting > greetings = ActiveRecord::Query< Greeting >()

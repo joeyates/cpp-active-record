@@ -10,14 +10,13 @@ class Person: public ActiveRecord::Base< Person > {
  public:
   AR_CONSTRUCTORS( Person )
   // Callback to set table_name and override any defaults
-  static void table() {
-    Table td;
-    td.table_name = "people";
-    td.fields     = fields
-                    ( "name", ActiveRecord::text )
-                    ( "surname", ActiveRecord::text )
-                    ( "age", ActiveRecord::integer )
-                    ( "height", ActiveRecord::floating_point );
+  static Table table( Connection * connection ) {
+    Table td( connection, "people" );
+    td.fields() = fields
+                  ( "name", ActiveRecord::text )
+                  ( "surname", ActiveRecord::text )
+                  ( "age", ActiveRecord::integer )
+                  ( "height", ActiveRecord::floating_point );
     return td;
   }
 };
@@ -26,6 +25,8 @@ class Person: public ActiveRecord::Base< Person > {
 template <>
 string ActiveRecord::Base< Person >::class_name = "Person";
 
+extern ActiveRecord::Connection ActiveRecord::connection;
+
 //////////////////////////////////////////////
 
 #include <active_record/connection.h>
@@ -33,25 +34,31 @@ string ActiveRecord::Base< Person >::class_name = "Person";
 #include <iostream>
 
 int main( int argc, const char *argv[] ) {
+  string database_file   = "people.sqlite3";
+  string remove_database = "rm -f " + database_file;
+  system( remove_database.c_str() );
   // Prepare
-  ActiveRecord::Connection connection;
   connection.connect( options
-    ( "adapter", "sqlite" )
-    ( "database", "people.sqlite3" ) );
+                      ( "adapter", "sqlite" )
+                      ( "database", database_file ) );
   Person::setup( &connection ); // Must be called for each model
+  connection.update_database();
 
   // Insert data
-  Person joe, john;
-  joe[ "name" ]    = "Joe";
-  joe[ "surname" ] = "Yates";
-  joe[ "age" ]     = 45;
-  joe[ "height" ]  = 1.80;
+  Person joe( attributes
+              ( "name", "Joe" )
+              ( "surname", "Yates" )
+              ( "age", 45 )
+              ( "height", 1.80 ) );
   joe.save();
-  john[ "name" ]    = "John";
-  john[ "surname" ] = "Smith";
-  john[ "age" ]     = 43;
-  john[ "height" ]  = 1.90;
-  john.save();
+
+  Person john;
+  john.init( attributes
+             ( "name", "John" )
+             ( "surname", "Smith" )
+             ( "age", 43 )
+             ( "height", 1.90 ) ).save();
+
   Person petra( attributes
                 ( "name",    "Petra" )
                 ( "surname", "Smith" )

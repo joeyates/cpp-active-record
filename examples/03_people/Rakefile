@@ -5,5 +5,6 @@ Rake::Builder.new do |builder|
   builder.header_search_paths  = [ '../../include/active_record' ]
   builder.objects_path         = '.'
   builder.include_paths        = [ '.', '../../include' ]
-  builder.library_dependencies = [ 'sqlite3', 'active_record_sqlite' ]
+  builder.library_paths        = [ '../../objects_i386' ]
+  builder.library_dependencies = [ 'sqlite3', 'active_record_sqlite_i386' ]
 end
