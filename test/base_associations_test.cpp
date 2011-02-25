@@ -11,7 +11,7 @@ class Library: public ActiveRecord::Base< Library > {
   AR_CONSTRUCTORS( Library )
   static Table table( Connection * connection ) {
     Table td( connection, "libraries" );
-    td.fields().push_back( Field( "name", ActiveRecord::text ) );
+    td.fields() = fields ( "name", ActiveRecord::text );
     return td;
   }
 };
@@ -24,8 +24,9 @@ class Book: public ActiveRecord::Base< Book > {
   AR_CONSTRUCTORS( Book )
   static Table table( Connection * connection ) {
     Table td( connection, "books" );
-    td.fields().push_back( Field( "title", ActiveRecord::text ) );
-    td.fields().push_back( Field( "library_id", ActiveRecord::integer ) );
+    td.fields() = fields
+                  ( "title", ActiveRecord::text )
+                  ( "library_id", ActiveRecord::integer );
     return td;
   }
 };

@@ -30,8 +30,9 @@ TEST_F( TableSetTest, TableCreation ) {
 
 TEST_F( TableSetTest, UpdateDatabase ) {
   Table td( &connection, "people" );
-  td.fields().push_back( Field( "name",    ActiveRecord::text ) );
-  td.fields().push_back( Field( "surname", ActiveRecord::text ) );
+  td.fields() = fields
+                ( "name",    ActiveRecord::text )
+                ( "surname", ActiveRecord::text );
 
   TableSet tables;
   tables[ "Person" ] = td;
@@ -93,8 +94,9 @@ TEST_F( TableSetCreateTableTest, PrimaryKeyField ) {
 TEST_F( TableSetCreateTableTest, Timestamps ) {
   Table td( &ActiveRecord::connection, "people" );
   td.timestamps( true );
-  td.fields().push_back( Field( "name",    ActiveRecord::text ) );
-  td.fields().push_back( Field( "surname", ActiveRecord::text ) );
+  td.fields() = fields
+                ( "name",    ActiveRecord::text )
+                ( "surname", ActiveRecord::text );
 
   TableSet tables;
   tables[ "Person" ] = td;
@@ -118,9 +120,10 @@ class TableSetUpdateDatabaseTest : public ::testing::Test {
 
 TEST_F( TableSetUpdateDatabaseTest, AddsFields ) {
   Table td( &ActiveRecord::connection, "foo" );
-  td.fields().push_back( Field( "bar", ActiveRecord::integer ) );
-  td.fields().push_back( Field( "baz", ActiveRecord::text ) );
-  td.fields().push_back( Field( "qux", ActiveRecord::floating_point ) );
+  td.fields() = fields
+                ( "bar", ActiveRecord::integer )
+                ( "baz", ActiveRecord::text )
+                ( "qux", ActiveRecord::floating_point );
 
   TableSet tables;
   tables[ "Foo" ] = td;

@@ -1,4 +1,5 @@
 #include "test_helper.h"
+#include <active_record/field.h>
 
 class FieldTest : public ::testing::Test {
  protected:
@@ -61,4 +62,22 @@ TEST_F( FieldsTest, DoesNotSubtractAccordingToType ) {
   Fields result = it - tf;
 
   ASSERT_EQ( 0, result.size() );
+}
+
+TEST_F( FieldsTest, FieldsMethodInCtor ) {
+  Fields abc( fields
+               ( "a", ActiveRecord::integer )
+               ( "b", ActiveRecord::text )
+               ( "c", ActiveRecord::floating_point ) );
+
+  ASSERT_EQ( 3, abc.size() );
+}
+
+TEST_F( FieldsTest, FieldsMethodInAssignment ) {
+  Fields abc = fields
+               ( "a", ActiveRecord::integer )
+               ( "b", ActiveRecord::text )
+               ( "c", ActiveRecord::floating_point );
+
+  ASSERT_EQ( 3, abc.size() );
 }

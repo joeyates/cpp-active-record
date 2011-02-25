@@ -29,6 +29,16 @@ typedef assign_detail::generic_list< Field >  GenericFieldList;
 
 class Fields : public vector< Field > {
  public:
+  Fields() {}
+
+  // Allow Fields foo( fields (...) ... );
+  Fields( const assign_detail::generic_list< Field > &other ) {
+    for( assign_detail::generic_list< Field >::const_iterator it = other.begin();
+         it != other.end();
+         ++it ) {
+      push_back( *it );
+    }
+  }
   Fields operator-( Fields &other ) {
     Fields fields;
     for( Fields::iterator it = this->begin(); it != this->end(); ++it ) {
@@ -67,7 +77,6 @@ list_of( const ActiveRecord::Field &f ) {
 
 namespace ActiveRecord {
 
-// Define a method that takes a list of OptionPairs to define options
 inline assign_detail::generic_list< Field > fields( const char * name,
                                                      ActiveRecord::Type type ) {
   return assign::list_of( Field( name, type ) );

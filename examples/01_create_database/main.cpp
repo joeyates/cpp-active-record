@@ -11,9 +11,10 @@ class Greeting: public ActiveRecord::Base< Greeting > {
   static void table() {
     Table td;
     td.table_name = "greetings";
-    td.fields.push_back( Field( "salute",   ActiveRecord::text ) );
-    td.fields.push_back( Field( "thing",    ActiveRecord::text ) );
-    td.fields.push_back( Field( "language", ActiveRecord::text ) );
+    td.fields() = fields
+                  ( "salute",   ActiveRecord::text )
+                  ( "thing",    ActiveRecord::text )
+                  ( "language", ActiveRecord::text );
     return td;
   }
 };

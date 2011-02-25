@@ -13,10 +13,11 @@ class Person: public ActiveRecord::Base< Person > {
   static void table() {
     Table td;
     td.table_name = "people";
-    td.fields.push_back( Field( "name", ActiveRecord::text ) );
-    td.fields.push_back( Field( "surname", ActiveRecord::text ) );
-    td.fields.push_back( Field( "age", ActiveRecord::integer ) );
-    td.fields.push_back( Field( "height", ActiveRecord::floating_point ) );
+    td.fields     = fields
+                    ( "name", ActiveRecord::text )
+                    ( "surname", ActiveRecord::text )
+                    ( "age", ActiveRecord::integer )
+                    ( "height", ActiveRecord::floating_point );
     return td;
   }
 };
