@@ -38,12 +38,3 @@ TEST_F( TableTest, AddFieldWithoutConnection ) {
 
   ASSERT_THROW( table.add_field( Field( "bar", ActiveRecord::text ) ), ActiveRecordException );
 }
-
-TEST_F( TableTest, HasMany ) {
-  Table td( NULL, "people" );
-  td.fields( fields
-             ( "a", ActiveRecord::integer )
-             ( "b", ActiveRecord::text )
-             ( "c", ActiveRecord::floating_point ) );
-  td.has_many( "addresses" );
-}
