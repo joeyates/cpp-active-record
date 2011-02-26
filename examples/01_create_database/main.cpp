@@ -18,10 +18,7 @@ class Greeting: public ActiveRecord::Base< Greeting > {
   }
 };
 
-template <>
-string ActiveRecord::Base< Greeting >::class_name = "Greeting";
-
-extern ActiveRecord::Connection ActiveRecord::connection;
+AR_DECLARE( Greeting )
 
 //////////////////////////////////////////////
 

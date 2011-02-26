@@ -21,11 +21,7 @@ class Person: public ActiveRecord::Base< Person > {
   }
 };
 
-// Necessary: Define the name of the table, so the class knows it's own name
-template <>
-string ActiveRecord::Base< Person >::class_name = "Person";
-
-extern ActiveRecord::Connection ActiveRecord::connection;
+AR_DECLARE( Person )
 
 //////////////////////////////////////////////
 

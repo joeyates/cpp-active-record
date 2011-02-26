@@ -2,8 +2,7 @@
 #include <sstream>
 #include <stdio.h>
 
-template <>
-string ActiveRecord::Base<Person>::class_name = "Person";
+AR_DECLARE( Person )
 
 string database_file = "./test.sqlite3";
 

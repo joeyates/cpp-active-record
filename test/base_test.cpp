@@ -2,10 +2,6 @@
 
 extern string database_file;
 
-namespace ActiveRecord {
-extern Connection connection;
-}
-
 class NoTableNameModel: public ActiveRecord::Base< NoTableNameModel > {
  public:
   AR_CONSTRUCTORS( NoTableNameModel )
@@ -15,8 +11,7 @@ class NoTableNameModel: public ActiveRecord::Base< NoTableNameModel > {
   }
 };
 
-template <>
-string ActiveRecord::Base< NoTableNameModel >::class_name = "Foo";
+AR_DECLARE( NoTableNameModel )
 
 class BaseSetupTest : public ::testing::Test {
 };

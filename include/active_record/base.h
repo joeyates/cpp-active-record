@@ -15,6 +15,12 @@
   klass( int id = ACTIVE_RECORD_UNSAVED ) : ActiveRecord::Base< klass >( id ) {} \
   klass( const GenericAttributePairList &attributes ) : ActiveRecord::Base< klass >( attributes ) {}
 
+// The model needs to know it's own name
+#define AR_DECLARE( klass ) \
+  extern ActiveRecord::Connection ActiveRecord::connection; \
+  template <> \
+  string ActiveRecord::Base< klass >::class_name = #klass;
+
 namespace ActiveRecord {
 
 extern Connection connection;

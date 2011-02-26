@@ -2,10 +2,6 @@
 
 extern string database_file;
 
-namespace ActiveRecord {
-extern Connection connection;
-}
-
 class Library: public ActiveRecord::Base< Library > {
  public:
   AR_CONSTRUCTORS( Library )
@@ -16,8 +12,7 @@ class Library: public ActiveRecord::Base< Library > {
   }
 };
 
-template <>
-string ActiveRecord::Base< Library >::class_name = "Library";
+AR_DECLARE( Library )
 
 class Book: public ActiveRecord::Base< Book > {
  public:
@@ -31,8 +26,7 @@ class Book: public ActiveRecord::Base< Book > {
   }
 };
 
-template <>
-string ActiveRecord::Base<Book>::class_name = "Book";
+AR_DECLARE( Book )
 
 namespace ActiveRecord {
 template< class Library > template< class Book >
