@@ -12,8 +12,6 @@ class Library: public ActiveRecord::Base< Library > {
   }
 };
 
-AR_DECLARE( Library )
-
 class Book: public ActiveRecord::Base< Book > {
  public:
   AR_CONSTRUCTORS( Book )
@@ -26,12 +24,11 @@ class Book: public ActiveRecord::Base< Book > {
   }
 };
 
+AR_DECLARE( Library )
 AR_DECLARE( Book )
-
-namespace ActiveRecord {
-template< class Library > template< class Book >
-vector< Book > ActiveRecord::Base< Library >::has_many();
-}
+AR_HAS_MANY( Library, Book )
+AR_HAS_MANY( Book, Library ) // Incorrect association
+AR_BELONGS_TO( Book, Library )
 
 class AssociationTest : public ::testing::Test {
  protected:
@@ -74,19 +71,8 @@ TEST_F( AssociationTest, HasMany ) {
   ASSERT_EQ( 2, books.size() );
 }
 
-// Wrong association
-namespace ActiveRecord {
-template< class Book > template< class Library >
-vector< Library > ActiveRecord::Base< Book >::has_many();
-}
-
 TEST_F( AssociationTest, HasManyIncorrectAssociation ) {
   ASSERT_THROW( vector< Library > books = lindisfarne.has_many< Library >(), ActiveRecordException );
-}
-
-namespace ActiveRecord {
-template< class Book > template< class Library >
-Library ActiveRecord::Base< Book >::belongs_to();
 }
 
 TEST_F( AssociationTest, BelongsTo ) {
