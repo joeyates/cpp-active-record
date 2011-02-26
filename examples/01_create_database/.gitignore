@@ -1,0 +1,4 @@
+greetings
+*.o
+*.mf
+.rake-builder
