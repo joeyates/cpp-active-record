@@ -68,7 +68,7 @@ int main( int argc, const char *argv[] ) {
 
   // Load by id
   Person loaded_joe( 1 );
-  cout << "Joe's surname: " << loaded_joe.text( "surname" ) << endl;
+  cout << "Joe's surname: " << loaded_joe[ "surname" ] << endl;
 
   // Update
   loaded_joe[ "surname" ] = "Bates";
@@ -83,14 +83,9 @@ int main( int argc, const char *argv[] ) {
     .all();
   int count = people.size();
   cout << "Result count: " << count << endl;
-  //for( vector< People >::iterator it = people.begin(); it != people.end(); ++it ) {
-  //  cout << it->name() << endl;
-  //}
-  for( int i = 0; i < count; ++i ) {
-    int id        = people[ i ].integer( "id" );
-    int age       = people[ i ].integer( "age" );
-    double height = people[ i ].floating_point( "height" );
-    string name   = people[ i ].text( "name" );
-    cout << name << " (" << id << "), age: " << age << ", height: " << height << endl;
+  for( vector< Person >::iterator it = people.begin(); it != people.end(); ++it ) {
+    cout << (*it)[ "name" ] << " ( #" << (*it)[ "id" ] << " ), ";
+    cout << "age: " << (*it)[ "age" ] << ", ";
+    cout << "height: " << (*it)[ "height" ] << endl;
   }
 }

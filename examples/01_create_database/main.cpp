@@ -58,7 +58,7 @@ int main( int argc, const char *argv[] ) {
     .all();
   for( int i = 0; i < greetings.size(); ++i ) {
     Greeting greeting = greetings[ i ];
-    cout << "In " << greeting.text( "language" ) << " you say: ";
-    cout << "'" << greeting.text( "salute" ) << " " << greeting.text( "thing" ) << "!'" << endl;
+    cout << "In " << greeting[ "language" ] << " you say: ";
+    cout << "'" << greeting[ "salute" ] << " " << greeting[ "thing" ] << "!'" << endl;
   }
 }
