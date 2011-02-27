@@ -16,7 +16,8 @@ class Person: public ActiveRecord::Base< Person > {
                   ( "name", ActiveRecord::text )
                   ( "surname", ActiveRecord::text )
                   ( "age", ActiveRecord::integer )
-                  ( "height", ActiveRecord::floating_point );
+                  ( "height", ActiveRecord::floating_point )
+                  ( "dob", ActiveRecord::date );
     return td;
   }
 };
@@ -45,7 +46,8 @@ int main( int argc, const char *argv[] ) {
               ( "name", "Joe" )
               ( "surname", "Yates" )
               ( "age", 45 )
-              ( "height", 1.80 ) );
+              ( "height", 1.80 )
+              ( "dob", Date::parse( "1964-01-24" ) ) );
   joe.save();
 
   Person john;
@@ -65,6 +67,7 @@ int main( int argc, const char *argv[] ) {
   // Load by id
   Person loaded_joe( 1 );
   cout << "Joe's surname: " << loaded_joe[ "surname" ] << endl;
+  cout << "Joe's date of birth: " << loaded_joe[ "dob" ] << endl;
 
   // Update
   loaded_joe[ "surname" ] = "Bates";
@@ -84,4 +87,6 @@ int main( int argc, const char *argv[] ) {
     cout << "age: " << (*it)[ "age" ] << ", ";
     cout << "height: " << (*it)[ "height" ] << endl;
   }
+
+  return 0;
 }

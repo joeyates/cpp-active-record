@@ -89,7 +89,11 @@ class Base {
     load_unless_new();
     return boost::get< double >( attributes_[ name ] );
   }
-
+  Date date( const string &name ) {
+    load_unless_new();
+    string s = boost::get< string >( attributes_[ name ] );
+    return Date::parse( s );
+  }
   // Associations
   template< class T1 >
   vector< T1 > has_many() {

@@ -159,6 +159,12 @@ void Connection::bind_parameters( sqlite3_stmt *ppStmt,
       sqlite3_bind_double( ppStmt, i + 1, value );
       break;
     }
+    case date: {
+      Date value = boost::get< Date >( *it );
+      string s   = value.to_string();
+      sqlite3_bind_text( ppStmt, i + 1, s.c_str(), s.size(), 0 );
+      break;
+    }
     default: {
       throw ActiveRecordException( "Type not implemented", __FILE__, __LINE__ );
     }

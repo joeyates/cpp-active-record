@@ -24,6 +24,10 @@ Row::Row( sqlite3_stmt *pStmt ) {
       const char * value = ( const char * ) sqlite3_column_text( pStmt, i );
       if ( value != 0 )
         attributes_[ name ] = value;
+    } else if( strcasecmp( type, "DATE" ) == 0 ) {
+      const char * value = ( const char * ) sqlite3_column_text( pStmt, i );
+      if ( value != 0 )
+        attributes_[ name ] = Date::parse( value );
     }
     else {
       stringstream error;

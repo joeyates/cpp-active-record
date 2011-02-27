@@ -5,7 +5,8 @@ namespace ActiveRecord {
 TypeNamePair type_pairs[] = {
   TypeNamePair( ActiveRecord::integer,        "INTEGER" ),
   TypeNamePair( ActiveRecord::text,           "TEXT" ),
-  TypeNamePair( ActiveRecord::floating_point, "FLOAT" )
+  TypeNamePair( ActiveRecord::floating_point, "FLOAT" ),
+  TypeNamePair( ActiveRecord::date,           "DATE" )
 };
 
 Type type_list[] = {
@@ -28,6 +29,8 @@ Type to_type( const string &type_name ) {
     return ActiveRecord::text;
   else if( type_name == "FLOAT" )
     return ActiveRecord::floating_point;
+  else if( type_name == "DATE" )
+    return ActiveRecord::date;
   else
     return ActiveRecord::unknown;
 }

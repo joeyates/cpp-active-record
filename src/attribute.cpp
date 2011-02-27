@@ -7,4 +7,9 @@ Type get_type( const Attribute & attribute ) {
   return index_to_type( type_index );
 }
 
+ostream & operator<<( ostream &cout, ActiveRecord::Date const &date ) {
+  cout << date.to_string();
+  return cout;
+}
+
 } // namespace ActiveRecord

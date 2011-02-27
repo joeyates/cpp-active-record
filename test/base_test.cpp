@@ -46,6 +46,7 @@ TEST_F( BaseAttributeTest, SettingAttributesSingly ) {
   joe[ "surname" ] = "Yates";
   joe[ "age" ]     = 45;
   joe[ "height" ]  = 1.80;
+  joe[ "dob" ]     = Date( 1965, 7, 31 );
 
   assert_string( "Joe", joe.text( "name" ) );
   ASSERT_EQ( 45, joe.integer( "age" ) );

@@ -4,7 +4,6 @@
 #include <iostream> // For debugging
 #include <map>
 #include <string>
-#include <vector>
 using namespace std;
 
 namespace ActiveRecord {
@@ -14,7 +13,8 @@ enum Type {
   unknown        = -1,
   integer        = 0,
   text           = 1,
-  floating_point = 2
+  floating_point = 2,
+  date           = 3
 };
 
 typedef pair< ActiveRecord::Type, string >    TypeNamePair;

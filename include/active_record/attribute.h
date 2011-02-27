@@ -2,18 +2,19 @@
 #define _ACTIVE_RECORD_ATTRIBUTE_H_
 
 #include <map>
-#include <active_record/type.h>
+#include <list>
 #include <boost/assign.hpp>
 #include <boost/variant.hpp>
 #include <boost/assign/list_of.hpp>
+#include <active_record/type.h>
+#include <active_record/date.h>
+
 using namespace std;
 using namespace boost::assign;
 using namespace boost;
 
-namespace ActiveRecord {
-
 // N.B. boost::variant.which() returns a 0-based index into this type list
-typedef boost::variant< int, string, double > Attribute;
+typedef boost::variant< int, string, double, Date > Attribute;
 typedef pair< string, Attribute >             AttributePair;
 typedef map< string, Attribute >              AttributeHash;
 typedef list< AttributePair >                 AttributePairList;
