@@ -15,6 +15,12 @@ TEST_F( AttributeTest, GetType ) {
   ASSERT_EQ( ActiveRecord::date,           get_type( qux ) );
 }
 
+TEST_F( AttributeTest, Equality ) {
+  Attribute foo( 13 );
+
+  ASSERT_TRUE( foo == foo );
+}
+
 TEST_F( AttributeTest, AttributesFunction ) {
   const AttributePairList attribs = attributes ( "foo", 13 )
                                                ( "bar", "hello" )

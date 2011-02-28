@@ -13,8 +13,21 @@ using namespace std;
 using namespace boost::assign;
 using namespace boost;
 
-// N.B. boost::variant.which() returns a 0-based index into this type list
-typedef boost::variant< int, string, double, Date > Attribute;
+typedef boost::variant< int, string, double, Date > AttributeType;
+
+// N.B. boost::variant.which() returns a 0-based index into the AttributeType list
+class Attribute : public AttributeType {
+ public:
+  Attribute() : AttributeType() {}
+  Attribute( int i ) : AttributeType( i ) {}
+  Attribute( const string &s ) : AttributeType( s ) {}
+  Attribute( const char *s ) : AttributeType( string( s ) ) {}
+  Attribute( double d ) : AttributeType( d ) {}
+  Attribute( Date date ) : AttributeType( date ) {}
+
+  bool operator==( const Attribute& other ) const;
+};
+
 typedef pair< string, Attribute >             AttributePair;
 typedef map< string, Attribute >              AttributeHash;
 typedef list< AttributePair >                 AttributePairList;
