@@ -3,8 +3,8 @@
 
 namespace ActiveRecord {
 
-Type get_type( const Attribute & attribute ) {
-  int type_index = attribute.which();
+Type Attribute::type() const {
+  int type_index = which();
   return index_to_type( type_index );
 }
 

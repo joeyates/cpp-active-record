@@ -25,6 +25,7 @@ class Attribute : public AttributeType {
   Attribute( double d ) : AttributeType( d ) {}
   Attribute( Date date ) : AttributeType( date ) {}
 
+  Type type() const;
   bool operator==( const Attribute& other ) const;
 };
 
@@ -34,8 +35,6 @@ typedef list< AttributePair >                 AttributePairList;
 typedef list< Attribute >                     AttributeList;
 typedef pair< string, AttributeList >         QueryParametersPair;
 typedef assign_detail::generic_list< AttributePair > GenericAttributePairList;
-
-Type get_type( const Attribute & attribute );
 
 } // namespace ActiveRecord
 

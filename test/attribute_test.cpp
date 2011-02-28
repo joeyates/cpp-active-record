@@ -9,10 +9,10 @@ TEST_F( AttributeTest, GetType ) {
   Attribute baz( 1.8 );
   Attribute qux( Date( 1999, 8, 29 ) );
 
-  ASSERT_EQ( ActiveRecord::integer,        get_type( foo ) );
-  ASSERT_EQ( ActiveRecord::text,           get_type( bar ) );
-  ASSERT_EQ( ActiveRecord::floating_point, get_type( baz ) );
-  ASSERT_EQ( ActiveRecord::date,           get_type( qux ) );
+  ASSERT_EQ( ActiveRecord::integer,        foo.type() );
+  ASSERT_EQ( ActiveRecord::text,           bar.type() );
+  ASSERT_EQ( ActiveRecord::floating_point, baz.type() );
+  ASSERT_EQ( ActiveRecord::date,           qux.type() );
 }
 
 TEST_F( AttributeTest, Equality ) {

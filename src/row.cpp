@@ -38,11 +38,11 @@ Row::Row( sqlite3_stmt *pStmt ) {
 }
 
 Type Row::get_type( const string &name ) {
-  return ActiveRecord::get_type( attributes_[ name ] );
+  return attributes_[ name ].type();
 }
 
 bool Row::is_type( const string &name, Type type ) {
-  Type actual = ActiveRecord::get_type( attributes_[ name ] );
+  Type actual = attributes_[ name ].type();
   return ( actual == type )? true : false;
 }
 
