@@ -40,7 +40,7 @@ Rake::Builder.new do | builder |
   builder.task_namespace       = :single_test
   builder.target               = 'single_test'
   builder.architecture         = 'x86_64'
-  builder.source_search_paths  = [ 'test/date_test.cpp', 'test/test_helper.cpp', 'test/main.cpp' ]
+  builder.source_search_paths  = [ 'test/table_set_test.cpp', 'test/test_helper.cpp', 'test/main.cpp' ]
   builder.header_search_paths  = [ 'test' ]
   builder.objects_path         = 'test/objects_single_test'
   builder.include_paths        = [ 'include', 'test' ]

@@ -91,8 +91,7 @@ class Base {
   }
   Date date( const string &name ) {
     load_unless_new();
-    string s = boost::get< string >( attributes_[ name ] );
-    return Date::parse( s );
+    return boost::get< Date >( attributes_[ name ] );
   }
   // Associations
   template< class T1 >

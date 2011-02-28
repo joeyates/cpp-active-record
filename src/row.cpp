@@ -1,7 +1,7 @@
 #include <active_record/row.h>
+#include <sstream>
 #include <active_record/type.h>
 #include <active_record/exception.h>
-#include <sstream>
 
 namespace ActiveRecord {
 
@@ -56,6 +56,10 @@ int Row::get_integer( const string &name ) {
 
 double Row::get_floating_point( const string &name ) {
   return boost::get< double >( attributes_[ name ] );
+}
+
+Date Row::get_date( const string &name ) {
+  return boost::get< Date >( attributes_[ name ] );
 }
 
 string Row::to_string() const {

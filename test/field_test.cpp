@@ -66,18 +66,20 @@ TEST_F( FieldsTest, DoesNotSubtractAccordingToType ) {
 
 TEST_F( FieldsTest, FieldsMethodInCtor ) {
   Fields abc( fields
-               ( "a", ActiveRecord::integer )
-               ( "b", ActiveRecord::text )
-               ( "c", ActiveRecord::floating_point ) );
+              ( "a", ActiveRecord::integer )
+              ( "b", ActiveRecord::text )
+              ( "c", ActiveRecord::floating_point )
+              ( "d", ActiveRecord::date ) );
 
-  ASSERT_EQ( 3, abc.size() );
+  ASSERT_EQ( 4, abc.size() );
 }
 
 TEST_F( FieldsTest, FieldsMethodInAssignment ) {
   Fields abc = fields
                ( "a", ActiveRecord::integer )
                ( "b", ActiveRecord::text )
-               ( "c", ActiveRecord::floating_point );
+               ( "c", ActiveRecord::floating_point )
+               ( "d", ActiveRecord::date );
 
-  ASSERT_EQ( 3, abc.size() );
+  ASSERT_EQ( 4, abc.size() );
 }

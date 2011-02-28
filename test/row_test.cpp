@@ -5,8 +5,9 @@ extern string database_file;
 class RowTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
-    pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT);" );
-    pipe_to_sqlite( database_file, "INSERT INTO foo (bar, baz, qux) VALUES (123, \"hello\", 1.5);" );
+    delete_database();
+    pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE);" );
+    pipe_to_sqlite( database_file, "INSERT INTO foo (bar, baz, qux, derp) VALUES (123, \"hello\", 1.5, \"1971-07-02\");" );
     sqlite3_open( database_file.c_str(), &db );
   }
   virtual void TearDown() {
@@ -32,6 +33,7 @@ TEST_F( RowTest, GetType ) {
   ASSERT_EQ( ActiveRecord::integer,        row.get_type( "bar" ) );
   ASSERT_EQ( ActiveRecord::text,           row.get_type( "baz" ) );
   ASSERT_EQ( ActiveRecord::floating_point, row.get_type( "qux" ) );
+  ASSERT_EQ( ActiveRecord::date,           row.get_type( "derp" ) );
 }
 
 TEST_F( RowTest, IsType ) {
@@ -73,4 +75,14 @@ TEST_F( RowTest, GetFloatingPoint ) {
   Row row( ppStmt );
 
   ASSERT_EQ( 1.5, row.get_floating_point( "qux" ) );
+}
+
+TEST_F( RowTest, GetDate ) {
+  char query[] = "SELECT * FROM foo";
+  sqlite3_prepare_v2( db, query, strlen(query), &ppStmt, 0 );
+  sqlite3_step( ppStmt );
+
+  Row row( ppStmt );
+
+  assert_attribute( Date( 1971, 07, 02 ), row.get_date( "derp" ) );
 }

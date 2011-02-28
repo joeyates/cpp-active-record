@@ -17,9 +17,9 @@ class Book: public ActiveRecord::Base< Book > {
   AR_CONSTRUCTORS( Book )
   static Table table( Connection * connection ) {
     Table td( connection, "books" );
-    td.fields() = fields
-                  ( "title", ActiveRecord::text )
-                  ( "library_id", ActiveRecord::integer );
+    td.fields() = fields ( "title", ActiveRecord::text )
+                         ( "date", ActiveRecord::date )
+                         ( "library_id", ActiveRecord::integer );
     return td;
   }
 };
@@ -45,7 +45,8 @@ class AssociationTest : public ::testing::Test {
                       ( "title", "The Lindisfarne Gospels" )
                       ( "library_id", british_library.id() ) ).save();
     codex_arundel.init( attributes
-                        ( "title", "The Codex Arudel" )
+                        ( "title", "The Codex Arundel" )
+                        ( "date", "1518-01-01" )
                         ( "library_id", british_library.id() ) ).save();
 
     nazionale.init( attributes

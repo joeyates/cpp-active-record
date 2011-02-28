@@ -47,7 +47,7 @@ class ReadSchemaTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT);" );
+    pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE);" );
     ActiveRecord::connection.connect( options
                                       ( "adapter", "sqlite" )
                                       ( "database", database_file ) );
@@ -61,10 +61,11 @@ TEST_F( ReadSchemaTest, LoadsSchema ) {
   TableSet schema = TableSet::schema( &ActiveRecord::connection );
   Table foo_table = schema[ "foo" ];
 
-  ASSERT_EQ( foo_table.fields().size(), 3 );
-  assert_field( foo_table, 0, "bar", ActiveRecord::integer );
-  assert_field( foo_table, 1, "baz", ActiveRecord::text );
-  assert_field( foo_table, 2, "qux", ActiveRecord::floating_point );
+  ASSERT_EQ( foo_table.fields().size(), 4 );
+  assert_field( foo_table, 0, "bar",  ActiveRecord::integer );
+  assert_field( foo_table, 1, "baz",  ActiveRecord::text );
+  assert_field( foo_table, 2, "qux",  ActiveRecord::floating_point );
+  assert_field( foo_table, 3, "derp", ActiveRecord::date );
 }
 
 class TableSetCreateTableTest : public ::testing::Test {
@@ -121,14 +122,15 @@ class TableSetUpdateDatabaseTest : public ::testing::Test {
 TEST_F( TableSetUpdateDatabaseTest, AddsFields ) {
   Table td( &ActiveRecord::connection, "foo" );
   td.fields() = fields
-                ( "bar", ActiveRecord::integer )
-                ( "baz", ActiveRecord::text )
-                ( "qux", ActiveRecord::floating_point );
+                ( "bar",  ActiveRecord::integer )
+                ( "baz",  ActiveRecord::text )
+                ( "qux",  ActiveRecord::floating_point )
+                ( "derp", ActiveRecord::date );
 
   TableSet tables;
   tables[ "Foo" ] = td;
   tables.update_database();
 
   string sql = table_definition( connection, "foo" );
-  assert_string( "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT)", sql );
+  assert_string( "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE)", sql );
 }
