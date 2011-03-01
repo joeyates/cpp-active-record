@@ -40,6 +40,12 @@ TEST_F( DateTest, CtorParse ) {
   ASSERT_EQ(   24, d.day() );
 }
 
+TEST_F( DateTest, ToString ) {
+  Date d( 2001, 9, 11 );
+
+  assert_string( "2001-09-11", d.to_string() );
+}
+
 TEST_F( DateTest, StreamOutput ) {
   Date d( 2001, 9, 11 );
   stringstream date_out;
