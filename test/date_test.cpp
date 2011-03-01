@@ -13,16 +13,13 @@ TEST_F( DateTest, ParsesOk ) {
   ASSERT_NO_THROW( { Date::parse( "1964-01-24" ); } );
 }
 
-/*
 TEST_F( DateTest, CtorDefault ) {
   Date d;
 
-  ASSERT_EQ( 2001, d.year() );
-  ASSERT_EQ(    9, d.month() );
-  ASSERT_EQ(   11, d.day() );
-  ASSERT_THROW
+  ASSERT_EQ( 1970, d.year() );
+  ASSERT_EQ(    1, d.month() );
+  ASSERT_EQ(    1, d.day() );
 }
-*/
 
 TEST_F( DateTest, CtorParts ) {
   Date d( 2001, 9, 11 );
