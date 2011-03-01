@@ -59,6 +59,7 @@ TEST_F( DateTest, Compare ) {
   Date d2( 2001, 9, 11 );
   Date d3( 2099, 7,  3 );
 
+  ASSERT_TRUE( d1 == d1 );
   ASSERT_TRUE( d1 == d2 );
   ASSERT_FALSE( d1 == d3 );
 }
