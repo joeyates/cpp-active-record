@@ -18,15 +18,19 @@ typedef boost::variant< int, string, double, Date > AttributeType;
 // N.B. boost::variant.which() returns a 0-based index into the AttributeType list
 class Attribute : public AttributeType {
  public:
-  Attribute() : AttributeType() {}
-  Attribute( int i ) : AttributeType( i ) {}
-  Attribute( const string &s ) : AttributeType( s ) {}
-  Attribute( const char *s ) : AttributeType( string( s ) ) {}
-  Attribute( double d ) : AttributeType( d ) {}
-  Attribute( Date date ) : AttributeType( date ) {}
+  Attribute() :                  AttributeType(), initialised_( false ) {}
+  Attribute( int i ) :           AttributeType( i ), initialised_( true ) {}
+  Attribute( const string &s ) : AttributeType( s ), initialised_( true ) {}
+  Attribute( const char *s ) :   AttributeType( string( s ) ), initialised_( true ) {}
+  Attribute( double d ) :        AttributeType( d ), initialised_( true ) {}
+  Attribute( Date date ) :       AttributeType( date ), initialised_( true ) {}
 
+  bool has_data() const { return initialised_; }
   Type type() const;
   bool operator==( const Attribute& other ) const;
+
+ private:
+  bool initialised_;
 };
 
 typedef pair< string, Attribute >             AttributePair;
