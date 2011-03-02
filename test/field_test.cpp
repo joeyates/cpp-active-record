@@ -37,7 +37,16 @@ TEST_F( FieldTest, SubtractsAccordingToName ) {
   ASSERT_STREQ( "a", ab[ 0 ].name().c_str() );
   ASSERT_STREQ( "b", ab[ 1 ].name().c_str() );
 }
+/*
+TEST_F( FieldTest, Ostream ) {
+  stringstream field_out;
+  Field a( "a", ActiveRecord::integer );
 
+  field_out << a;
+
+  assert_string( "", field_out.str() );
+}
+*/
 class FieldsTest : public ::testing::Test {
  protected:
   virtual void SetUp() {

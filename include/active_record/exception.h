@@ -7,6 +7,12 @@
 using namespace std;
 
 namespace ActiveRecord {
+class ActiveRecordException;
+}
+
+ostream & operator<<( ostream &cout, const ActiveRecord::ActiveRecordException &e );
+
+namespace ActiveRecord {
 
 class ActiveRecordException {
  public:

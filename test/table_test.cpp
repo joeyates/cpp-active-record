@@ -38,3 +38,16 @@ TEST_F( TableTest, AddFieldWithoutConnection ) {
 
   ASSERT_THROW( table.add_field( Field( "bar", ActiveRecord::text ) ), ActiveRecordException );
 }
+
+TEST_F( TableTest, Ostream ) {
+  stringstream table_out;
+  Table td( NULL, "people" );
+  td.fields( fields
+             ( "a", ActiveRecord::integer )
+             ( "b", ActiveRecord::text )
+             ( "c", ActiveRecord::floating_point ) );
+
+  table_out << td;
+
+  assert_string( "people: a INTEGER, b TEXT, c FLOAT", table_out.str() );
+}

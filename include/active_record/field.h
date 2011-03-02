@@ -10,8 +10,15 @@ using namespace boost::assign;
 using namespace boost;
 
 namespace ActiveRecord {
+class Field;
+}
+
+ostream & operator<<( ostream &cout, const ActiveRecord::Field& field );
+
+namespace ActiveRecord {
 
 class Field {
+ friend ostream & ::operator<<( ostream &cout, const Field& field );
  public:
   Field( const string &name, ActiveRecord::Type type )
     : name_( name ),

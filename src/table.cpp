@@ -44,3 +44,15 @@ void Table::assert_connection( const char * file, int line ) {
 }
 
 } // namespace ActiveRecord
+
+ostream & operator<<( ostream &cout, const ActiveRecord::Table &table ) {
+  cout << table.table_name_ << ": ";
+  for( ActiveRecord::Fields::const_iterator it = table.fields_.begin();
+       it != table.fields_.end();
+       ++it ) {
+    if( it != table.fields_.begin() )
+      cout << ", ";
+    cout << *it;
+  }
+  return cout;
+}

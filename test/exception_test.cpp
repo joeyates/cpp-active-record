@@ -20,3 +20,12 @@ TEST_F( ExceptionTest, MessageOnly ) {
 
   assert_string( "foo", e.to_string() );
 }
+
+TEST_F( ExceptionTest, Ostream ) {
+  stringstream error_out;
+  ActiveRecordException e( "foo", "/path/to/file.cpp", 999 );
+
+  error_out << e;
+
+  assert_string( "/path/to/file.cpp:999: foo", error_out.str() );
+}

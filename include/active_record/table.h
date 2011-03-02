@@ -8,10 +8,17 @@
 using namespace std;
 
 namespace ActiveRecord {
+class Table;
+}
+
+ostream & operator<<( ostream &cout, const ActiveRecord::Table &table );
+
+namespace ActiveRecord {
 
 class Connection;
 
 class Table {
+ friend ostream & ::operator<<( ostream &cout, const Table & e );
  public:
   Table( Connection * connection = NULL, const string &table_name = "" )
     : connection_( connection ),
