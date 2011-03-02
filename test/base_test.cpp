@@ -147,6 +147,38 @@ TEST_F( BaseLoadTest, HasDataWithAttributes ) {
   ASSERT_TRUE( joe.has_data() );
 }
 
+class BaseOperators : public ::testing::Test {
+ protected:
+  virtual void SetUp() {
+    connect_database( ActiveRecord::connection, database_file );
+    Person::setup( &ActiveRecord::connection );
+    ActiveRecord::connection.update_database();
+    pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height, dob) VALUES (\"Cherilyn\", \"Sarkisian\", 64, 1.68, \"1946-05-20\");" );
+    pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height, dob) VALUES (\"Christina\", \"Aguilera\", 30, 1.56, \"1980-12-18\");" );
+  }
+  virtual void TearDown() {
+    delete_database();
+  }
+ protected:
+  Connection connection;
+};
+
+TEST_F( BaseOperators, Equality ) {
+  Person cher( 1 );
+  Person christina( 2 );
+
+  ASSERT_TRUE( cher == cher );
+  ASSERT_FALSE( cher == christina );
+}
+
+TEST_F( BaseOperators, UpdatedEquality ) {
+  Person cher1( 1 );
+  Person cher2( 1 );
+  cher2[ "name" ] = "cher";
+
+  ASSERT_FALSE( cher1 == cher2 );
+}
+
 class BaseSaveTest : public ::testing::Test {
  protected:
   virtual void SetUp() {

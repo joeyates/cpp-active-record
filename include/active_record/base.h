@@ -127,11 +127,27 @@ class Base {
     else
       return update();
   }
-  inline int id() {
+  inline int id() const {
     return id_;
   }
-  bool has_data() {
+  bool has_data() const {
     return ( attributes_.size() > 0 ) ? true : false;
+  }
+  // No need to load either instance:
+  // if states and attributes are the same,
+  // we accept they're the same
+  bool operator==( const Base& other ) const {
+    if( id() != other.id() )
+      return false;
+    if( state_ != other.state_ )
+      return false;
+    if( attributes_.size() != other.attributes_.size() )
+      return false;
+    for( AttributeHash::const_iterator it = attributes_.begin();
+         it != attributes_.end();
+         ++it ) {
+    }
+    return true;
   }
 
  private:
