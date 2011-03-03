@@ -215,6 +215,12 @@ string Base< T >::to_string() const {
   return ss.str();
 }
 
+template< class T >
+ostream & operator<<( ostream &cout, const ActiveRecord::Base< T >& record ) {
+  cout << record.to_string();
+  return cout;
+}
+
 /////////////////////////////////////////
 // Private
 

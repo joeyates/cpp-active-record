@@ -185,6 +185,15 @@ TEST_F( BaseOperators, ToS ) {
   assert_string( "Person: age 64, dob 1946-05-20, height 1.68, id 1, name Cherilyn, surname Sarkisian", cher.to_string() );
 }
 
+TEST_F( BaseOperators, StreamOutput ) {
+  Person cher( 1 );
+  stringstream cher_out;
+
+  cher_out << cher;
+
+  assert_string( "Person: age 64, dob 1946-05-20, height 1.68, id 1, name Cherilyn, surname Sarkisian", cher_out.str() );
+}
+
 class BaseSaveTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
