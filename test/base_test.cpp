@@ -179,6 +179,12 @@ TEST_F( BaseOperators, UpdatedEquality ) {
   ASSERT_FALSE( cher1 == cher2 );
 }
 
+TEST_F( BaseOperators, ToS ) {
+  Person cher( 1 );
+
+  assert_string( "Person: age 64, dob 1946-05-20, height 1.68, id 1, name Cherilyn, surname Sarkisian", cher.to_string() );
+}
+
 class BaseSaveTest : public ::testing::Test {
  protected:
   virtual void SetUp() {

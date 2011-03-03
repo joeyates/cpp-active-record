@@ -149,6 +149,7 @@ class Base {
     }
     return true;
   }
+  string to_string() const;
 
  private:
   // Member variables
@@ -197,6 +198,21 @@ void Base< T >::setup( Connection * connection ) {
     throw ActiveRecordException( "set the table name when returning Table", __FILE__, __LINE__ );
     }
   connection->set_table( T::class_name, td );
+}
+
+template< class T >
+string Base< T >::to_string() const {
+  const_cast<Base< T > *>( this )->load_unless_new();
+  stringstream ss;
+  ss << T::class_name << ": ";
+  for( AttributeHash::const_iterator it = attributes_.begin();
+       it != attributes_.end();
+       ++it ) {
+    if( it != attributes_.begin() )
+      ss << ", ";
+    ss << it->first << " " << it->second;
+  }
+  return ss.str();
 }
 
 /////////////////////////////////////////
