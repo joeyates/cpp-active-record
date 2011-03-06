@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <time.h>
+#include <stdio.h>
 #include <active_record/exception.h>
 
 using namespace std;
