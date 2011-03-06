@@ -42,7 +42,7 @@ Rake::Builder.new do | builder |
   builder.header_search_paths  = [ 'test' ]
   builder.objects_path         = 'test/objects_test'
   builder.include_paths        = [ 'include', 'test' ]
-  builder.library_dependencies = [ 'sqlite3', 'gtest', 'boost_date_time', 'active_record_sqlite_x86_64' ]
+  builder.library_dependencies = [ 'sqlite3', 'gtest', 'active_record_sqlite_x86_64' ]
   builder.library_paths        = [ 'objects_x86_64', '/opt/local/lib' ]
   builder.target_prerequisites = [ :'rake:x86_64' ]
   builder.default_task         = [ :run ]
@@ -56,7 +56,7 @@ Rake::Builder.new do | builder |
   builder.header_search_paths  = [ 'test' ]
   builder.objects_path         = 'test/objects_single_test'
   builder.include_paths        = [ 'include', 'test' ]
-  builder.library_dependencies = [ 'sqlite3', 'gtest', 'boost_date_time', 'active_record_sqlite_x86_64' ]
+  builder.library_dependencies = [ 'sqlite3', 'gtest', 'active_record_sqlite_x86_64' ]
   builder.library_paths        = [ 'objects_x86_64', '/opt/local/lib' ]
   builder.target_prerequisites = [ :'rake:x86_64' ]
   builder.default_task         = [ :run ]
