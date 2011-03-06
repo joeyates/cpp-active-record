@@ -18,7 +18,7 @@
  $ git clone git://github.com/joeyates/cpp-active-record.git
  $ cd cpp-active-record
 
-Create '.rake-builder':
+You may need to create/edit '.rake-builder':
 
  ---
  :rake_builder: 
