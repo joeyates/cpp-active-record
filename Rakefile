@@ -23,6 +23,18 @@ Rake::Builder.new do | builder |
 end
 
 Rake::Builder.new do | builder |
+  builder.task_namespace       = :x86_64_profiled
+  builder.target               = 'libactive_record_sqlite_x86_64_profiled.a'
+  builder.architecture         = 'x86_64'
+  builder.source_search_paths  = [ 'src' ]
+  builder.header_search_paths  = [ 'include/**/*.h' ]
+  builder.compilation_options  = [ '-pg' ]
+  builder.objects_path         = 'objects_x86_64_profiled'
+  builder.include_paths        = [ 'include' ]
+  builder.library_dependencies = [ 'sqlite3' ]
+end
+
+Rake::Builder.new do | builder |
   builder.task_namespace       = :test
   builder.target               = 'active_record_test'
   builder.architecture         = 'x86_64'
