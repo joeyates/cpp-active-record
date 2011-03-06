@@ -19,6 +19,7 @@ class Connection {
   ~Connection();
 
   void      connect( OptionsHash options );
+  void      disconnect();
   bool      connected()              { return db_ != NULL ? true : false; }
 
   // Tables/Models

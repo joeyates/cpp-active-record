@@ -9,10 +9,7 @@ Connection::Connection() : db_( NULL) {}
 Connection::Connection( const Connection& other ) {}
 
 Connection::~Connection() {
-  if( db_ != NULL) {
-    sqlite3_close( db_ );
-    db_ = NULL;
-  }
+  disconnect();
 }
 
 Connection Connection::operator=( const Connection& other ) {
@@ -23,6 +20,13 @@ Connection Connection::operator=( const Connection& other ) {
 
 void Connection::connect( OptionsHash options ) {
   sqlite_initialize( options[ "database" ] );
+}
+
+void Connection::disconnect() {
+  if( db_ != NULL) {
+    sqlite3_close( db_ );
+    db_ = NULL;
+  }
 }
 
 // Tables
