@@ -4,6 +4,9 @@
  $ gem install rake-builder
 
 * Boost
+** Linux - Ubuntu
+ $ sudo apt-get install libboost-all-dev
+
 ** Mac OS X with MacPorts:
  $ sudo port install boost
 
