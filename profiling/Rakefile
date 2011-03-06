@@ -1,0 +1,11 @@
+require 'rake/builder'
+
+Rake::Builder.new do | builder |
+  builder.target               = '100000_greetings'
+  builder.architecture         = 'x86_64'
+  builder.compilation_options  = [ '-pg' ]
+  builder.include_paths        = [ '../include' ]
+  builder.linker_options       = [ '-pg' ]
+  builder.library_dependencies = [ 'sqlite3', 'active_record_sqlite_x86_64_profiled' ]
+  builder.library_paths        = [ '../objects_x86_64_profiled' ]
+end
