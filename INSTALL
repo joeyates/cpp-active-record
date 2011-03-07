@@ -27,6 +27,8 @@ You may need to create/edit '.rake-builder':
  :include_paths: 
  - /path/containing/boost/include/directory
  - /path/containing/c++/include/directory
+ :library_paths:
+ - /path/containing/libgtest.so
 
 Copy the file to '.rake-builder.test'
 
