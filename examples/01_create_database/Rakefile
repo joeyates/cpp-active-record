@@ -1,11 +1,11 @@
 require 'rake/builder'
 
 Rake::Builder.new do |builder|
-  builder.architecture         = :i386
+  builder.architecture         = :x86_64
   builder.target               = 'greetings'
   builder.header_search_paths  = [ '../../include/active_record' ]
   builder.objects_path         = '.'
   builder.include_paths        = [ '.', '../../include' ]
-  builder.library_paths        = [ '../../objects_i386' ]
-  builder.library_dependencies = [ 'sqlite3', 'active_record_sqlite_i386' ]
+  builder.library_paths        = [ '../../objects_x86_64' ]
+  builder.library_dependencies = [ 'sqlite3', 'active_record_sqlite_x86_64' ]
 end
