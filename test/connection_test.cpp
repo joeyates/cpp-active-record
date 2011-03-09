@@ -110,6 +110,8 @@ TEST_F( ConnectionQueryTest, SelectAll ) {
 
   RowSet rows = connection.select_all( "SELECT bar FROM foo ORDER BY bar;" );
 
-  ASSERT_EQ( 42, rows[ 0 ].get_integer( "bar" ) );
-  ASSERT_EQ( 99, rows[ 1 ].get_integer( "bar" ) );
+  RowSet::iterator it = rows.begin();
+  ASSERT_EQ( 42, it->get_integer( "bar" ) );
+  ++it;
+  ASSERT_EQ( 99, it->get_integer( "bar" ) );
 }
