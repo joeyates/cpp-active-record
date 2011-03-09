@@ -3,7 +3,6 @@
 
 #include <map>
 #include <list>
-#include <vector>
 #include <string>
 #include <iostream>
 #include <boost/assign.hpp>
@@ -36,7 +35,7 @@ class Row {
   AttributeHash attributes_;
 };
 
-typedef vector< Row > RowSet;
+typedef list< Row > RowSet;
 
 } // namespace ActiveRecord
 
