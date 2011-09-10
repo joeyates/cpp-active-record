@@ -27,7 +27,7 @@ string table_definition( Connection &connection, const string &table_name ) {
   if( rows.size() == 0 )
     return "";
 
-  return rows[ 0 ].get_text( "sql" );
+  return rows.front().get_text( "sql" );
 }
 
 void pipe_to_sqlite( const string &database_file,

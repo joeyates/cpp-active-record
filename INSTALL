@@ -4,6 +4,9 @@
  $ gem install rake-builder
 
 * Boost
+** Linux - Ubuntu
+ $ sudo apt-get install libboost-all-dev
+
 ** Mac OS X with MacPorts:
  $ sudo port install boost
 
@@ -15,7 +18,7 @@
  $ git clone git://github.com/joeyates/cpp-active-record.git
  $ cd cpp-active-record
 
-Create '.rake-builder':
+You may need to create/edit '.rake-builder':
 
  ---
  :rake_builder: 
@@ -24,6 +27,8 @@ Create '.rake-builder':
  :include_paths: 
  - /path/containing/boost/include/directory
  - /path/containing/c++/include/directory
+ :library_paths:
+ - /path/containing/libgtest.so
 
 Copy the file to '.rake-builder.test'
 
