@@ -7,7 +7,7 @@ namespace ActiveRecord {
 
 // The default connection
 Connection connection;
-bool       debug;
+bool       debug      = false;
 
 void set_debug( bool new_debug )
 {
@@ -16,8 +16,8 @@ void set_debug( bool new_debug )
 
 void log( const string& message )
 {
-  //if( ! debug )
-  //  return;
+  if( ! debug )
+    return;
   cout << message << endl;
 }
 
