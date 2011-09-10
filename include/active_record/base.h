@@ -70,6 +70,8 @@ class Base {
     }
 
     state_ = unsaved;
+
+    return *this;
   }
 
   // Attributes
