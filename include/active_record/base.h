@@ -196,7 +196,7 @@ void Base< T >::setup( Connection * connection ) {
 
   if( td.table_name().empty() ) {
     throw ActiveRecordException( "set the table name when returning Table", __FILE__, __LINE__ );
-    }
+  }
   connection->set_table( T::class_name, td );
 }
 
