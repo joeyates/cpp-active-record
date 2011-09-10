@@ -6,7 +6,6 @@
 namespace ActiveRecord {
 
 // The default connection
-Connection connection;
 bool       debug      = false;
 
 void set_debug( bool new_debug )

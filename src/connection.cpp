@@ -73,8 +73,9 @@ void Connection::commit() {
 
 bool Connection::execute( const string &query,
                           const AttributeList &parameters ) {
-  sqlite3_stmt *ppStmt = prepare( query, parameters );
+  log( "Connection::execute" );
   log( query );
+  sqlite3_stmt *ppStmt = prepare( query, parameters );
   sqlite3_step( ppStmt );
   sqlite3_finalize( ppStmt );
   return true;
@@ -82,6 +83,8 @@ bool Connection::execute( const string &query,
 
 long Connection::insert( const string &query,
                          const AttributeList &parameters ) {
+  log( "Connection::insert" );
+  log( query );
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   sqlite3_step( ppStmt );
   sqlite3_finalize( ppStmt );
@@ -134,6 +137,7 @@ sqlite3_stmt * Connection::prepare( const string &query,
     }
     if( added )
       error << "]";
+    log( error.str() );
     throw ActiveRecordException( error.str(), __FILE__, __LINE__ );
   }
   bind_parameters( ppStmt, parameters );
