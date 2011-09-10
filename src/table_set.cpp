@@ -1,5 +1,7 @@
 #include <active_record/table_set.h>
+
 #include <sstream>
+#include <active_record/active_record.h>
 #include <active_record/exception.h>
 #include <active_record/type.h>
 #include <active_record/connection.h>
@@ -27,8 +29,8 @@ Table TableSet::table_data( Connection * connection,
   for( RowSet::iterator it = rows.begin();
        it != rows.end();
        ++it ) {
-    // cid | name |    type | notnull | dflt_value | pk
-    // 0   |  bar | INTEGER |       0 |            | 0
+    // cid | name | type    | notnull | dflt_value | pk
+    //   0 |  bar | INTEGER |       0 |            |  0
     string name      = it->get_text( "name" );
     string type_name = it->get_text( "type" );
     ActiveRecord::Type type = ActiveRecord::to_type( type_name );
@@ -43,6 +45,8 @@ Table TableSet::table_data( Connection * connection,
 }
 
 void TableSet::create_table( Table &td ) {
+  log( "TableSet::create_table" );
+  log( td.table_name() );
   stringstream ss;
   ss << "CREATE TABLE " << td.table_name();
   ss << " (";
@@ -59,6 +63,8 @@ void TableSet::create_table( Table &td ) {
 }
 
 void TableSet::update_table( Table &required ) {
+  log( "TableSet::update_table" );
+  log( required.table_name() );
   Table existing = table_data( required.connection(), required.table_name() );
   Fields missing = required.fields() - existing.fields();
   Fields remove  = existing.fields() - required.fields();
@@ -74,8 +80,10 @@ void TableSet::update_table( Table &required ) {
 // Data Definition / Database Structure
 
 void TableSet::update_database() {
+  log( "TableSet::update_database" );
   for( TableSet::iterator it = begin(); it != end(); ++it ) {
     Table td = it->second;
+    log( td.table_name() );
     if( td.connection()->table_exists( td.table_name() ) )
       update_table( td );
     else

@@ -18,9 +18,9 @@ class Connection {
   Connection();
   ~Connection();
 
-  void      connect( OptionsHash options );
-  void      disconnect();
-  bool      connected()              { return db_ != NULL ? true : false; }
+  void          connect( OptionsHash options );
+  void          disconnect();
+  bool          connected();
 
   // Tables/Models
   void          set_table( const string &class_name, const Table &table );
@@ -28,10 +28,10 @@ class Connection {
   void          update_database();
 
   // Database Structure
-  bool      table_exists( const string &table_name );
+  bool          table_exists( const string &table_name );
   // Transactions
-  void      begin_transaction();
-  void      commit();
+  void          begin_transaction();
+  void          commit();
   // Queries
   bool          execute( const string &query,
                          const AttributeList &parameters = AttributeList() );
