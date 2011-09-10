@@ -12,7 +12,7 @@ Models are declared as classes and the database columns are declared as classes 
 == Tables
 
 We need to connect:
-- the "model", e.g. Person, with it's list of attributes,
+- the "model", e.g. Person, with its list of attributes,
 - the program's store of information about models and their equivalent database tables (and, optionally the connection to use)
 - the database(s)
 

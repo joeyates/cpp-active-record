@@ -6,21 +6,22 @@
   class Foo: public ActiveRecord::Base< Foo > {
   };
 
-- Define 2 empty constructors:
+- Define constructors:
   ...
   public:
-   Foo() : ActiveRecord::Base< Foo >() {}
-   Foo( int id ) : ActiveRecord::Base< Foo >( id ) {}
+   AR_CONSTRUCTORS( File )
   ...
 
-- Define set_table_data() method describing the table:
+- Define table() method describing the table:
   ...
   public:
-    static void set_table_data( TableData &td ) {
-      td.table_name = "foos";
-      td.fields.push_back( Field( "bar", ActiveRecord::text ) );
-      td.fields.push_back( Field( "baz", ActiveRecord::integer ) );
-      td.update_database = true;
+    static void table( Connection * connection ) {
+      Table td( connection, "foos" );
+      td.fields() = fields
+                    ( "bar", ActiveRecord::text )
+                    ( "baz", ActiveRecord::integer );
+      td.timestamps( true );
+      return td;
     }
   ...
 
