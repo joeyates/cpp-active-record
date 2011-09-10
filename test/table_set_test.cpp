@@ -2,9 +2,6 @@
 #include <active_record/table.h>
 
 extern string database_file;
-namespace ActiveRecord {
-extern Connection connection;
-}
 
 class TableSetTest : public ::testing::Test {
  protected:
@@ -48,17 +45,19 @@ class ReadSchemaTest : public ::testing::Test {
   virtual void SetUp() {
     delete_database();
     pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE);" );
-    ActiveRecord::connection.connect( options
+    connection.connect( options
                                       ( "adapter", "sqlite" )
                                       ( "database", database_file ) );
   }
   virtual void TearDown() {
     delete_database();
   }
+ protected:
+  Connection connection;
 };
 
 TEST_F( ReadSchemaTest, LoadsSchema ) {
-  TableSet schema = TableSet::schema( &ActiveRecord::connection );
+  TableSet schema = TableSet::schema( &connection );
   Table foo_table = schema[ "foo" ];
 
   ASSERT_EQ( foo_table.fields().size(), 4 );
@@ -72,15 +71,17 @@ class TableSetCreateTableTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    connect_database( ActiveRecord::connection, database_file );
+    connect_database( connection, database_file );
   }
   virtual void TearDown() {
     delete_database();
   }
+ protected:
+  Connection connection;
 };
 
 TEST_F( TableSetCreateTableTest, PrimaryKeyField ) {
-  Table td( &ActiveRecord::connection, "people" );
+  Table td( &connection, "people" );
   td.primary_key( "hi" );
   td.fields().push_back( Field( "height",  ActiveRecord::floating_point ) );
 
@@ -93,7 +94,7 @@ TEST_F( TableSetCreateTableTest, PrimaryKeyField ) {
 }
 
 TEST_F( TableSetCreateTableTest, Timestamps ) {
-  Table td( &ActiveRecord::connection, "people" );
+  Table td( &connection, "people" );
   td.timestamps( true );
   td.fields() = fields
                 ( "name",    ActiveRecord::text )
@@ -112,15 +113,17 @@ class TableSetUpdateDatabaseTest : public ::testing::Test {
   virtual void SetUp() {
     delete_database();
     pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER);" );
-    connect_database( ActiveRecord::connection, database_file );
+    connect_database( connection, database_file );
   }
   virtual void TearDown() {
     delete_database();
   }
+ protected:
+  Connection connection;
 };
 
 TEST_F( TableSetUpdateDatabaseTest, AddsFields ) {
-  Table td( &ActiveRecord::connection, "foo" );
+  Table td( &connection, "foo" );
   td.fields() = fields
                 ( "bar",  ActiveRecord::integer )
                 ( "baz",  ActiveRecord::text )

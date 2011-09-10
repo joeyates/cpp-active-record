@@ -103,7 +103,7 @@ class Base {
     if( state_ < loaded )
       throw ActiveRecordException( "Instance not loaded", __FILE__, __LINE__ );
 
-    Query< T1 > query;
+    Query< T1 > query( *connection__ );
     Table t1 = connection__->get_table( T1::class_name );
     stringstream where;
     where << singular_name_ << "_id = ?";
@@ -115,7 +115,7 @@ class Base {
     if( state_ < loaded )
       throw ActiveRecordException( "Instance not loaded", __FILE__, __LINE__ );
 
-    Query< T1 > query;
+    Query< T1 > query( *connection__ );
     Table t1 = connection__->get_table( T1::class_name );
     string primary_key = t1.primary_key();
     stringstream where;
