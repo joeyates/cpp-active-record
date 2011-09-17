@@ -31,6 +31,7 @@ int main( int argc, const char *argv[] ) {
   string remove_database = "rm -f " + database_file;
   system( remove_database.c_str() );
   // Prepare
+  Connection connection;
   connection.connect( options
                       ( "adapter", "sqlite" )
                       ( "database", database_file ) );
@@ -49,10 +50,11 @@ int main( int argc, const char *argv[] ) {
                  ( "language", "Italian" ) );
   ciao.save();
 
-  vector< Greeting > greetings = ActiveRecord::Query< Greeting >()
+  vector< Greeting > greetings = ActiveRecord::Query< Greeting >( connection )
     .order( "language" )
     .limit( 5 )
     .all();
+
   for( int i = 0; i < greetings.size(); ++i ) {
     Greeting greeting = greetings[ i ];
     cout << "In " << greeting[ "language" ] << " you say: ";
