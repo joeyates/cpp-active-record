@@ -3,7 +3,7 @@
 #include <active_record/table.h>
 #include <active_record/query.h>
 
-extern string database_file;
+extern string database_name;
 
 class ConnectionTest : public ::testing::Test {
  protected:
@@ -16,17 +16,17 @@ TEST_F( ConnectionTest, ConnectNewDatabase ) {
   Connection connection;
   connection.connect( options
                       ( "adapter", "sqlite" )
-                      ( "database", database_file ) );
-  assert_file_exists( database_file );
+                      ( "database", database_name ) );
+  assert_file_exists( database_name );
 }
 
 TEST_F( ConnectionTest, ConnectExistingDatabase ) {
-  pipe_to_sqlite(database_file, "CREATE TABLE foo (bar INTEGER);" );
+  pipe_to_sqlite(database_name, "CREATE TABLE foo (bar INTEGER);");
   Connection connection;
   ASSERT_NO_THROW( {
       connection.connect( options
                           ( "adapter", "sqlite" )
-                          ( "database", database_file ) );
+                          ( "database", database_name ) );
   } );
 }
 
@@ -40,21 +40,21 @@ class ConnectionQueryTest : public ::testing::Test {
 };
 
 TEST_F( ConnectionQueryTest, Execute ) {
-  connect_database( connection, database_file );
+  connect_database( connection, database_name );
 
   connection.execute( "CREATE TABLE foo (bar INTEGER);" );
 
-  assert_table_exists( database_file, "foo" );
+  assert_table_exists( database_name, "foo" );
 }
 
 TEST_F( ConnectionQueryTest, ExecuteBadSQL ) {
-  connect_database( connection, database_file );
+  connect_database( connection, database_name );
 
   ASSERT_THROW( connection.execute( "CREATE THING xxx" ), ActiveRecord::ActiveRecordException );
 }
 
 TEST_F( ConnectionQueryTest, SelectOne ) {
-  connect_database( connection, database_file );
+  connect_database( connection, database_name );
 
   connection.execute( "CREATE TABLE foo (bar INTEGER);" );
   connection.execute( "INSERT INTO foo (bar) VALUES (42);" );
@@ -65,7 +65,7 @@ TEST_F( ConnectionQueryTest, SelectOne ) {
 }
 
 TEST_F( ConnectionQueryTest, SelectOneNoData ) {
-  connect_database( connection, database_file );
+  connect_database( connection, database_name );
 
   connection.execute( "CREATE TABLE foo (bar INTEGER);" );
   connection.execute( "INSERT INTO foo (bar) VALUES (42);" );
@@ -76,7 +76,7 @@ TEST_F( ConnectionQueryTest, SelectOneNoData ) {
 }
 
 TEST_F( ConnectionQueryTest, SelectOneWithAttributes ) {
-  connect_database( connection, database_file );
+  connect_database( connection, database_name );
 
   connection.execute( "CREATE TABLE foo (bar INTEGER, baz TEXT);" );
   connection.execute( "INSERT INTO foo (bar, baz) VALUES (42, 'hello');" );
@@ -90,7 +90,7 @@ TEST_F( ConnectionQueryTest, SelectOneWithAttributes ) {
 }
 
 TEST_F( ConnectionQueryTest, SelectOneWithParameters ) {
-  connect_database( connection, database_file );
+  connect_database( connection, database_name );
 
   connection.execute( "CREATE TABLE foo (bar INTEGER, baz TEXT);" );
   connection.execute( "INSERT INTO foo (bar, baz) VALUES (42, 'hello');" );
@@ -102,7 +102,7 @@ TEST_F( ConnectionQueryTest, SelectOneWithParameters ) {
 }
 
 TEST_F( ConnectionQueryTest, SelectAll ) {
-  connect_database( connection, database_file );
+  connect_database( connection, database_name );
 
   connection.execute( "CREATE TABLE foo (bar INTEGER);" );
   connection.execute( "INSERT INTO foo (bar) VALUES (42);" );

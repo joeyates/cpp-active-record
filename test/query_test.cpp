@@ -1,13 +1,13 @@
 #include "test_helper.h"
 #include <active_record/query.h>
 
-extern string database_file;
+extern string database_name;
 
 class QueryTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    connect_database( connection, database_file );
+    connect_database( connection, database_name );
     Person::setup( &connection );
     connection.update_database();
     connection.execute("INSERT INTO people (name, surname, age, height) VALUES (\"Joe\", \"Yates\", 45, 1.80);");

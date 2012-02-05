@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-extern string database_file;
+extern string database_name;
 
 class Library: public ActiveRecord::Base< Library > {
  public:
@@ -31,7 +31,7 @@ class AssociationTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    connect_database( connection, database_file );
+    connect_database( connection, database_name );
     Library::setup( &connection );
     Book::setup( &connection );
     connection.update_database();

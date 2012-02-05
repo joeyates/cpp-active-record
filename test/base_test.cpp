@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-extern string database_file;
+extern string database_name;
 
 class NoTableNameModel: public ActiveRecord::Base< NoTableNameModel > {
  public:
@@ -24,7 +24,7 @@ class BaseAttributeTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    connect_database( connection, database_file );
+    connect_database( connection, database_name );
     Person::setup( &connection );
     connection.update_database();
   }
@@ -90,7 +90,7 @@ TEST_F( BaseAttributeTest, SettingAttributesAfterConstruction ) {
 class BaseLoadTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
-    connect_database( connection, database_file );
+    connect_database( connection, database_name );
     Person::setup( &connection );
     connection.update_database();
     connection.execute("INSERT INTO people (name, surname, age, height, dob) VALUES (\"Joe\", \"Yates\", 45, 1.80, \"1965-07-31\");" );
@@ -152,7 +152,7 @@ TEST_F( BaseLoadTest, HasDataWithAttributes ) {
 class BaseOperators : public ::testing::Test {
  protected:
   virtual void SetUp() {
-    connect_database( connection, database_file );
+    connect_database( connection, database_name );
     Person::setup( &connection );
     connection.update_database();
     connection.execute("INSERT INTO people (name, surname, age, height, dob) VALUES (\"Cherilyn\", \"Sarkisian\", 64, 1.68, \"1946-05-20\");" );
@@ -200,7 +200,7 @@ class BaseSaveTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    connect_database( connection, database_file );
+    connect_database( connection, database_name );
     Person::setup( &connection );
     connection.update_database();
   }

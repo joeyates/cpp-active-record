@@ -4,17 +4,17 @@
 
 AR_DECLARE( Person )
 
-string database_file = "./test.sqlite3";
+string database_name = "./test.sqlite3";
 
 void connect_database( ActiveRecord::Connection &connection,
-                       const string &database_file ) {
+                       const string &database_name ) {
   connection.connect( options
                       ( "adapter", "sqlite" )
-                      ( "database", database_file ) );
+                      ( "database", database_name ) );
 }
 
 void delete_database() {
-  string remove_database = "rm -f " + database_file;
+  string remove_database = "rm -f " + database_name;
   system( remove_database.c_str() );
 }
 
@@ -30,10 +30,10 @@ string table_definition( Connection &connection, const string &table_name ) {
   return rows.front().get_text( "sql" );
 }
 
-void pipe_to_sqlite( const string &database_file,
+void pipe_to_sqlite( const string &database_name,
                      const string &command ) {
   stringstream ss;
-  ss << "echo '" << command << "' | sqlite3 " << database_file << ";";
+  ss << "echo '" << command << "' | sqlite3 " << database_name << ";";
   system( ss.str().c_str() );
 }
 
@@ -60,13 +60,13 @@ void assert_attribute_pair_list( const AttributePairList &expected,
   }
 }
 
-void assert_table_exists( const string &database_file,
+void assert_table_exists( const string &database_name,
                           const string &table_name ) {
   stringstream row_query;
   row_query << "echo '";
   row_query << "SELECT name FROM sqlite_master ";
   row_query << "WHERE type=\"table\" AND name = \"" << table_name << "\";";
-  row_query << "' | sqlite3 " << database_file;
+  row_query << "' | sqlite3 " << database_name;
   FILE *pipe = popen( row_query.str().c_str(), "r" );
   if( !pipe )
     throw "Failed to open pipe";

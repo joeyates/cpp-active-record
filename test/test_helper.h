@@ -7,18 +7,18 @@
 
 using namespace std;
 
-void connect_database( Connection &connection, const string &database_file );
+void connect_database( Connection &connection, const string &database_name );
 void delete_database();
 string table_definition( Connection &connection, const string &table_name );
 
-void pipe_to_sqlite( const string &database_file, const string &command );
+void pipe_to_sqlite( const string &database_name, const string &command );
 
 void assert_string( const string &expected, const string &actual );
 void assert_attribute( const Attribute &expected, const Attribute &actual );
 void assert_attribute_pair_list( const AttributePairList &expected,
                                  const AttributePairList &actual );
 
-void assert_table_exists( const string &database_file, const string &table );
+void assert_table_exists( const string &database_name, const string &table );
 
 void assert_field_name( Table &td, int field_index, const string &name );
 void assert_field_type( Table &td, int field_index, ActiveRecord::Type type );

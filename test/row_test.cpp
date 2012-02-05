@@ -1,14 +1,14 @@
 #include "test_helper.h"
 
-extern string database_file;
+extern string database_name;
 
 class RowTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    pipe_to_sqlite(database_file, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE);");
-    pipe_to_sqlite(database_file, "INSERT INTO foo (bar, baz, qux, derp) VALUES (123, \"hello\", 1.5, \"1971-07-02\");");
-    sqlite3_open( database_file.c_str(), &db );
+    pipe_to_sqlite( database_name, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE);" );
+    pipe_to_sqlite( database_name, "INSERT INTO foo (bar, baz, qux, derp) VALUES (123, \"hello\", 1.5, \"1971-07-02\");" );
+    sqlite3_open( database_name.c_str(), &db );
   }
   virtual void TearDown() {
     delete_database();
