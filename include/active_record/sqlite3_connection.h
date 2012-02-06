@@ -18,6 +18,8 @@ class Sqlite3Connection : public Connection {
   virtual void  disconnect();
   virtual bool  connected();
 
+  // Database Structure
+  virtual bool  table_exists( const string &table_name );
   // Queries
   virtual bool          execute( const string &query,
                                  const AttributeList &parameters = AttributeList() );
@@ -40,7 +42,7 @@ class Sqlite3Connection : public Connection {
   sqlite3_stmt * prepare( const string &query, const AttributeList &parameters );
   void           bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters );
 
-  sqlite3 *        db_;
+  sqlite3 *      db_;
 };
 
 } // namespace ActiveRecord

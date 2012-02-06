@@ -14,6 +14,9 @@ Sqlite3Connection Sqlite3Connection::operator=( const Sqlite3Connection& other )
   return *this;
 }
 
+/////////////////////////////////////////////////////
+// Connection
+
 void Sqlite3Connection::connect( OptionsHash options ) {
   log( options[ "database" ] );
   sqlite_initialize( options[ "database" ] );
@@ -28,6 +31,17 @@ void Sqlite3Connection::disconnect() {
 
 bool Sqlite3Connection::connected() {
   return db_ != NULL ? true : false;
+}
+
+/////////////////////////////////////////////////////
+// Database Structure
+
+bool Sqlite3Connection::table_exists( const string &table_name ) {
+  AttributeList parameters;
+  parameters.push_back( table_name );
+  RowSet rows = select_all( "SELECT name FROM sqlite_master WHERE type='table' AND name = ?;",
+                            parameters );
+  return ( rows.size() ? true : false );
 }
 
 bool Sqlite3Connection::execute( const string &query,
