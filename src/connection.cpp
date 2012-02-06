@@ -1,13 +1,12 @@
 #include <active_record/connection.h>
 
-#include <sstream>
-#include <active_record/exception.h>
 #include <active_record/active_record.h>
 
 namespace ActiveRecord {
 
 //////////////////////////////////
 // Tables
+
 void Connection::set_table( const string &class_name, const Table &table ) {
   log( "Connection::set_table" );
   log( class_name );

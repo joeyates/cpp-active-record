@@ -2,12 +2,9 @@
 #define _ACTIVE_RECORD_SQLITE3_CONNECTION_H_
 
 #include <sqlite3.h>
-#include <active_record/active_record.h>
 #include <active_record/connection.h>
 
 namespace ActiveRecord {
-
-class Table;
 
 class Sqlite3Connection : public Connection {
  public:
@@ -22,17 +19,23 @@ class Sqlite3Connection : public Connection {
   virtual bool  table_exists( const string &table_name );
   // Queries
   virtual bool          execute( const string &query,
-                                 const AttributeList &parameters = AttributeList() );
+      const AttributeList &parameters = AttributeList() );
   virtual long          insert( const string &query,
-                                const AttributeList &parameters = AttributeList() );
-  //virtual Attribute     select_value( const string &query,
-  //                                    const AttributeList &parameters = AttributeList() );
-  //virtual AttributeList select_values( const string &query,
-  //                                     const AttributeList &parameters = AttributeList() );
+      const AttributeList &parameters = AttributeList() );
+  virtual Attribute     select_value( const string &query,
+      const AttributeList &parameters = AttributeList() );
+  virtual AttributeList select_values( const string &query,
+      const AttributeList &parameters = AttributeList() );
   virtual Row           select_one( const string &query,
-                                    const AttributeList &parameters = AttributeList() );
+      const AttributeList &parameters = AttributeList() );
   virtual RowSet        select_all( const string &query,
-                                    const AttributeList &parameters = AttributeList() );
+      const AttributeList &parameters = AttributeList() );
+  virtual string        primary_key(const string &table_name);
+  virtual TableSet      schema();
+  virtual Table         table_data(const string &table_name);
+  virtual void          remove_field(const string &table_name,
+      const string &field_name);
+
  private:
   Sqlite3Connection( const Sqlite3Connection& other );
   Sqlite3Connection operator=( const Sqlite3Connection& other );

@@ -1,13 +1,16 @@
 #include "test_helper.h"
+#include <active_record/connection/sqlite3.h>
 
 extern string database_name;
+
+using namespace ActiveRecord;
 
 class Library: public ActiveRecord::Base< Library > {
  public:
   AR_CONSTRUCTORS( Library )
   static Table table( Connection * connection ) {
     Table td( connection, "libraries" );
-    td.fields() = fields ( "name", ActiveRecord::text );
+    td.fields() = fields ( "name", Type::text );
     return td;
   }
 };
@@ -17,9 +20,9 @@ class Book: public ActiveRecord::Base< Book > {
   AR_CONSTRUCTORS( Book )
   static Table table( Connection * connection ) {
     Table td( connection, "books" );
-    td.fields() = fields ( "title", ActiveRecord::text )
-                         ( "date", ActiveRecord::date )
-                         ( "library_id", ActiveRecord::integer );
+    td.fields() = fields ( "title", Type::text )
+                         ( "date", Type::date )
+                         ( "library_id", Type::integer );
     return td;
   }
 };
@@ -36,20 +39,20 @@ class AssociationTest : public ::testing::Test {
     Book::setup( &connection );
     connection.update_database();
 
-    british_library.init( attributes
+    british_library.init( attribute_pairs
                           ( "name", "The British Library" ) ).save();
-    lindisfarne.init( attributes
+    lindisfarne.init( attribute_pairs
                       ( "title", "The Lindisfarne Gospels" )
                       ( "library_id", british_library.id() ) ).save();
-    codex_arundel.init( attributes
+    codex_arundel.init( attribute_pairs
                         ( "title", "The Codex Arundel" )
                         ( "date", "1518-01-01" )
                         ( "library_id", british_library.id() ) ).save();
 
-    nazionale.init( attributes
+    nazionale.init( attribute_pairs
                     ( "name", "La biblioteca nazionale" ) ).save();
 
-    galileiana.init( attributes
+    galileiana.init( attribute_pairs
                      ( "title", "Collezione galileiana" )
                      ( "library_id", nazionale.id() ) ).save();
   }

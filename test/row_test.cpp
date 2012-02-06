@@ -2,6 +2,8 @@
 
 extern string database_name;
 
+using namespace ActiveRecord;
+
 class RowTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
@@ -30,10 +32,10 @@ TEST_F( RowTest, GetType ) {
 
   Row row( ppStmt );
 
-  ASSERT_EQ( ActiveRecord::integer,        row.get_type( "bar" ) );
-  ASSERT_EQ( ActiveRecord::text,           row.get_type( "baz" ) );
-  ASSERT_EQ( ActiveRecord::floating_point, row.get_type( "qux" ) );
-  ASSERT_EQ( ActiveRecord::date,           row.get_type( "derp" ) );
+  ASSERT_EQ( Type::integer,        row.get_type( "bar" ) );
+  ASSERT_EQ( Type::text,           row.get_type( "baz" ) );
+  ASSERT_EQ( Type::floating_point, row.get_type( "qux" ) );
+  ASSERT_EQ( Type::date,           row.get_type( "derp" ) );
 }
 
 TEST_F( RowTest, IsType ) {
@@ -43,8 +45,8 @@ TEST_F( RowTest, IsType ) {
 
   Row row( ppStmt );
 
-  ASSERT_TRUE(  row.is_type( "bar", ActiveRecord::integer ) );
-  ASSERT_FALSE( row.is_type( "bar", ActiveRecord::text ) );
+  ASSERT_TRUE(  row.is_type( "bar", Type::integer ) );
+  ASSERT_FALSE( row.is_type( "bar", Type::text ) );
 }
 
 TEST_F( RowTest, GetInteger ) {
@@ -86,3 +88,5 @@ TEST_F( RowTest, GetDate ) {
 
   assert_attribute( Date( 1971, 07, 02 ), row.get_date( "derp" ) );
 }
+
+// TODO: RowSet

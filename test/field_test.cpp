@@ -1,6 +1,8 @@
 #include "test_helper.h"
 #include <active_record/field.h>
 
+using namespace ActiveRecord;
+
 class FieldTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
@@ -10,17 +12,17 @@ class FieldTest : public ::testing::Test {
 };
 
 TEST_F( FieldTest, ReturnsProperties ) {
-  Field field( "foo", ActiveRecord::integer );
+  Field field( "foo", Type::integer );
 
   ASSERT_STREQ( "foo", field.name().c_str() );
-  ASSERT_EQ( ActiveRecord::integer, field.type() );
+  ASSERT_EQ( Type::integer, field.type() );
 }
 
 TEST_F( FieldTest, SubtractsAccordingToName ) {
-  Field a( "a", ActiveRecord::integer );
-  Field b( "b", ActiveRecord::integer );
-  Field c( "c", ActiveRecord::integer );
-  Field d( "d", ActiveRecord::integer );
+  Field a( "a", Type::integer );
+  Field b( "b", Type::integer );
+  Field c( "c", Type::integer );
+  Field d( "d", Type::integer );
 
   Fields abc;
   abc.push_back( a );
@@ -40,7 +42,7 @@ TEST_F( FieldTest, SubtractsAccordingToName ) {
 /*
 TEST_F( FieldTest, Ostream ) {
   stringstream field_out;
-  Field a( "a", ActiveRecord::integer );
+  Field a( "a", Type::integer );
 
   field_out << a;
 
@@ -56,9 +58,9 @@ class FieldsTest : public ::testing::Test {
 };
 
 TEST_F( FieldsTest, DoesNotSubtractAccordingToType ) {
-  Field i( "a", ActiveRecord::integer );
-  Field t( "a", ActiveRecord::text );
-  Field f( "a", ActiveRecord::floating_point );
+  Field i( "a", Type::integer );
+  Field t( "a", Type::text );
+  Field f( "a", Type::floating_point );
 
   Fields it;
   it.push_back( i );
@@ -75,20 +77,20 @@ TEST_F( FieldsTest, DoesNotSubtractAccordingToType ) {
 
 TEST_F( FieldsTest, FieldsMethodInCtor ) {
   Fields abc( fields
-              ( "a", ActiveRecord::integer )
-              ( "b", ActiveRecord::text )
-              ( "c", ActiveRecord::floating_point )
-              ( "d", ActiveRecord::date ) );
+              ( "a", Type::integer )
+              ( "b", Type::text )
+              ( "c", Type::floating_point )
+              ( "d", Type::date ) );
 
   ASSERT_EQ( 4, abc.size() );
 }
 
 TEST_F( FieldsTest, FieldsMethodInAssignment ) {
   Fields abc = fields
-               ( "a", ActiveRecord::integer )
-               ( "b", ActiveRecord::text )
-               ( "c", ActiveRecord::floating_point )
-               ( "d", ActiveRecord::date );
+               ( "a", Type::integer )
+               ( "b", Type::text )
+               ( "c", Type::floating_point )
+               ( "d", Type::date );
 
   ASSERT_EQ( 4, abc.size() );
 }

@@ -1,4 +1,10 @@
 #include "test_helper.h"
+#include <active_record/connection/postgresql.h>
+#include <active_record/connection/sqlite3.h>
+
+extern string database_name;
+
+using namespace ActiveRecord;
 
 class TableTest : public ::testing::Test {
 };
@@ -18,7 +24,7 @@ TEST_F( TableTest, Attributes ) {
 
 TEST_F( TableTest, Fields ) {
   Table table( NULL, "foo" );
-  table.fields().push_back( Field( "name", ActiveRecord::text ) );
+  table.fields().push_back( Field( "name", Type::text ) );
 
   ASSERT_EQ( 1, table.fields().size() );
 }
@@ -26,9 +32,9 @@ TEST_F( TableTest, Fields ) {
 TEST_F( TableTest, FieldsAssignmentList ) {
   Table td( NULL, "people" );
   td.fields( fields
-             ( "a", ActiveRecord::integer )
-             ( "b", ActiveRecord::text )
-             ( "c", ActiveRecord::floating_point ) );
+             ( "a", Type::integer )
+             ( "b", Type::text )
+             ( "c", Type::floating_point ) );
 
   ASSERT_EQ( 3, td.fields().size() );
 }
@@ -36,16 +42,16 @@ TEST_F( TableTest, FieldsAssignmentList ) {
 TEST_F( TableTest, AddFieldWithoutConnection ) {
   Table table( NULL, "foo" );
 
-  ASSERT_THROW( table.add_field( Field( "bar", ActiveRecord::text ) ), ActiveRecordException );
+  ASSERT_THROW( table.add_field( Field( "bar", Type::text ) ), ActiveRecordException );
 }
 
 TEST_F( TableTest, Ostream ) {
   stringstream table_out;
   Table td( NULL, "people" );
   td.fields( fields
-             ( "a", ActiveRecord::integer )
-             ( "b", ActiveRecord::text )
-             ( "c", ActiveRecord::floating_point ) );
+             ( "a", Type::integer )
+             ( "b", Type::text )
+             ( "c", Type::floating_point ) );
 
   table_out << td;
 

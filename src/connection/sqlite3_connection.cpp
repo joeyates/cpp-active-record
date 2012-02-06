@@ -1,6 +1,10 @@
-#include <active_record/sqlite3_connection.h>
+#include <active_record/connection/sqlite3.h>
+
+#include <ctime>
 
 namespace ActiveRecord {
+
+extern TypeNameMap type_name;
 
 Sqlite3Connection::Sqlite3Connection() : db_( NULL ) {}
 
@@ -65,7 +69,7 @@ long Sqlite3Connection::insert( const string &query,
 }
 
 Row Sqlite3Connection::select_one( const string &query,
-                            const AttributeList &parameters ) {
+    const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   int step_result = sqlite3_step( ppStmt );
   if( step_result != SQLITE_ROW ) {
@@ -77,7 +81,7 @@ Row Sqlite3Connection::select_one( const string &query,
 }
 
 RowSet Sqlite3Connection::select_all( const string &query,
-                               const AttributeList &parameters ) {
+    const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   RowSet results;
   while( sqlite3_step( ppStmt ) == SQLITE_ROW ) {
@@ -88,7 +92,7 @@ RowSet Sqlite3Connection::select_all( const string &query,
 }
 
 AttributeList Sqlite3Connection::select_values( const string &query,
-					 const AttributeList &parameters ) {
+    const AttributeList &parameters ) {
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   AttributeList results;
   while( sqlite3_step( ppStmt ) == SQLITE_ROW ) {
@@ -98,11 +102,162 @@ AttributeList Sqlite3Connection::select_values( const string &query,
   return results;
 }
 
+Attribute Sqlite3Connection::select_value(const string &query,
+    const AttributeList &parameters) {
+  Attribute result;
+  sqlite3_stmt *ppStmt = prepare(query, parameters);
+  int step_result = sqlite3_step(ppStmt);
+  if(step_result != SQLITE_ROW )
+    return result;
+  result = Attribute::from_field(ppStmt, 0);
+  sqlite3_finalize(ppStmt);
+  return result;
+}
+
+TableSet Sqlite3Connection::schema() {
+  TableSet s;
+
+  RowSet rows = select_all(
+    "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;"
+  );
+  for(RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
+    string table_name = it->get_text("name");
+    s[table_name] = table_data(table_name);
+  }
+
+  return s;
+}
+
+Table Sqlite3Connection::table_data(const string &table_name) {
+  Table td(this, table_name);
+
+  string pk = primary_key(table_name);
+  td.primary_key(pk);
+
+  stringstream row_query;
+  row_query << "PRAGMA table_info(\"" << table_name << "\");";
+  RowSet rows = select_all(row_query.str());
+  for(RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
+    // cid | name | type    | notnull | dflt_value | pk
+    //   0 |  bar | INTEGER |       0 |            |  0
+    string name      = it->get_text("name");
+    string type_name = it->get_text("type");
+
+    if(name == pk)
+      continue;
+
+    ActiveRecord::Type::Type type = ActiveRecord::to_type(type_name);
+    if(type == Type::unknown) {
+      stringstream error;
+      error << "Unknown type: " << type_name;
+      throw ActiveRecordException(error.str(), __FILE__, __LINE__);
+    }
+    td.fields().push_back(Field(name, type));
+  }
+  return td;
+}
+
+string Sqlite3Connection::primary_key(const string &table_name) {
+  string row_query = "PRAGMA table_info(\"" + table_name + "\");";
+  RowSet rows = select_all(row_query);
+  for(RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
+    // cid | name | type    | notnull | dflt_value | pk
+    //   0 |  bar | INTEGER |       0 |            |  0
+    Type::Type t = it->get_type("pk");
+    string tn = type_name[t];
+    int is_pk = atoi(it->get_text("pk").c_str());
+    if(is_pk != 0) {
+      string name = it->get_text("name");
+      return name;
+    }
+  }
+  return "";
+}
+
+string temp_table_name() {
+  const char * base_name = "ar_rename";
+  time_t t_now = time(0);
+  struct tm * now = gmtime(&t_now);
+
+  char * buffer;
+  const char * format = "%s_%u%02u%02u_%02u%02u%02u";
+  int len = snprintf(
+    buffer, 0, format,
+    base_name,
+    now->tm_year + 1900,
+    now->tm_mon + 1,
+    now->tm_mday,
+    now->tm_hour,
+    now->tm_min,
+    now->tm_sec
+  );
+
+  buffer = new char[len + 1];
+  int used = snprintf(
+    buffer, len + 1, format,
+    base_name,
+    now->tm_year + 1900,
+    now->tm_mon + 1,
+    now->tm_mday,
+    now->tm_hour,
+    now->tm_min,
+    now->tm_sec
+  );
+  string name = buffer;
+  delete[] buffer;
+  return name;
+}
+
+void Sqlite3Connection::remove_field(const string &table_name,
+    const string &field_name) {
+  string temp_table = temp_table_name();
+
+  Table td = table_data(table_name);
+  string pk = td.primary_key();
+  Fields fields = td.fields();
+
+  stringstream copy_fields;
+  bool first = true;
+  if(pk != "") {
+    copy_fields << pk;
+    first = false;
+  }
+
+  Table temp(this, temp_table);
+  temp.primary_key(pk);
+  for(Fields::const_iterator it = fields.begin(); it != fields.end(); ++it) {
+    string name = it->name();
+    if(name == field_name) {
+      continue;
+    }
+    if(first)
+      first = false;
+    else
+      copy_fields << ", ";
+    copy_fields << name;
+    temp.fields().push_back(*it);
+  }
+
+  TableSet::create_table(temp);
+
+  stringstream copy;
+  copy << "INSERT INTO " << temp_table << " SELECT " << copy_fields.str() << " FROM " << table_name;
+  execute(copy.str()); 
+
+  stringstream drop;
+  drop << "DROP TABLE " << table_name;
+  execute(drop.str());
+
+  stringstream rename;
+  rename << "ALTER TABLE " << temp_table << " RENAME TO " << table_name;
+  execute(rename.str());
+}
+
 ////////////////////////////////////////
 // Private
 
 sqlite3_stmt * Sqlite3Connection::prepare( const string &query,
-                                    const AttributeList &parameters ) {
+    const AttributeList &parameters ) {
   if( db_ == NULL )
     throw ActiveRecordException( "Database not connected", __FILE__, __LINE__ );
   sqlite3_stmt *ppStmt = 0;
@@ -135,22 +290,22 @@ void Sqlite3Connection::bind_parameters( sqlite3_stmt *ppStmt,
        it != parameters.end();
        ++it ) {
     switch( it->which() ) {
-    case integer: {
+    case Type::integer: {
       int value = boost::get< int >( *it );
       sqlite3_bind_int( ppStmt, i + 1, value );
       break;
     }
-    case text: {
+    case Type::text: {
       string value = boost::get< std::string >( *it );
       sqlite3_bind_text( ppStmt, i + 1, value.c_str(), value.size(), 0 );
       break;
     }
-    case floating_point: {
+    case Type::floating_point: {
       double value = boost::get< double >( *it );
       sqlite3_bind_double( ppStmt, i + 1, value );
       break;
     }
-    case date: {
+    case Type::date: {
       Date value = boost::get< Date >( *it );
       string s   = value.to_string();
       sqlite3_bind_text( ppStmt, i + 1, s.c_str(), s.size(), 0 );

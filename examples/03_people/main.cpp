@@ -43,7 +43,7 @@ int main( int argc, const char *argv[] ) {
   connection.update_database();
 
   // Insert data
-  Person joe( attributes
+  Person joe( attribute_pairs
               ( "name", "Joe" )
               ( "surname", "Yates" )
               ( "age", 45 )
@@ -52,13 +52,13 @@ int main( int argc, const char *argv[] ) {
   joe.save();
 
   Person john;
-  john.init( attributes
+  john.init( attribute_pairs
              ( "name", "John" )
              ( "surname", "Smith" )
              ( "age", 43 )
              ( "height", 1.90 ) ).save();
 
-  Person petra( attributes
+  Person petra( attribute_pairs
                 ( "name",    "Petra" )
                 ( "surname", "Smith" )
                 ( "age",     25 )

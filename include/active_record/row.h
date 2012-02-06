@@ -1,16 +1,17 @@
 #ifndef _ACTIVE_RECORD_ROW_H_
 #define _ACTIVE_RECORD_ROW_H_
 
-#include <map>
 #include <list>
 #include <string>
 #include <iostream>
 #include <boost/assign.hpp>
 #include <boost/variant.hpp>
+#include <sqlite3.h>
+#include <postgresql/libpq-fe.h>
+
 #include <active_record/type.h>
 #include <active_record/date.h>
 #include <active_record/attribute.h>
-#include <sqlite3.h>
 
 using namespace std;
 
@@ -21,9 +22,10 @@ class Row {
  public:
   Row() {};
   Row( sqlite3_stmt *ppStmt );
+  Row(PGresult *exec_result, int row);
   bool   has_data()                 { return attributes_.size() > 0; };
-  Type   get_type( const string &name );
-  bool   is_type( const string &name, Type type );
+  Type::Type   get_type( const string &name );
+  bool   is_type( const string &name, Type::Type type );
   string get_text( const string &name );
   int    get_integer( const string &name );
   double get_floating_point( const string &name );

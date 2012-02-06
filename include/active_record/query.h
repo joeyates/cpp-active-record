@@ -184,7 +184,7 @@ list_of( const ActiveRecord::Attribute &t ) {
 namespace ActiveRecord {
 
 /*
- ( parameters 13 "hello" 15.5 )
+ parameters (13 "hello" 15.5)
 */
 inline AttributeList parameters( const Attribute &value ) {
   return boost::assign::list_of( ActiveRecord::Attribute( value ) );

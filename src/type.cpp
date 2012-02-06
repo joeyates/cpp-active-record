@@ -3,36 +3,41 @@
 namespace ActiveRecord {
 
 TypeNamePair type_pairs[] = {
-  TypeNamePair( ActiveRecord::integer,        "INTEGER" ),
-  TypeNamePair( ActiveRecord::text,           "TEXT" ),
-  TypeNamePair( ActiveRecord::floating_point, "FLOAT" ),
-  TypeNamePair( ActiveRecord::date,           "DATE" )
+  TypeNamePair( Type::integer,        "INTEGER" ),
+  TypeNamePair( Type::long_long,      "LONG_LONG" ),
+  TypeNamePair( Type::text,           "TEXT" ),
+  TypeNamePair( Type::floating_point, "FLOAT" ),
+  TypeNamePair( Type::date,           "DATE" )
 };
 
-Type type_list[] = {
-  integer,
-  text,
-  floating_point
+Type::Type type_list[] = {
+  Type::integer,
+  Type::long_long,
+  Type::text,
+  Type::floating_point,
+  Type::date
 };
 
 TypeNameMap type_name( type_pairs,
                        type_pairs + sizeof( type_pairs ) / sizeof( type_pairs[ 0 ] ) );
 
-Type index_to_type( int index ) {
+Type::Type index_to_type( int index ) {
   type_list[ index ];
 }
 
-Type to_type( const string &type_name ) {
+Type::Type to_type( const string &type_name ) {
   if( type_name == "INTEGER" )
-    return ActiveRecord::integer;
+    return Type::integer;
+  else if( type_name == "LONG_LONG" )
+    return Type::long_long;
   else if( type_name == "TEXT" )
-    return ActiveRecord::text;
+    return Type::text;
   else if( type_name == "FLOAT" )
-    return ActiveRecord::floating_point;
+    return Type::floating_point;
   else if( type_name == "DATE" )
-    return ActiveRecord::date;
+    return Type::date;
   else
-    return ActiveRecord::unknown;
+    return Type::unknown;
 }
 
 } // namespace ActiveRecord

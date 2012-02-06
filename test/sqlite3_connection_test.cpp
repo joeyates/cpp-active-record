@@ -1,4 +1,5 @@
 #include "test_helper.h"
+#include <active_record/connection/sqlite3.h>
 #include <active_record/exception.h>
 #include <active_record/table.h>
 #include <active_record/query.h>
@@ -21,13 +22,8 @@ TEST_F( ConnectionTest, ConnectNewDatabase ) {
 }
 
 TEST_F( ConnectionTest, ConnectExistingDatabase ) {
-<<<<<<< HEAD
   pipe_to_sqlite(database_name, "CREATE TABLE foo (bar INTEGER);");
-  Connection connection;
-=======
-  pipe_to_sqlite( database_name, "CREATE TABLE foo (bar INTEGER);" );
   Sqlite3Connection connection;
->>>>>>> Refectored SQLite stuff into subclass
   ASSERT_NO_THROW( {
       connection.connect( options
                           ( "adapter", "sqlite" )
@@ -119,4 +115,50 @@ TEST_F( ConnectionQueryTest, SelectAll ) {
   ASSERT_EQ( 42, it->get_integer( "bar" ) );
   ++it;
   ASSERT_EQ( 99, it->get_integer( "bar" ) );
+}
+
+class Sqlite3WithConnectionTest : public ::testing::Test {
+ protected:
+  virtual void SetUp() {
+    delete_database();
+    connect_database(connection, database_name);
+    string create = "\
+      CREATE TABLE foo (pk INTEGER PRIMARY KEY, bar INTEGER, baz TEXT, qux FLOAT, derp DATE);\
+    ";
+    connection.execute(create);
+  }
+  virtual void TearDown() {
+    connection.disconnect();
+    delete_database();
+  }
+ protected:
+  Sqlite3Connection connection;
+};
+
+TEST_F(Sqlite3WithConnectionTest, TableDataLoadsFieldsAndSkipsPkey) {
+  Table foo_table = connection.table_data("foo");
+
+  ASSERT_EQ(foo_table.fields().size(), 4);
+  assert_field(foo_table, 0, "bar",  Type::integer);
+  assert_field(foo_table, 1, "baz",  Type::text);
+  assert_field(foo_table, 2, "qux",  Type::floating_point);
+  assert_field(foo_table, 3, "derp", Type::date);
+}
+
+// TODO: test for setting pkey
+
+TEST_F(Sqlite3WithConnectionTest, RemoveField) {
+  connection.remove_field("foo", "bar");
+
+  Table foo_table = connection.table_data("foo");
+
+  ASSERT_EQ("pk", foo_table.primary_key());
+  ASSERT_EQ(foo_table.fields().size(), 3);
+  assert_field(foo_table, 0, "baz",  Type::text);
+  assert_field(foo_table, 1, "qux",  Type::floating_point);
+  assert_field(foo_table, 2, "derp", Type::date);
+}
+
+TEST_F(Sqlite3WithConnectionTest, FindsPrimaryKey) {
+  ASSERT_EQ(connection.primary_key("foo"), "pk");
 }

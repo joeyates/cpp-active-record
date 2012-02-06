@@ -40,6 +40,9 @@ namespace ActiveRecord {
 inline assign_detail::generic_list< ActiveRecord::OptionPair > options( const char * name, const char * value ) {
   return assign::list_of( ActiveRecord::OptionPair( name, value ) );
 }
+inline assign_detail::generic_list< ActiveRecord::OptionPair > options(const string &name, const string &value ) {
+  return assign::list_of(ActiveRecord::OptionPair(name, value));
+}
 
 } // namespace ActiveRecord
 

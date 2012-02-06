@@ -1,4 +1,5 @@
 #include "test_helper.h"
+#include <active_record/connection/sqlite3.h>
 
 extern string database_name;
 
@@ -57,7 +58,7 @@ TEST_F( BaseAttributeTest, SettingAttributesSingly ) {
 }
 
 TEST_F( BaseAttributeTest, SettingAttributesUsingAttributesMethod ) {
-  Person joe( attributes
+  Person joe( attribute_pairs
               ( "name", "Joe" )
               ( "surname", "Yates" )
               ( "age", 45 )
@@ -72,7 +73,7 @@ TEST_F( BaseAttributeTest, SettingAttributesUsingAttributesMethod ) {
 
 TEST_F( BaseAttributeTest, SettingAttributesAfterConstruction ) {
   Person joe;
-  ASSERT_NO_THROW( joe.init( attributes
+  ASSERT_NO_THROW( joe.init( attribute_pairs
                              ( "name", "Joe" )
                              ( "surname", "Yates" )
                              ( "age", 45 )
@@ -139,7 +140,7 @@ TEST_F( BaseLoadTest, HasDataOnlyId ) {
 }
 
 TEST_F( BaseLoadTest, HasDataWithAttributes ) {
-  Person joe( attributes
+  Person joe( attribute_pairs
               ( "name", "Joe" )
               ( "surname", "Yates" )
               ( "age", 45 )
@@ -227,7 +228,7 @@ TEST_F( BaseSaveTest, SaveWithNoData ) {
 }
 
 TEST_F( BaseSaveTest, SavedAttributes ) {
-  Person joe( attributes
+  Person joe( attribute_pairs
               ( "name", "Joe" )
               ( "surname", "Yates" )
               ( "age", 45 )

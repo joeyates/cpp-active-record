@@ -3,7 +3,6 @@
 
 #include <active_record/type.h>
 #include <active_record/base.h>
-#include <active_record/sqlite3_connection.h>
 
 using namespace ActiveRecord;
 
@@ -13,11 +12,11 @@ class Person: public ActiveRecord::Base< Person > {
   static Table table( Connection * connection ) {
     Table td( connection, "people" );
     td.fields() = fields
-                  ( "name",    ActiveRecord::text )
-                  ( "surname", ActiveRecord::text )
-                  ( "age",     ActiveRecord::integer )
-                  ( "height",  ActiveRecord::floating_point )
-                  ( "dob",     ActiveRecord::date );
+                  ( "name",    ActiveRecord::Type::text )
+                  ( "surname", ActiveRecord::Type::text )
+                  ( "age",     ActiveRecord::Type::integer )
+                  ( "height",  ActiveRecord::Type::floating_point )
+                  ( "dob",     ActiveRecord::Type::date );
     return td;
   }
 };

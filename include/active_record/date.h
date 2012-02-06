@@ -91,4 +91,6 @@ class Date {
   }
 };
 
+} // namespace ActiveRecord
+
 #endif //ndef _ACTIVE_RECORD_DATE_

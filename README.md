@@ -1,5 +1,9 @@
 ActiveRecord - a C++ implementation of the Active Record pattern.
 
+Databases supported:
+* PostgreSQL
+* SQLite
+
 # Installation
 
 See the file INSTALL.md.

@@ -3,16 +3,18 @@
 class AttributeTest : public ::testing::Test {
 };
 
+using namespace ActiveRecord;
+
 TEST_F( AttributeTest, GetType ) {
   Attribute foo( 13 );
   Attribute bar( "hello" );
   Attribute baz( 1.8 );
   Attribute qux( Date( 1999, 8, 29 ) );
 
-  ASSERT_EQ( ActiveRecord::integer,        foo.type() );
-  ASSERT_EQ( ActiveRecord::text,           bar.type() );
-  ASSERT_EQ( ActiveRecord::floating_point, baz.type() );
-  ASSERT_EQ( ActiveRecord::date,           qux.type() );
+  ASSERT_EQ( Type::integer,        foo.type() );
+  ASSERT_EQ( Type::text,           bar.type() );
+  ASSERT_EQ( Type::floating_point, baz.type() );
+  ASSERT_EQ( Type::date,           qux.type() );
 }
 
 TEST_F( AttributeTest, HasData ) {
@@ -54,7 +56,7 @@ TEST_F( AttributeTest, Ostream ) {
 class AttributeHashTest : public ::testing::Test {};
 
 TEST_F( AttributeHashTest, AttributesFunction ) {
-  const AttributePairList attribs = attributes ( "foo", 13 )
+  const AttributePairList attribs = attribute_pairs ( "foo", 13 )
                                                ( "bar", "hello" )
                                                ( "baz", 15.5 )
                                                ( "qux", Date( 1999, 8, 29 ) );
@@ -71,7 +73,7 @@ TEST_F( AttributeHashTest, AttributesFunction ) {
 }
 
 TEST_F( AttributeHashTest, Access ) {
-  AttributeHash attribs = attributes( "foo", 13 )
+  AttributeHash attribs = attribute_pairs( "foo", 13 )
                                     ( "bar", "hello" );
 
   assert_attribute( 13,      attribs[ "foo" ] );
@@ -79,7 +81,7 @@ TEST_F( AttributeHashTest, Access ) {
 }
 
 TEST_F( AttributeHashTest, MissingKeys ) {
-  AttributeHash attribs = attributes( "foo", 13 )
+  AttributeHash attribs = attribute_pairs( "foo", 13 )
                                     ( "bar", "hello" );
 
   Attribute a = attribs[ "xxx" ];

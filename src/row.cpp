@@ -1,24 +1,20 @@
 #include <active_record/row.h>
+
 #include <sstream>
+
+#include <active_record/active_record.h>
+#include <active_record/attribute.h>
 #include <active_record/type.h>
 #include <active_record/exception.h>
 
 namespace ActiveRecord {
 
-Row::Row( sqlite3_stmt *pStmt ) {
-  int count = sqlite3_column_count( pStmt );
-  for( int i = 0; i < count; ++i ) {
-    string name = sqlite3_column_name(pStmt, i);
-    attributes_[ name ] = Attribute::from_field( pStmt, i );
-  }
-}
-
-Type Row::get_type( const string &name ) {
+Type::Type Row::get_type( const string &name ) {
   return attributes_[ name ].type();
 }
 
-bool Row::is_type( const string &name, Type type ) {
-  Type actual = attributes_[ name ].type();
+bool Row::is_type( const string &name, Type::Type type ) {
+  Type::Type actual = attributes_[ name ].type();
   return ( actual == type )? true : false;
 }
 

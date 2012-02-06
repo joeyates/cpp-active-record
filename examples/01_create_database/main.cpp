@@ -39,12 +39,12 @@ int main( int argc, const char *argv[] ) {
   connection.update_database();
 
   // Insert data
-  Greeting hello( attributes
+  Greeting hello( attribute_pairs
                   ( "salute", "Hello" )
                   ( "thing", "World" )
                   ( "language", "English" ) );
   hello.save();
-  Greeting ciao( attributes
+  Greeting ciao( attribute_pairs
                  ( "salute", "Ciao" )
                  ( "thing", "Mondo" )
                  ( "language", "Italian" ) );
