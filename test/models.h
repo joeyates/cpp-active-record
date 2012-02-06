@@ -3,6 +3,7 @@
 
 #include <active_record/type.h>
 #include <active_record/base.h>
+#include <active_record/sqlite3_connection.h>
 
 using namespace ActiveRecord;
 

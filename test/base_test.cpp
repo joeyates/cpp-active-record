@@ -32,7 +32,7 @@ class BaseAttributeTest : public ::testing::Test {
     delete_database();
   }
  private:
-  Connection connection;
+  Sqlite3Connection connection;
 };
 
 TEST_F( BaseAttributeTest, Defaults ) {
@@ -99,7 +99,7 @@ class BaseLoadTest : public ::testing::Test {
     delete_database();
   }
  protected:
-  Connection connection;
+  Sqlite3Connection connection;
 };
 
 TEST_F( BaseLoadTest, Default ) {
@@ -162,7 +162,7 @@ class BaseOperators : public ::testing::Test {
     delete_database();
   }
  protected:
-  Connection connection;
+  Sqlite3Connection connection;
 };
 
 TEST_F( BaseOperators, Equality ) {
@@ -208,7 +208,7 @@ class BaseSaveTest : public ::testing::Test {
     delete_database();
   }
  protected:
-  Connection connection;
+  Sqlite3Connection connection;
 };
 
 TEST_F( BaseSaveTest, Save ) {

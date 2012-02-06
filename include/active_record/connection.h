@@ -7,7 +7,6 @@
 #include <active_record/table_set.h>
 #include <active_record/row.h>
 #include <cstdio>
-#include <sqlite3.h>
 
 namespace ActiveRecord {
 
@@ -15,12 +14,9 @@ class Table;
 
 class Connection {
  public:
-  Connection();
-  ~Connection();
-
-  void          connect( OptionsHash options );
-  void          disconnect();
-  bool          connected();
+  virtual void  connect( OptionsHash options ) = 0;
+  virtual void  disconnect()                   = 0;
+  virtual bool  connected()                    = 0;
 
   // Tables/Models
   void          set_table( const string &class_name, const Table &table );
@@ -33,28 +29,19 @@ class Connection {
   void          begin_transaction();
   void          commit();
   // Queries
-  bool          execute( const string &query,
-                         const AttributeList &parameters = AttributeList() );
-  long          insert( const string &query,
-                        const AttributeList &parameters = AttributeList() );
-  Attribute     select_value( const string &query,
-                              const AttributeList &parameters = AttributeList() );
-  AttributeList select_values( const string &query,
-                               const AttributeList &parameters = AttributeList() );
-  Row           select_one( const string &query,
-                            const AttributeList &parameters = AttributeList() );
-  RowSet        select_all( const string &query,
-                            const AttributeList &parameters = AttributeList() );
+  virtual bool          execute( const string &query,
+                                 const AttributeList &parameters = AttributeList() )       = 0;
+  virtual long          insert( const string &query,
+                                const AttributeList &parameters = AttributeList() )        = 0;
+  //virtual Attribute     select_value( const string &query,
+  //                                    const AttributeList &parameters = AttributeList() )  = 0;
+  //virtual AttributeList select_values( const string &query,
+  //                                     const AttributeList &parameters = AttributeList() ) = 0;
+  virtual Row           select_one( const string &query,
+                                    const AttributeList &parameters = AttributeList() )    = 0;
+  virtual RowSet        select_all( const string &query,
+                                    const AttributeList &parameters = AttributeList() )    = 0;
  private:
-  Connection( const Connection& other );
-  Connection operator=( const Connection& other );
-
-  bool           sqlite_initialize( string database_path_name );
-  static string  sqlite_error( int error_code );
-  sqlite3_stmt * prepare( const string &query, const AttributeList &parameters );
-  void           bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters );
-
-  sqlite3 *        db_;
   TableSet         tables_;
 };
 

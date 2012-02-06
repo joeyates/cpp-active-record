@@ -15,7 +15,7 @@ class TableSetTest : public ::testing::Test {
     delete_database();
   }
  protected:
-  Connection connection;
+  Sqlite3Connection connection;
 };
 
 TEST_F( TableSetTest, TableCreation ) {
@@ -53,7 +53,7 @@ class ReadSchemaTest : public ::testing::Test {
     delete_database();
   }
  protected:
-  Connection connection;
+  Sqlite3Connection connection;
 };
 
 TEST_F( ReadSchemaTest, LoadsSchema ) {
@@ -77,7 +77,7 @@ class TableSetCreateTableTest : public ::testing::Test {
     delete_database();
   }
  protected:
-  Connection connection;
+  Sqlite3Connection connection;
 };
 
 TEST_F( TableSetCreateTableTest, PrimaryKeyField ) {
@@ -119,7 +119,7 @@ class TableSetUpdateDatabaseTest : public ::testing::Test {
     delete_database();
   }
  protected:
-  Connection connection;
+  Sqlite3Connection connection;
 };
 
 TEST_F( TableSetUpdateDatabaseTest, AddsFields ) {

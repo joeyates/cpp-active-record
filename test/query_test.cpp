@@ -19,7 +19,7 @@ class QueryTest : public ::testing::Test {
     delete_database();
   }
  protected:
-  Connection connection;
+  Sqlite3Connection connection;
 };
 
 TEST_F( QueryTest, All ) {
