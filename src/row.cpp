@@ -9,31 +9,7 @@ Row::Row( sqlite3_stmt *pStmt ) {
   int count = sqlite3_column_count( pStmt );
   for( int i = 0; i < count; ++i ) {
     string name = sqlite3_column_name( pStmt, i );
-    const char * type = sqlite3_column_decltype( pStmt, i );
-    if( type == NULL ) {
-      // http://www.sqlite.org/capi3ref.html#sqlite3_column_decltype
-      // expression or subquery - skip
-      const char * value = ( const char * ) sqlite3_column_text( pStmt, i );
-      if ( value != 0 )
-        attributes_[ name ] = value;
-    } else if( strcasecmp( type, "INTEGER" ) == 0 ) {
-      attributes_[ name ] = sqlite3_column_int( pStmt, i );
-    } else if( strcasecmp( type, "FLOAT" ) == 0 ) {
-      attributes_[ name ] = sqlite3_column_double( pStmt, i );
-    } else if( strcasecmp( type, "TEXT" ) == 0 ) {
-      const char * value = ( const char * ) sqlite3_column_text( pStmt, i );
-      if ( value != 0 )
-        attributes_[ name ] = value;
-    } else if( strcasecmp( type, "DATE" ) == 0 ) {
-      const char * value = ( const char * ) sqlite3_column_text( pStmt, i );
-      if ( value != 0 )
-        attributes_[ name ] = Date::parse( value );
-    }
-    else {
-      stringstream error;
-      error << "Unhandled data type: " << type;
-      throw ActiveRecordException( error.str(), __FILE__, __LINE__ );
-    }
+    attributes_[ name ] = Attribute::from_field( pStmt, i );
   }
 }
 

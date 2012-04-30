@@ -25,6 +25,33 @@ bool Attribute::operator==( const Attribute& other ) const {
   }
 }
 
+Attribute Attribute::from_field(sqlite3_stmt *pStmt, int i) {
+  const char * type = sqlite3_column_decltype( pStmt, i );
+  if( type == NULL ) {
+    // http://www.sqlite.org/capi3ref.html#sqlite3_column_decltype
+    // expression or subquery - skip
+    const char * value = ( const char * ) sqlite3_column_text( pStmt, i );
+    if( value != 0 ) // TODO - throw exception?
+      return value;
+  } else if( strcasecmp( type, "INTEGER" ) == 0 ) {
+    return sqlite3_column_int( pStmt, i );
+  } else if( strcasecmp( type, "FLOAT" ) == 0 ) {
+    return sqlite3_column_double( pStmt, i );
+  } else if( strcasecmp( type, "TEXT" ) == 0 ) {
+    const char * value = ( const char * ) sqlite3_column_text( pStmt, i );
+    if( value != 0 ) // TODO - throw exception?
+      return value;
+  } else if( strcasecmp( type, "DATE" ) == 0 ) {
+    const char * value = ( const char * ) sqlite3_column_text( pStmt, i );
+    if( value != 0 )
+      return Date::parse( value );
+  } else {
+    stringstream error;
+    error << "Unhandled data type: " << type;
+    throw ActiveRecordException( error.str(), __FILE__, __LINE__ );
+  }
+}
+
 ostream & operator<<( ostream &cout, ActiveRecord::Date const &date ) {
   cout << date.to_string();
   return cout;

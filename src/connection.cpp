@@ -100,6 +100,17 @@ RowSet Connection::select_all( const string &query,
   return results;
 }
 
+AttributeList Connection::select_values( const string &query,
+					 const AttributeList &parameters ) {
+  sqlite3_stmt *ppStmt = prepare( query, parameters );
+  AttributeList results;
+  while( sqlite3_step( ppStmt ) == SQLITE_ROW ) {
+    results.push_back( Attribute::from_field( ppStmt, 0 ) );
+  }
+  sqlite3_finalize( ppStmt );
+  return results;
+}
+
 ////////////////////////////////////////
 // Private
 
