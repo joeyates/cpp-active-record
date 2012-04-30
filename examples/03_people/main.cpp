@@ -35,6 +35,7 @@ int main( int argc, const char *argv[] ) {
   string remove_database = "rm -f " + database_file;
   system( remove_database.c_str() );
   // Prepare
+  Connection connection;
   connection.connect( options
                       ( "adapter", "sqlite" )
                       ( "database", database_file ) );
@@ -74,7 +75,7 @@ int main( int argc, const char *argv[] ) {
   loaded_joe.save();
 
   // Run a query
-  vector< Person > people = ActiveRecord::Query< Person >()
+  vector< Person > people = ActiveRecord::Query< Person >( connection )
     .where( "surname = ?", "Smith" )
     .where( "age <= ?", 45 )
     .order( "name" )

@@ -24,13 +24,15 @@ class BaseAttributeTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    connect_database( ActiveRecord::connection, database_file );
-    Person::setup( &ActiveRecord::connection );
-    ActiveRecord::connection.update_database();
+    connect_database( connection, database_file );
+    Person::setup( &connection );
+    connection.update_database();
   }
   virtual void TearDown() {
     delete_database();
   }
+ private:
+  Connection connection;
 };
 
 TEST_F( BaseAttributeTest, Defaults ) {
@@ -88,9 +90,9 @@ TEST_F( BaseAttributeTest, SettingAttributesAfterConstruction ) {
 class BaseLoadTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
-    connect_database( ActiveRecord::connection, database_file );
-    Person::setup( &ActiveRecord::connection );
-    ActiveRecord::connection.update_database();
+    connect_database( connection, database_file );
+    Person::setup( &connection );
+    connection.update_database();
     pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height, dob) VALUES (\"Joe\", \"Yates\", 45, 1.80, \"1965-07-31\");" );
   }
   virtual void TearDown() {
@@ -150,9 +152,9 @@ TEST_F( BaseLoadTest, HasDataWithAttributes ) {
 class BaseOperators : public ::testing::Test {
  protected:
   virtual void SetUp() {
-    connect_database( ActiveRecord::connection, database_file );
-    Person::setup( &ActiveRecord::connection );
-    ActiveRecord::connection.update_database();
+    connect_database( connection, database_file );
+    Person::setup( &connection );
+    connection.update_database();
     pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height, dob) VALUES (\"Cherilyn\", \"Sarkisian\", 64, 1.68, \"1946-05-20\");" );
     pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height, dob) VALUES (\"Christina\", \"Aguilera\", 30, 1.56, \"1980-12-18\");" );
   }
@@ -198,9 +200,9 @@ class BaseSaveTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    connect_database( ActiveRecord::connection, database_file );
-    Person::setup( &ActiveRecord::connection );
-    ActiveRecord::connection.update_database();
+    connect_database( connection, database_file );
+    Person::setup( &connection );
+    connection.update_database();
   }
   virtual void TearDown() {
     delete_database();

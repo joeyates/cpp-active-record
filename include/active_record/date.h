@@ -74,7 +74,6 @@ class Date {
   }
 
   static bool parse( const string &date, struct tm &tm ) {
-    struct tm t;
     int year, month, day;
     int found = sscanf( date.c_str(), "%u-%u-%u", &year, &month, &day );
     if( found != 3 )

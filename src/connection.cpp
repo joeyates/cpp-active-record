@@ -1,10 +1,12 @@
 #include <active_record/connection.h>
+
 #include <sstream>
 #include <active_record/exception.h>
+#include <active_record/active_record.h>
 
 namespace ActiveRecord {
 
-Connection::Connection() : db_( NULL) {}
+Connection::Connection() : db_( NULL ) {}
 
 Connection::Connection( const Connection& other ) {}
 
@@ -18,7 +20,12 @@ Connection Connection::operator=( const Connection& other ) {
 
 // Connection
 
+bool Connection::connected() {
+  return db_ != NULL ? true : false;
+}
+
 void Connection::connect( OptionsHash options ) {
+  log( options[ "database" ] );
   sqlite_initialize( options[ "database" ] );
 }
 
@@ -31,6 +38,8 @@ void Connection::disconnect() {
 
 // Tables
 void Connection::set_table( const string &class_name, const Table &table ) {
+  log( "Connection::set_table" );
+  log( class_name );
   tables_[ class_name ] = table;
 }
 
@@ -39,6 +48,7 @@ Table & Connection::get_table( const string &class_name ) {
 }
 
 void Connection::update_database() {
+  log( "Connection::update_database" );
   tables_.update_database();
 }
 
@@ -63,6 +73,8 @@ void Connection::commit() {
 
 bool Connection::execute( const string &query,
                           const AttributeList &parameters ) {
+  log( "Connection::execute" );
+  log( query );
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   sqlite3_step( ppStmt );
   sqlite3_finalize( ppStmt );
@@ -71,6 +83,8 @@ bool Connection::execute( const string &query,
 
 long Connection::insert( const string &query,
                          const AttributeList &parameters ) {
+  log( "Connection::insert" );
+  log( query );
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   sqlite3_step( ppStmt );
   sqlite3_finalize( ppStmt );
@@ -114,18 +128,6 @@ AttributeList Connection::select_values( const string &query,
 ////////////////////////////////////////
 // Private
 
-bool Connection::sqlite_initialize( string database_path_name ) {
-  int nResult = sqlite3_open( database_path_name.c_str(), &db_ );
-  if( nResult ) {
-    stringstream error;
-    error << "Can't open database '" << database_path_name << "'";
-    error << sqlite3_errmsg( db_ );
-    sqlite3_close( db_ );
-    throw ActiveRecordException( error.str(), __FILE__, __LINE__ );
-  }
-  return true;
-}
-
 sqlite3_stmt * Connection::prepare( const string &query,
                                     const AttributeList &parameters ) {
   if( db_ == NULL )
@@ -146,6 +148,7 @@ sqlite3_stmt * Connection::prepare( const string &query,
     }
     if( added )
       error << "]";
+    log( error.str() );
     throw ActiveRecordException( error.str(), __FILE__, __LINE__ );
   }
   bind_parameters( ppStmt, parameters );
@@ -186,6 +189,21 @@ void Connection::bind_parameters( sqlite3_stmt *ppStmt,
     }
     ++i;
   }
+}
+
+//////////////////////
+// SQLite-specific
+
+bool Connection::sqlite_initialize( string database_path_name ) {
+  int nResult = sqlite3_open( database_path_name.c_str(), &db_ );
+  if( nResult ) {
+    stringstream error;
+    error << "Can't open database '" << database_path_name << "'";
+    error << sqlite3_errmsg( db_ );
+    sqlite3_close( db_ );
+    throw ActiveRecordException( error.str(), __FILE__, __LINE__ );
+  }
+  return true;
 }
 
 string Connection::sqlite_error( int error_code ) {

@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <sstream>
 #include <string>
+
+#include <active_record/active_record.h>
 #include <active_record/exception.h>
 #include <active_record/connection.h>
 #include <active_record/query.h>
@@ -11,31 +13,30 @@
 
 #define ACTIVE_RECORD_UNSAVED -1
 
-#define AR_CONSTRUCTORS( klass ) \
-  klass( int id = ACTIVE_RECORD_UNSAVED ) : ActiveRecord::Base< klass >( id ) {} \
+#define AR_CONSTRUCTORS( klass )                                                                     \
+  klass( int id = ACTIVE_RECORD_UNSAVED ) : ActiveRecord::Base< klass >( id ) {}                     \
   klass( const GenericAttributePairList &attributes ) : ActiveRecord::Base< klass >( attributes ) {}
 
 // The model needs to know it's own name
-#define AR_DECLARE( klass ) \
-  extern ActiveRecord::Connection ActiveRecord::connection; \
-  template <> \
+#define AR_DECLARE( klass )                                             \
+  template <>                                                           \
+  ActiveRecord::Connection* ActiveRecord::Base< klass >::connection__ = NULL ; \
+  template <>                                                           \
   string ActiveRecord::Base< klass >::class_name = #klass;
 
-#define AR_HAS_MANY( owner, item ) \
-  namespace ActiveRecord { \
-  template< class owner > template< class other > \
-  vector< other > ActiveRecord::Base< owner >::has_many(); \
+#define AR_HAS_MANY( owner, item )                           \
+  namespace ActiveRecord {                                   \
+    template< class owner > template< class other >          \
+    vector< other > ActiveRecord::Base< owner >::has_many(); \
   }
 
-#define AR_BELONGS_TO( item, owner ) \
-  namespace ActiveRecord { \
-  template< class item > template< class owner > \
-  owner ActiveRecord::Base< item >::belongs_to(); \
+#define AR_BELONGS_TO( item, owner )                \
+  namespace ActiveRecord {                          \
+    template< class item > template< class owner >  \
+    owner ActiveRecord::Base< item >::belongs_to(); \
   }
 
 namespace ActiveRecord {
-
-extern Connection connection;
 
 /*
 GCC wants template instantiation in the same file as the declaration,
@@ -47,7 +48,8 @@ class Base {
   enum state { blank, prepared, unsaved, loaded };
  public:
   // Static members
-  static string class_name;
+  static string       class_name;
+  static Connection * connection__;
   static void setup( Connection * connection );
 
   // Constructors
@@ -70,6 +72,8 @@ class Base {
     }
 
     state_ = unsaved;
+
+    return *this;
   }
 
   // Attributes
@@ -99,8 +103,8 @@ class Base {
     if( state_ < loaded )
       throw ActiveRecordException( "Instance not loaded", __FILE__, __LINE__ );
 
-    Query< T1 > query;
-    Table t1 = connection.get_table( T1::class_name );
+    Query< T1 > query( *connection__ );
+    Table t1 = connection__->get_table( T1::class_name );
     stringstream where;
     where << singular_name_ << "_id = ?";
     return query.where( where.str(), id() ).all();
@@ -111,8 +115,8 @@ class Base {
     if( state_ < loaded )
       throw ActiveRecordException( "Instance not loaded", __FILE__, __LINE__ );
 
-    Query< T1 > query;
-    Table t1 = connection.get_table( T1::class_name );
+    Query< T1 > query( *connection__ );
+    Table t1 = connection__->get_table( T1::class_name );
     string primary_key = t1.primary_key();
     stringstream where;
     where << primary_key << " = ?";
@@ -192,12 +196,13 @@ void Base< T >::setup( Connection * connection ) {
   if( connection == NULL )
     throw ActiveRecordException( "connection is NULL", __FILE__, __LINE__ );
 
-  Table td = T::table( connection );
+  T::connection__ = connection;
+  Table td = T::table( connection__ );
 
   if( td.table_name().empty() ) {
     throw ActiveRecordException( "set the table name when returning Table", __FILE__, __LINE__ );
-    }
-  connection->set_table( T::class_name, td );
+  }
+  connection__->set_table( T::class_name, td );
 }
 
 template< class T >
@@ -234,7 +239,7 @@ bool Base< T >::load() {
   AttributeList parameters;
   parameters.push_back( id() );
 
-  Row row = connection.select_one( ss.str(), parameters );
+  Row row = connection__->select_one( ss.str(), parameters );
   if( ! row.has_data() )
     throw ActiveRecordException( "Record not found", __FILE__, __LINE__ );
 
@@ -268,7 +273,7 @@ bool Base< T >::create() {
   else // Handle INSERT with no data
     ss << "(" << primary_key_ << ") VALUES ( NULL )";
 
-  id_    = ( int ) connection.insert( ss.str(), parameters );
+  id_    = ( int ) connection__->insert( ss.str(), parameters );
   state_ = loaded;
 
   return true;
@@ -294,20 +299,25 @@ bool Base< T >::update() {
   ss << "SET "   << columns.str() << " ";
   ss << "WHERE " << primary_key_ << " = ?;";
   parameters.push_back( id() );
-  return connection.execute( ss.str(), parameters );
+  return connection__->execute( ss.str(), parameters );
 }
 
 // State
 
 template < class T >
 void Base< T >::prepare() {
+  log( "Base::prepare" );
   if( state_ >= prepared )
     return;
   if( T::class_name.empty() )
     return;
-  Table t        = connection.get_table( T::class_name );
+  log( T::class_name );
+  log( "connection__.get_table" );
+  Table t        = connection__->get_table( T::class_name );
   primary_key_   = t.primary_key();
   table_name_    = t.table_name();
+  log( "table_name_:" );
+  log( table_name_ );
   singular_name_ = T::class_name;
   std::transform( singular_name_.begin(), singular_name_.end(), singular_name_.begin(), ::tolower );
   state_         = prepared;

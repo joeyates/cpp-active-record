@@ -6,6 +6,6 @@ Rake::Builder.new do |builder|
   builder.header_search_paths  = [ '../../include/active_record' ]
   builder.objects_path         = '.'
   builder.include_paths        = [ '.', '../../include' ]
-  builder.library_paths        = [ '../../objects_x86_64', '/opt/local/lib' ]
-  builder.library_dependencies = [ 'sqlite3', 'boost_date_time', 'active_record_sqlite_x86_64' ]
+  builder.library_paths        = [ '../../objects_x86_64' ]
+  builder.library_dependencies = [ 'sqlite3', 'boost_date_time-mt', 'active_record_sqlite_x86_64' ]
 end

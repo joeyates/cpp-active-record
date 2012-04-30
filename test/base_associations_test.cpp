@@ -59,6 +59,7 @@ class AssociationTest : public ::testing::Test {
   virtual void TearDown() {
     delete_database();
   }
+  Connection connection;
   Library british_library;
   Library nazionale;
   Book    lindisfarne;

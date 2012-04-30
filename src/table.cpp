@@ -1,4 +1,6 @@
 #include <active_record/table.h>
+
+#include <active_record/active_record.h>
 #include <active_record/exception.h>
 #include <active_record/connection.h>
 #include <sstream>
@@ -9,11 +11,13 @@ namespace ActiveRecord {
 extern TypeNameMap type_name;
 
 void Table::add_field( const Field &field ) {
+  log( "add_field" );
   assert_connection( __FILE__, __LINE__ );
   stringstream ss;
   ss << "ALTER TABLE " << table_name_;
   ss << " ADD " << field.name() << " " << type_name[ field.type() ];
   ss << ";";
+  log( ss.str() );
   connection_->execute( ss.str() );
 }
 
