@@ -1,9 +1,23 @@
 require 'rake/builder'
 
 Rake::Builder.new do | builder |
-  builder.target               = '100000_greetings'
+  builder.task_namespace       = :active_record
+  builder.target               = '100000_greetings_active_record'
+  builder.architecture         = 'x86_64'
+  builder.compilation_options  = [ '-pg -DACTIVE_RECORD' ]
+  builder.objects_path         = 'active_record'
+  builder.include_paths        = [ '../include' ]
+  builder.linker_options       = [ '-pg' ]
+  builder.library_dependencies = [ 'sqlite3', 'active_record_sqlite_x86_64_profiled' ]
+  builder.library_paths        = [ '../objects_x86_64_profiled' ]
+end
+
+Rake::Builder.new do | builder |
+  builder.task_namespace       = :sqlite
+  builder.target               = '100000_greetings_sqlite'
   builder.architecture         = 'x86_64'
   builder.compilation_options  = [ '-pg' ]
+  builder.objects_path         = 'sqlite'
   builder.include_paths        = [ '../include' ]
   builder.linker_options       = [ '-pg' ]
   builder.library_dependencies = [ 'sqlite3', 'active_record_sqlite_x86_64_profiled' ]
