@@ -53,12 +53,11 @@ int main( int argc, const char *argv[] ) {
 Installation
 ============
 
+(For fuller installation instructions, see the file INSTALL)
+
 ## Install Dependencies
  - [Boost](http://www.boost.org/)
  - [GoogleTest](http://code.google.com/p/googletest/)
- - [Rake Builder](https://github.com/joeyates/rake-builder)
-
-    gem install rake-builder
 
 ## Download
 
@@ -66,10 +65,9 @@ Installation
 
 ## Install
 
-    rake build
-    sudo rake install
-
-For fuller installation instructions, see the file called INSTALL
+    ./configure
+    make
+    make install
 
 Other information
 =================

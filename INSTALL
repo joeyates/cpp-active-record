@@ -1,14 +1,6 @@
-= Dependencies
-
-* The Rake::Builder build system:
- $ gem install rake-builder
-
 * Boost
 ** Linux - Ubuntu
  $ sudo apt-get install libboost-all-dev
-
-** Mac OS X with MacPorts:
- $ sudo port install boost
 
 * googletest
 ** http://code.google.com/p/googletest/
@@ -18,24 +10,7 @@
  $ git clone git://github.com/joeyates/cpp-active-record.git
  $ cd cpp-active-record
 
-You may need to create/edit '.rake-builder':
-
- ---
- :rake_builder: 
-   :config_file: 
-     :version: "1.0"
- :include_paths: 
- - /path/containing/boost/include/directory
- - /path/containing/c++/include/directory
- :library_paths:
- - /path/containing/libgtest.so
-
-Copy the file to '.rake-builder.test'
-
 == Test
-
- $ rake test:run
 
 == Install
 
- $ sudo rake install
