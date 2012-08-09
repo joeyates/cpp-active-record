@@ -123,7 +123,7 @@ QueryParametersPair Query< T >::query_and_parameters() {
 template < class T >
 vector< T > Query< T >::all() {
   QueryParametersPair query = query_and_parameters();
-  AttributeList ids         = connection.select_values( query.first, query.second );
+  AttributeList ids         = connection_->select_values( query.first, query.second );
   vector< T > results;
   for( AttributeList::iterator it = ids.begin(); it != ids.end(); ++it ) {
     T record( boost::get< int >( *it ) );
