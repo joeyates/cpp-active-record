@@ -44,6 +44,7 @@ Rake::Builder.new do | builder |
   builder.include_paths        = [ 'include', 'test' ]
   builder.library_dependencies = [ 'gtest', 'active_record_sqlite_x86_64', 'sqlite3' ]
   builder.library_paths        = [ 'objects_x86_64' ]
+  builder.linker_options       = [ '-L.' ]
   builder.target_prerequisites = [ :'rake:x86_64' ]
   builder.default_task         = [ :run ]
 end
@@ -58,6 +59,7 @@ Rake::Builder.new do | builder |
   builder.include_paths        = [ 'include', 'test' ]
   builder.library_dependencies = [ 'gtest', 'active_record_sqlite_x86_64', 'sqlite3' ]
   builder.library_paths        = [ 'objects_x86_64' ]
+  builder.linker_options       = [ '-L.' ]
   builder.target_prerequisites = [ :'rake:x86_64' ]
   builder.default_task         = [ :run ]
 end
