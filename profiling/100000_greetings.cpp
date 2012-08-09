@@ -94,12 +94,20 @@ void sqlite_retrieve() {
   sqlite3_close( db );
 }
 
+/* With ACTIVE_RECORD defined, profiles ActiveRecord,
+   without, profiles straight SQLite */
 int main( int argc, char **argv ) {
   ar_setup();
+#ifdef ACTIVE_RECORD
+  cout << "Profiling ActiveRecord version" << endl;
   ar_query_retrieve();
+#endif
   ar_close();
 
-  //sqlite_retrieve();
+#ifndef ACTIVE_RECORD
+  cout << "Profiling SQLite version" << endl;
+  sqlite_retrieve();
+#endif
 
   return 0;
 }

@@ -123,12 +123,10 @@ QueryParametersPair Query< T >::query_and_parameters() {
 template < class T >
 vector< T > Query< T >::all() {
   QueryParametersPair query = query_and_parameters();
-  RowSet rows               = connection_->select_all( query.first, query.second );
-  Table t                   = connection_->get_table( T::class_name );
-  string primary_key        = t.primary_key();
+  AttributeList ids         = connection.select_values( query.first, query.second );
   vector< T > results;
-  for( RowSet::iterator it = rows.begin(); it != rows.end(); ++it ) {
-    T record( it->get_integer( primary_key ) );
+  for( AttributeList::iterator it = ids.begin(); it != ids.end(); ++it ) {
+    T record( boost::get< int >( *it ) );
     results.push_back( record );
   }
   return results;
