@@ -4,14 +4,22 @@
 .rake-builder*
 autom4te.cache/
 /.bundle/
+config.h
+config.h.in
+config.log
+config.status
 .DS_Store
 depcomp
+/.deps/
 Gemfile*
 install-sh
 libactive_record_sqlite.a
+Makefile.in
 missing
 objects_i386
 objects_x86_64
+README
+stamp-h1
 test/objects_*
 /vendor/
 
