@@ -13,7 +13,11 @@ bin_PROGRAMS = active_record_test single_test
 
 active_record_test_SOURCES = test/attribute_test.cpp test/base_associations_test.cpp test/base_test.cpp test/connection_test.cpp test/date_test.cpp test/exception_test.cpp test/field_test.cpp test/main.cpp test/query_test.cpp test/row_test.cpp test/table_set_test.cpp test/table_test.cpp test/test_helper.cpp
 active_record_test_CPPFLAGS = -Iinclude -Itest
+active_record_test_LDFLAGS = -L.
+active_record_test_LDADD = -lgtest -lactive_record_sqlite_i386 -lsqlite3
 
 single_test_SOURCES = test/base_test.cpp test/main.cpp test/test_helper.cpp
 single_test_CPPFLAGS = -Iinclude -Itest
+single_test_LDFLAGS = -L.
+single_test_LDADD = -lgtest -lactive_record_sqlite_i386 -lsqlite3
 
