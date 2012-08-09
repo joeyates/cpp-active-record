@@ -1,3 +1,4 @@
+*.a
 *.o
 *depend.mf
 *.sqlite3
@@ -14,6 +15,7 @@ depcomp
 Gemfile*
 install-sh
 libactive_record_sqlite.a
+Makefile
 Makefile.in
 missing
 objects_i386
