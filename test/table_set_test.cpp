@@ -44,10 +44,8 @@ class ReadSchemaTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE);" );
-    connection.connect( options
-                                      ( "adapter", "sqlite" )
-                                      ( "database", database_file ) );
+    connect_database(connection, database_file);
+    connection.execute("CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE);");
   }
   virtual void TearDown() {
     delete_database();
@@ -112,8 +110,8 @@ class TableSetUpdateDatabaseTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER);" );
     connect_database( connection, database_file );
+    connection.execute("CREATE TABLE foo (bar INTEGER);");
   }
   virtual void TearDown() {
     delete_database();
@@ -137,3 +135,4 @@ TEST_F( TableSetUpdateDatabaseTest, AddsFields ) {
   string sql = table_definition( connection, "foo" );
   assert_string( "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE)", sql );
 }
+

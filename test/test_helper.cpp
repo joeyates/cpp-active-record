@@ -30,13 +30,6 @@ string table_definition( Connection &connection, const string &table_name ) {
   return rows.front().get_text( "sql" );
 }
 
-void pipe_to_sqlite( const string &database_file,
-                     const string &command ) {
-  stringstream ss;
-  ss << "echo '" << command << "' | sqlite3 " << database_file << ";";
-  system( ss.str().c_str() );
-}
-
 void assert_string( const string &expected, const string &actual ) {
   ASSERT_STREQ( expected.c_str(), actual.c_str() );
 }
