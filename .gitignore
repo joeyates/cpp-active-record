@@ -5,8 +5,11 @@
 autom4te.cache/
 /.bundle/
 .DS_Store
+depcomp
 Gemfile*
+install-sh
 libactive_record_sqlite.a
+missing
 objects_i386
 objects_x86_64
 test/objects_*
