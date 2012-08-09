@@ -69,6 +69,33 @@ Installation
     make
     make install
 
+Maintenance
+===========
+
+Dependencies
+------------
+
+Rebuilding autoconf files
+-------------------------
+
+Make automake happy:
+
+ $ automake --add-missing
+ $ ln -s README.md README
+
+Create config.h.in:
+
+ $ autoheader
+
+Rebuild configure.ac and Makefile.am:
+
+ $ rm -f configure configure.ac Makefile.am
+ $ rake "autoconf[cpp-active-record]"
+
+Create configure:
+
+ $ autoconf
+
 Other information
 =================
 
