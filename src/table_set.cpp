@@ -10,6 +10,9 @@ namespace ActiveRecord {
 
 extern TypeNameMap type_name;
 
+//////////////////////////////////////////////////////////
+// static methods
+
 TableSet TableSet::schema( Connection * connection ) {
   TableSet s;
   RowSet rows = connection->select_all( "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;" );
@@ -77,6 +80,8 @@ void TableSet::update_table( Table &required ) {
 }
 
 ////////////////////////////////////
+// public methods
+
 // Data Definition / Database Structure
 
 void TableSet::update_database() {
