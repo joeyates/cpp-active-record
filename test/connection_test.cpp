@@ -21,7 +21,7 @@ TEST_F( ConnectionTest, ConnectNewDatabase ) {
 }
 
 TEST_F( ConnectionTest, ConnectExistingDatabase ) {
-  pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER);" );
+  pipe_to_sqlite(database_file, "CREATE TABLE foo (bar INTEGER);" );
   Connection connection;
   ASSERT_NO_THROW( {
       connection.connect( options

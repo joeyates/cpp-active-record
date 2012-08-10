@@ -6,8 +6,8 @@ class RowTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
-    pipe_to_sqlite( database_file, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE);" );
-    pipe_to_sqlite( database_file, "INSERT INTO foo (bar, baz, qux, derp) VALUES (123, \"hello\", 1.5, \"1971-07-02\");" );
+    pipe_to_sqlite(database_file, "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE);");
+    pipe_to_sqlite(database_file, "INSERT INTO foo (bar, baz, qux, derp) VALUES (123, \"hello\", 1.5, \"1971-07-02\");");
     sqlite3_open( database_file.c_str(), &db );
   }
   virtual void TearDown() {

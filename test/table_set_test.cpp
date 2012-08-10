@@ -55,7 +55,7 @@ class ReadSchemaTest : public ::testing::Test {
 };
 
 TEST_F( ReadSchemaTest, LoadsSchema ) {
-  TableSet schema = TableSet::schema( &connection );
+  TableSet schema = TableSet::schema(&connection);
   Table foo_table = schema[ "foo" ];
 
   ASSERT_EQ( foo_table.fields().size(), 4 );
