@@ -11,6 +11,7 @@ class TableSetTest : public ::testing::Test {
                         ( "database", database_file ) );
   }
   virtual void TearDown() {
+    connection.disconnect();
     delete_database();
   }
  protected:
@@ -48,6 +49,7 @@ class ReadSchemaTest : public ::testing::Test {
     connection.execute("CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE);");
   }
   virtual void TearDown() {
+    connection.disconnect();
     delete_database();
   }
  protected:
