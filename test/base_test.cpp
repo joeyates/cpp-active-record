@@ -93,7 +93,7 @@ class BaseLoadTest : public ::testing::Test {
     connect_database( connection, database_file );
     Person::setup( &connection );
     connection.update_database();
-    pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height, dob) VALUES (\"Joe\", \"Yates\", 45, 1.80, \"1965-07-31\");" );
+    connection.execute("INSERT INTO people (name, surname, age, height, dob) VALUES (\"Joe\", \"Yates\", 45, 1.80, \"1965-07-31\");" );
   }
   virtual void TearDown() {
     delete_database();
@@ -155,8 +155,8 @@ class BaseOperators : public ::testing::Test {
     connect_database( connection, database_file );
     Person::setup( &connection );
     connection.update_database();
-    pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height, dob) VALUES (\"Cherilyn\", \"Sarkisian\", 64, 1.68, \"1946-05-20\");" );
-    pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height, dob) VALUES (\"Christina\", \"Aguilera\", 30, 1.56, \"1980-12-18\");" );
+    connection.execute("INSERT INTO people (name, surname, age, height, dob) VALUES (\"Cherilyn\", \"Sarkisian\", 64, 1.68, \"1946-05-20\");" );
+    connection.execute("INSERT INTO people (name, surname, age, height, dob) VALUES (\"Christina\", \"Aguilera\", 30, 1.56, \"1980-12-18\");" );
   }
   virtual void TearDown() {
     delete_database();

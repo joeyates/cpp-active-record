@@ -10,10 +10,10 @@ class QueryTest : public ::testing::Test {
     connect_database( connection, database_file );
     Person::setup( &connection );
     connection.update_database();
-    pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height) VALUES (\"Joe\", \"Yates\", 45, 1.80);" );
-    pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height) VALUES (\"Joe\", \"Smith\", 45, 1.80);" );
-    pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height) VALUES (\"John\", \"Smith\", 67, 1.80);" );
-    pipe_to_sqlite( database_file, "INSERT INTO people (name, surname, age, height) VALUES (\"Frank\", \"Smith\", 45, 1.79);" );
+    connection.execute("INSERT INTO people (name, surname, age, height) VALUES (\"Joe\", \"Yates\", 45, 1.80);");
+    connection.execute("INSERT INTO people (name, surname, age, height) VALUES (\"Joe\", \"Smith\", 45, 1.80);");
+    connection.execute("INSERT INTO people (name, surname, age, height) VALUES (\"John\", \"Smith\", 67, 1.80);");
+    connection.execute("INSERT INTO people (name, surname, age, height) VALUES (\"Frank\", \"Smith\", 45, 1.79);");
   }
   virtual void TearDown() {
     delete_database();
