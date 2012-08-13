@@ -13,7 +13,6 @@ config.status
 Gemfile*
 libactive_record_sqlite.a
 Makefile
-Makefile.in
 objects_i386
 objects_x86_64
 stamp-h1
