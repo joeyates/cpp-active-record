@@ -58,6 +58,11 @@ Installation
 ## Install Dependencies
  - [Boost](http://www.boost.org/)
  - [GoogleTest](http://code.google.com/p/googletest/)
+ - SQLite3
+
+Ubuntu:
+
+    apt-get install libboost-all-dev libgtest-dev libsqlite3-dev
 
 ## Download
 
@@ -75,17 +80,12 @@ Maintenance
 Dependencies
 ------------
 
+Ubuntu:
+
+    apt-get install automake
+
 Rebuilding autoconf files
 -------------------------
-
-Make automake happy:
-
- $ automake --add-missing
- $ ln -s README.md README
-
-Create config.h.in:
-
- $ autoheader
 
 Rebuild configure.ac and Makefile.am:
 
