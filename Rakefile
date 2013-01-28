@@ -5,7 +5,7 @@ Rake::Builder.new do | builder |
   builder.target               = 'libactive_record_sqlite_i386.a'
   builder.architecture         = 'i386'
   builder.source_search_paths  = [ 'src' ]
-  builder.header_search_paths  = [ 'include/**/*.h' ]
+  builder.installable_headers  = [ 'include/**/*.h' ]
   builder.objects_path         = 'objects_i386'
   builder.include_paths        = [ 'include' ]
   builder.library_dependencies = [ 'sqlite3' ]
@@ -16,7 +16,7 @@ Rake::Builder.new do | builder |
   builder.target               = 'libactive_record_sqlite_x86_64.a'
   builder.architecture         = 'x86_64'
   builder.source_search_paths  = [ 'src' ]
-  builder.header_search_paths  = [ 'include/**/*.h' ]
+  builder.installable_headers  = [ 'include/**/*.h' ]
   builder.objects_path         = 'objects_x86_64'
   builder.include_paths        = [ 'include' ]
   builder.library_dependencies = [ 'sqlite3' ]
@@ -27,7 +27,7 @@ Rake::Builder.new do | builder |
   builder.target               = 'libactive_record_sqlite_x86_64_profiled.a'
   builder.architecture         = 'x86_64'
   builder.source_search_paths  = [ 'src' ]
-  builder.header_search_paths  = [ 'include/**/*.h' ]
+  builder.installable_headers  = [ 'include/**/*.h' ]
   builder.compilation_options  = [ '-pg' ]
   builder.objects_path         = 'objects_x86_64_profiled'
   builder.include_paths        = [ 'include' ]
@@ -39,7 +39,7 @@ Rake::Builder.new do | builder |
   builder.target               = 'active_record_test'
   builder.architecture         = 'x86_64'
   builder.source_search_paths  = [ 'test' ]
-  builder.header_search_paths  = [ 'test' ]
+  builder.installable_headers  = [ 'test' ]
   builder.objects_path         = 'test/objects_test'
   builder.include_paths        = [ 'include', 'test' ]
   builder.library_dependencies = [ 'gtest', 'active_record_sqlite_x86_64', 'sqlite3' ]
@@ -54,7 +54,7 @@ Rake::Builder.new do | builder |
   builder.target               = 'single_test'
   builder.architecture         = 'x86_64'
   builder.source_search_paths  = [ 'test/base_test.cpp', 'test/test_helper.cpp', 'test/main.cpp' ]
-  builder.header_search_paths  = [ 'test' ]
+  builder.installable_headers  = [ 'test' ]
   builder.objects_path         = 'test/objects_single_test'
   builder.include_paths        = [ 'include', 'test' ]
   builder.library_dependencies = [ 'gtest', 'active_record_sqlite_x86_64', 'sqlite3' ]
