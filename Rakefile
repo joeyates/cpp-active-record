@@ -46,7 +46,7 @@ Rake::Builder.new do | builder |
   builder.library_paths        = [ 'objects_x86_64' ]
   builder.linker_options       = [ '-L.' ]
   builder.target_prerequisites = [ :'rake:x86_64' ]
-  builder.default_task         = [ :run ]
+  builder.default_task         = :run
 end
 
 Rake::Builder.new do | builder |
