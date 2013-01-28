@@ -10,7 +10,7 @@
 /config.status
 .DS_Store
 /.deps/
-/Gemfile*
+/Gemfile.lock
 /Makefile
 /objects_*
 /stamp-h1
