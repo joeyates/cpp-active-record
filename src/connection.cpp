@@ -169,7 +169,10 @@ void Connection::bind_parameters( sqlite3_stmt *ppStmt,
     }
     case text: {
       string value = boost::get< std::string >( *it );
-      sqlite3_bind_text( ppStmt, i + 1, value.c_str(), value.size(), 0 );
+        char *buff = new char[value.length()+1];
+        memset(buff, 0, value.length()+1);
+        memcpy(buff, value.c_str(), value.length());
+      sqlite3_bind_text( ppStmt, i + 1, buff, value.size(), 0 );
       break;
     }
     case floating_point: {
@@ -180,7 +183,10 @@ void Connection::bind_parameters( sqlite3_stmt *ppStmt,
     case date: {
       Date value = boost::get< Date >( *it );
       string s   = value.to_string();
-      sqlite3_bind_text( ppStmt, i + 1, s.c_str(), s.size(), 0 );
+        char *buff = new char[s.length()+1];
+        memset(buff, 0, s.length()+1);
+        memcpy(buff, s.c_str(), s.length());
+      sqlite3_bind_text( ppStmt, i + 1, buff, s.size(), 0 );
       break;
     }
     default: {
