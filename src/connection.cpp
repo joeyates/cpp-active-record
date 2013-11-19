@@ -1,12 +1,15 @@
-#include <active_record/connection.h>
+#include "connection.h"
 
 #include <sstream>
-#include <active_record/exception.h>
-#include <active_record/active_record.h>
+#include "exception.h"
+#include "active_record.h"
+using namespace std;
 
 namespace ActiveRecord {
 
-Connection::Connection() : db_( NULL ) {}
+Connection::Connection() : db_( NULL ) {
+    m_vAllocatedMemory.reserve(2000);
+}
 
 Connection::Connection( const Connection& other ) {}
 
@@ -78,6 +81,10 @@ bool Connection::execute( const string &query,
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   sqlite3_step( ppStmt );
   sqlite3_finalize( ppStmt );
+    std::for_each(m_vAllocatedMemory.begin(), m_vAllocatedMemory.end(), [](char *pTemp){
+        delete [] pTemp;
+    });
+    m_vAllocatedMemory.clear();
   return true;
 }
 
@@ -88,6 +95,10 @@ long Connection::insert( const string &query,
   sqlite3_stmt *ppStmt = prepare( query, parameters );
   sqlite3_step( ppStmt );
   sqlite3_finalize( ppStmt );
+    std::for_each(m_vAllocatedMemory.begin(), m_vAllocatedMemory.end(), [](char *pTemp){
+        delete [] pTemp;
+    });
+    m_vAllocatedMemory.clear();
   return sqlite3_last_insert_rowid( db_ );
 }
 
@@ -100,6 +111,10 @@ Row Connection::select_one( const string &query,
   }
   Row row( ppStmt );
   sqlite3_finalize( ppStmt );
+    std::for_each(m_vAllocatedMemory.begin(), m_vAllocatedMemory.end(), [](char *pTemp){
+        delete [] pTemp;
+    });
+    m_vAllocatedMemory.clear();
   return row;
 }
 
@@ -111,6 +126,10 @@ RowSet Connection::select_all( const string &query,
     results.push_back( Row( ppStmt ) );
   }
   sqlite3_finalize( ppStmt );
+    std::for_each(m_vAllocatedMemory.begin(), m_vAllocatedMemory.end(), [](char *pTemp){
+        delete [] pTemp;
+    });
+    m_vAllocatedMemory.clear();
   return results;
 }
 
@@ -122,6 +141,10 @@ AttributeList Connection::select_values( const string &query,
     results.push_back( Attribute::from_field( ppStmt, 0 ) );
   }
   sqlite3_finalize( ppStmt );
+    std::for_each(m_vAllocatedMemory.begin(), m_vAllocatedMemory.end(), [](char *pTemp){
+        delete [] pTemp;
+    });
+    m_vAllocatedMemory.clear();
   return results;
 }
 
@@ -164,23 +187,35 @@ void Connection::bind_parameters( sqlite3_stmt *ppStmt,
     switch( it->which() ) {
     case integer: {
       int value = boost::get< int >( *it );
+//        std::cout<<value<<"  ";
       sqlite3_bind_int( ppStmt, i + 1, value );
       break;
     }
     case text: {
       string value = boost::get< std::string >( *it );
-      sqlite3_bind_text( ppStmt, i + 1, value.c_str(), value.size(), 0 );
+//        std::cout<<value<<"  ";
+        char *buff = new char[value.length()+1];
+        memset(buff, 0, value.length()+1);
+        memcpy(buff, value.c_str(), value.length());
+      sqlite3_bind_text( ppStmt, i + 1, buff, value.size(), 0 );
+        m_vAllocatedMemory.push_back(buff);
       break;
     }
     case floating_point: {
       double value = boost::get< double >( *it );
+//        std::cout<<value<<"  ";
       sqlite3_bind_double( ppStmt, i + 1, value );
       break;
     }
     case date: {
       Date value = boost::get< Date >( *it );
       string s   = value.to_string();
-      sqlite3_bind_text( ppStmt, i + 1, s.c_str(), s.size(), 0 );
+//        std::cout<<s<<"  ";
+        char *buff = new char[s.length()+1];
+        memset(buff, 0, s.length()+1);
+        memcpy(buff, s.c_str(), s.length());
+      sqlite3_bind_text( ppStmt, i + 1, buff, s.size(), 0 );
+        m_vAllocatedMemory.push_back(buff);
       break;
     }
     default: {
