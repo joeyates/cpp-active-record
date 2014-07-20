@@ -53,11 +53,8 @@ int main( int argc, const char *argv[] ) {
 Installation
 ============
 
-(For fuller installation instructions, see the file INSTALL)
-
 ## Install Dependencies
  - [Boost](http://www.boost.org/)
- - [GoogleTest](http://code.google.com/p/googletest/)
  - SQLite3
 
 Ubuntu:
@@ -73,6 +70,13 @@ Ubuntu:
     ./configure
     make
     make install
+
+Development
+===========
+
+## Dependencies
+
+ - [GoogleTest](http://code.google.com/p/googletest/)
 
 Maintenance
 ===========
