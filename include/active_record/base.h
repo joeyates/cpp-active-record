@@ -24,11 +24,9 @@
   template <>                                                           \
   string ActiveRecord::Base< klass >::class_name = #klass;
 
-#define AR_HAS_MANY( owner, item )                           \
-  namespace ActiveRecord {                                   \
-    template< class owner > template< class other >          \
-    vector< other > ActiveRecord::Base< owner >::has_many(); \
-  }
+#define AR_HAS_MANY( owner, owned, association )    \
+  template< class owner > template< class owned >   \
+  vector< owned > association();                    \
 
 #define AR_BELONGS_TO( item, owner )                \
   namespace ActiveRecord {                          \

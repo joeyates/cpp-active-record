@@ -2,6 +2,8 @@
 
 extern string database_file;
 
+class Book;
+
 class Library: public ActiveRecord::Base< Library > {
  public:
   AR_CONSTRUCTORS( Library )
@@ -10,6 +12,7 @@ class Library: public ActiveRecord::Base< Library > {
     td.fields() = fields ( "name", ActiveRecord::text );
     return td;
   }
+  AR_HAS_MANY( Library, Book, books )
 };
 
 class Book: public ActiveRecord::Base< Book > {
@@ -22,12 +25,11 @@ class Book: public ActiveRecord::Base< Book > {
                          ( "library_id", ActiveRecord::integer );
     return td;
   }
+  AR_HAS_MANY( Book, Library, libraries ) // Incorrect association
 };
 
 AR_DECLARE( Library )
 AR_DECLARE( Book )
-AR_HAS_MANY( Library, Book )
-AR_HAS_MANY( Book, Library ) // Incorrect association
 AR_BELONGS_TO( Book, Library )
 
 class AssociationTest : public ::testing::Test {
