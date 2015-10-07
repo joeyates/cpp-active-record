@@ -54,17 +54,9 @@ int main( int argc, const char *argv[] ) {
 }
 ```
 
-# Tests
+# Development and Tests
 
-This project uses Google Test.
-
-```shell
-$ make test
-```
-
-# Project Maintenance
-
-See the file MAINTENANCE.md.
+See the file DEVELOPMENT.md.
 
 # Other information
 
