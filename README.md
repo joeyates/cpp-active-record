@@ -1,9 +1,13 @@
 ActiveRecord - a C++ implementation of the Active Record pattern.
 
-Quick Start Guide
-=================
+# Installation
 
-Here's a Hello World! example, that saves a record to the database, and retrieves it:
+See the file INSTALL.md.
+
+# Quick Start Guide
+
+Here's a Hello World! example, that saves a record to the database, and retrieves
+it:
 
 ```c++
 #include <active_record/type.h>
@@ -50,58 +54,21 @@ int main( int argc, const char *argv[] ) {
 }
 ```
 
-Installation
-============
+# Tests
 
-(For fuller installation instructions, see the file INSTALL)
+This project uses Google Test.
 
-## Install Dependencies
- - [Boost](http://www.boost.org/)
- - [GoogleTest](http://code.google.com/p/googletest/)
- - SQLite3
+```shell
+$ make test
+```
 
-Ubuntu:
+# Project Maintenance
 
-    apt-get install libboost-all-dev libgtest-dev libsqlite3-dev
+See the file MAINTENANCE.md.
 
-## Download
-
-    git clone git://github.com/joeyates/cpp-active-record.git
-
-## Install
-
-    ./configure
-    make
-    make install
-
-Maintenance
-===========
-
-Dependencies
-------------
-
-Ubuntu:
-
-    apt-get install automake
-
-Rebuilding autoconf files
--------------------------
-
-Rebuild configure.ac and Makefile.am:
-
- $ rm -f configure configure.ac Makefile.am
- $ rake "autoconf[cpp-active-record]"
-
-Create configure:
-
- $ autoconf
-
-Other information
-=================
+# Other information
 
 * Usage
-    * See the examples directory
+  * See the `examples` directory
 * Documentation
-    * See the doc directory
-* Testing
-    * This project uses Google Test.
+  * See the `doc` directory
