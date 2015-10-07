@@ -26,9 +26,6 @@ class Book: public ActiveRecord::Base< Book > {
 
 AR_DECLARE( Library )
 AR_DECLARE( Book )
-AR_HAS_MANY( Library, Book )
-AR_HAS_MANY( Book, Library ) // Incorrect association
-AR_BELONGS_TO( Book, Library )
 
 class AssociationTest : public ::testing::Test {
  protected:
