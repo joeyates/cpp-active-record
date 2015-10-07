@@ -1,5 +1,8 @@
 require 'rake/builder'
 
+GTEST_DEPENDENCIES = %w(pthread)
+LIBRARY_DEPENDENCIES = %w(sqlite3)
+
 Rake::Builder.new do | builder |
   builder.task_namespace       = :i386
   builder.target               = 'libactive_record_sqlite_i386.a'
@@ -8,7 +11,7 @@ Rake::Builder.new do | builder |
   builder.installable_headers  = [ 'include/**/*.h' ]
   builder.objects_path         = 'objects_i386'
   builder.include_paths        = [ 'include' ]
-  builder.library_dependencies = [ 'sqlite3' ]
+  builder.library_dependencies = LIBRARY_DEPENDENCIES
 end
 
 Rake::Builder.new do | builder |
@@ -19,7 +22,7 @@ Rake::Builder.new do | builder |
   builder.installable_headers  = [ 'include/**/*.h' ]
   builder.objects_path         = 'objects_x86_64'
   builder.include_paths        = [ 'include' ]
-  builder.library_dependencies = [ 'sqlite3' ]
+  builder.library_dependencies = LIBRARY_DEPENDENCIES
 end
 
 Rake::Builder.new do | builder |
@@ -31,7 +34,7 @@ Rake::Builder.new do | builder |
   builder.compilation_options  = [ '-pg' ]
   builder.objects_path         = 'objects_x86_64_profiled'
   builder.include_paths        = [ 'include' ]
-  builder.library_dependencies = [ 'sqlite3' ]
+  builder.library_dependencies = LIBRARY_DEPENDENCIES
 end
 
 Rake::Builder.new do | builder |
@@ -42,7 +45,7 @@ Rake::Builder.new do | builder |
   builder.installable_headers  = [ 'test' ]
   builder.objects_path         = 'test/objects_test'
   builder.include_paths        = [ 'include', 'test' ]
-  builder.library_dependencies = [ 'gtest', 'active_record_sqlite_x86_64', 'sqlite3' ]
+  builder.library_dependencies = [ 'gtest', 'active_record_sqlite_x86_64' ] + LIBRARY_DEPENDENCIES + GTEST_DEPENDENCIES
   builder.library_paths        = [ 'objects_x86_64' ]
   builder.linker_options       = [ '-L.' ]
   builder.target_prerequisites = [ :'rake:x86_64' ]
@@ -57,7 +60,7 @@ Rake::Builder.new do | builder |
   builder.installable_headers  = [ 'test' ]
   builder.objects_path         = 'test/objects_single_test'
   builder.include_paths        = [ 'include', 'test' ]
-  builder.library_dependencies = [ 'gtest', 'active_record_sqlite_x86_64', 'sqlite3' ]
+  builder.library_dependencies = [ 'gtest', 'active_record_sqlite_x86_64' ] + LIBRARY_DEPENDENCIES + GTEST_DEPENDENCIES
   builder.library_paths        = [ 'objects_x86_64' ]
   builder.linker_options       = [ '-L.' ]
   builder.target_prerequisites = [ :'rake:x86_64' ]
