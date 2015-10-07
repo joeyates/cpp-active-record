@@ -15,7 +15,11 @@ git clone git://github.com/joeyates/cpp-active-record.git
 Ubuntu:
 
 ```shell
-sudo apt-get install libboost-all-dev libgtest-dev libsqlite3-dev
+sudo apt-get install \
+  libboost-all-dev \
+  libgtest-dev \       # Test use the gtest library
+  libsqlite3-dev \
+  xutils-dev           # The build system requires `makedepend`
 ```
 
 Complie gtest:
