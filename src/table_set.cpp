@@ -74,6 +74,8 @@ void TableSet::update_table( Table &required ) {
   for( Fields::iterator it = missing.begin(); it != missing.end(); ++it )
     existing.add_field( *it );
   for( Fields::iterator it = remove.begin(); it != remove.end(); ++it ) {
+    if ((*it).name() == existing.primary_key())
+      continue;
     throw ActiveRecordException( "Table::remove_field not yet implemented", __FILE__, __LINE__ );
     //existing.remove_field( *it );
   }

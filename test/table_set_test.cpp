@@ -138,7 +138,34 @@ TEST_F( TableSetUpdateDatabaseTest, AddsFields ) {
   assert_string( "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE)", sql );
 }
 
-class TableSetUpdateTableTest : public ::testing::Test {
+class TableSetUpdateTableTestWithPrivateKey : public ::testing::Test {
+ protected:
+  virtual void SetUp() {
+    delete_database();
+    connect_database( connection, database_file );
+    connection.execute("CREATE TABLE foo (id INTEGER PRIMARY KEY, bar INTEGER);");
+  }
+  virtual void TearDown() {
+    delete_database();
+  }
+ protected:
+  Connection connection;
+};
+
+TEST_F( TableSetUpdateTableTestWithPrivateKey, AddsFields ) {
+  TableSet schema = TableSet::schema(&connection);
+
+  Table fooUpdate(&connection, "foo");
+  fooUpdate.fields().push_back( Field( "bar", ActiveRecord::integer ) );
+  fooUpdate.fields().push_back( Field( "baz", ActiveRecord::text ) );
+
+  schema.update_table(fooUpdate);
+
+  string sql = table_definition( connection, "foo" );
+  assert_string( "CREATE TABLE foo (id INTEGER PRIMARY KEY, bar INTEGER, baz TEXT)", sql );
+}
+
+class TableSetUpdateTableTestWithoutPrivateKey : public ::testing::Test {
  protected:
   virtual void SetUp() {
     delete_database();
@@ -152,7 +179,7 @@ class TableSetUpdateTableTest : public ::testing::Test {
   Connection connection;
 };
 
-TEST_F( TableSetUpdateTableTest, AddsFields ) {
+TEST_F( TableSetUpdateTableTestWithoutPrivateKey, AddsFields ) {
   TableSet schema = TableSet::schema(&connection);
 
   Table fooUpdate(&connection, "foo");
@@ -165,7 +192,7 @@ TEST_F( TableSetUpdateTableTest, AddsFields ) {
   assert_string( "CREATE TABLE foo (bar INTEGER, baz TEXT)", sql );
 }
 
-TEST_F( TableSetUpdateTableTest, RemovingFieldsInSqliteFails ) {
+TEST_F( TableSetUpdateTableTestWithoutPrivateKey, RemovingFieldsInSqliteFails ) {
   TableSet schema = TableSet::schema(&connection);
 
   Table fooUpdate(&connection, "foo");
@@ -173,7 +200,7 @@ TEST_F( TableSetUpdateTableTest, RemovingFieldsInSqliteFails ) {
   ASSERT_THROW( schema.update_table(fooUpdate), ActiveRecordException );
 }
 
-TEST_F( TableSetUpdateTableTest, WithATableWithTheSameFieldsDoesNothing ) {
+TEST_F( TableSetUpdateTableTestWithoutPrivateKey, WithATableWithTheSameFieldsDoesNothing ) {
   TableSet schema = TableSet::schema(&connection);
 
   Table fooUpdate(&connection, "foo");
@@ -185,7 +212,7 @@ TEST_F( TableSetUpdateTableTest, WithATableWithTheSameFieldsDoesNothing ) {
   assert_string( "CREATE TABLE foo (bar INTEGER)", sql );
 }
 
-TEST_F( TableSetUpdateTableTest, UsingTableFromSchemaDoesNothing ) {
+TEST_F( TableSetUpdateTableTestWithoutPrivateKey, UsingTableFromSchemaDoesNothing ) {
   TableSet schema = TableSet::schema(&connection);
   Table foo = TableSet::table_data(&connection, "foo");
 
