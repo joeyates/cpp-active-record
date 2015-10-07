@@ -138,3 +138,59 @@ TEST_F( TableSetUpdateDatabaseTest, AddsFields ) {
   assert_string( "CREATE TABLE foo (bar INTEGER, baz TEXT, qux FLOAT, derp DATE)", sql );
 }
 
+class TableSetUpdateTableTest : public ::testing::Test {
+ protected:
+  virtual void SetUp() {
+    delete_database();
+    connect_database( connection, database_file );
+    connection.execute("CREATE TABLE foo (bar INTEGER);");
+  }
+  virtual void TearDown() {
+    delete_database();
+  }
+ protected:
+  Connection connection;
+};
+
+TEST_F( TableSetUpdateTableTest, AddsFields ) {
+  TableSet schema = TableSet::schema(&connection);
+
+  Table fooUpdate(&connection, "foo");
+  fooUpdate.fields().push_back( Field( "bar", ActiveRecord::integer ) );
+  fooUpdate.fields().push_back( Field( "baz", ActiveRecord::text ) );
+
+  schema.update_table(fooUpdate);
+
+  string sql = table_definition( connection, "foo" );
+  assert_string( "CREATE TABLE foo (bar INTEGER, baz TEXT)", sql );
+}
+
+TEST_F( TableSetUpdateTableTest, RemovingFieldsInSqliteFails ) {
+  TableSet schema = TableSet::schema(&connection);
+
+  Table fooUpdate(&connection, "foo");
+
+  ASSERT_THROW( schema.update_table(fooUpdate), ActiveRecordException );
+}
+
+TEST_F( TableSetUpdateTableTest, WithATableWithTheSameFieldsDoesNothing ) {
+  TableSet schema = TableSet::schema(&connection);
+
+  Table fooUpdate(&connection, "foo");
+  fooUpdate.fields().push_back( Field( "bar", ActiveRecord::integer ) );
+
+  schema.update_table(fooUpdate);
+
+  string sql = table_definition( connection, "foo" );
+  assert_string( "CREATE TABLE foo (bar INTEGER)", sql );
+}
+
+TEST_F( TableSetUpdateTableTest, UsingTableFromSchemaDoesNothing ) {
+  TableSet schema = TableSet::schema(&connection);
+  Table foo = TableSet::table_data(&connection, "foo");
+
+  schema.update_table(foo);
+
+  string sql = table_definition( connection, "foo" );
+  assert_string( "CREATE TABLE foo (bar INTEGER)", sql );
+}
