@@ -52,7 +52,7 @@ void assert_attribute( const Attribute &expected, const Attribute &actual ) {
 void assert_attribute_pair_list( const AttributePairList &expected,
                                  const AttributePairList &actual ) {
   ASSERT_EQ( expected.size(), actual.size() );
-  for( AttributePairList::const_iterator itexp = expected.begin(), itact = expected.begin();
+  for( AttributePairList::const_iterator itexp = expected.begin(), itact = actual.begin();
        itexp != expected.end();
        ++itexp, ++itact ) {
     assert_string( itexp->first, itact->first );
