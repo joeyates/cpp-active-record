@@ -43,16 +43,9 @@ bundle install
 
 # Rebuilding autoconf files
 
-Rebuild configure.ac and Makefile.am:
+This project uses Rake::Builder to generate autoconf files.
+
 
 ```shell
-$ rm -f configure configure.ac Makefile.am
-$ bundle exec rake "autoconf[cpp-active-record]"
-```
-
-Create configure and Makefile:
-
-```
-$ autoconf
-$ ./configure
+$ rake configure:rebuild
 ```

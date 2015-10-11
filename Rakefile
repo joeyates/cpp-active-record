@@ -33,6 +33,38 @@ task :help do
    EOT
 end
 
+namespace :configure do
+  desc 'Remove configure and related files files to allow rebuild'
+
+  task :clean do
+    `rm -rf aclocal.m4 autom4te.cache configure configure.ac Makefile.am Makefile.in config.status config.h.in`
+  end
+
+  desc 'Rebuild configure and associated files'
+  task :rebuild => [:clean, 'configure.ac', 'aclocal.m4', 'config.h.in', :autoconf, :automake]
+
+  task :'configure.ac' do
+    version = File.read('VERSION').chomp
+    Rake::Task['autoconf'].execute(OpenStruct.new(:project_title => 'cpp-active-record', :version => version))
+  end
+
+  task :'aclocal.m4' do
+    `aclocal`
+  end
+
+  task :'config.h.in' do
+    `autoheader`
+  end
+
+  task :autoconf do
+    `autoconf`
+  end
+
+  task :automake do
+    `automake`
+  end
+end
+
 name          = "#{ARCHITECTURE}"
 name          += '_profiled'       if PROFILED
 
