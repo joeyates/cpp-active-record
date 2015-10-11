@@ -2,11 +2,9 @@ require 'rake/builder'
 
 ARCHITECTURE       = 'x86_64'
 PROFILED           = ENV['PROFILED']
+GTEST_FILTER       = ENV['GTEST_FILTER']
 PG_CLIENT_INCLUDES = `pg_config --includedir`.chomp
 PG_SERVER_INCLUDES = `pg_config --includedir-server`.chomp
-
-name          = "#{ARCHITECTURE}"
-name          += '_profiled'       if PROFILED
 
 def running_tests
   tasks = Rake.application.top_level_tasks
@@ -17,13 +15,7 @@ raise "Supply a PG_USER for tests" if running_tests && ENV['PG_USER'].nil?
 
 PG_USER = ENV['PG_USER']
 
-if ENV['TEST_FILES']
-  TEST_NAME                = "partial_#{name}_test"
-  TEST_SOURCE_SEARCH_PATHS = ['test/main.cpp', 'test/test_helper.cpp'] + ENV['TEST_FILES'].split( ',' )
-else
-  TEST_NAME                = "#{name}_test"
-  TEST_SOURCE_SEARCH_PATHS = ['test', 'test/connection']
-end
+task :default => 'build'
 
 desc 'Print help information for this Rakefile'
 task :help do
@@ -36,9 +28,13 @@ task :help do
       $ PG_USER=foo rake test:run
       the user must have the necessary privileges to create databases
     Test only certain files:
-      $ PG_USER=foo TEST_FILES=test/foo_test.cpp,test/bar_test.cpp rake test:run
+      $ PG_USER=foo GTEST_FILTER=Foo* rake test:run
+    (See https://code.google.com/p/googletest/wiki/AdvancedGuide#Running_a_Subset_of_the_Tests)
    EOT
 end
+
+name          = "#{ARCHITECTURE}"
+name          += '_profiled'       if PROFILED
 
 Rake::Builder.new do |builder|
   builder.target               = "libactive_record_#{name}.a"
@@ -50,7 +46,15 @@ Rake::Builder.new do |builder|
   builder.compilation_options  = ['-pg'] if PROFILED
 end
 
-task :default => 'build'
+TEST_NAME                = "#{name}_test"
+TEST_SOURCE_SEARCH_PATHS = ['test']
+
+test_target_parameters =
+  if GTEST_FILTER
+    ["--gtest_filter=#{GTEST_FILTER}"]
+  else
+    []
+  end
 
 Rake::Builder.new do |builder|
   builder.task_namespace       = :test
@@ -66,5 +70,6 @@ Rake::Builder.new do |builder|
   builder.target_prerequisites = [:"rake:build"]
   builder.default_task         = :run
   builder.compilation_options  = ["-DPG_USER=#{PG_USER}"]
+  builder.target_parameters    = test_target_parameters
 end
 
