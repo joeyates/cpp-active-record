@@ -3,6 +3,7 @@ require 'rake/builder'
 ARCHITECTURE       = 'x86_64'
 PROFILED           = ENV['PROFILED']
 GTEST_FILTER       = ENV['GTEST_FILTER']
+LIBRARY_PATHS      = (ENV['CPPAR_LIBRARYPATHS'] || '').split(',')
 
 def running_tests
   tasks = Rake.application.top_level_tasks
@@ -76,6 +77,7 @@ Rake::Builder.new do |builder|
   builder.objects_path         = "objects/#{name}"
   builder.include_paths        = include_paths
   builder.compilation_options  = ['-pg'] if PROFILED
+  builder.library_paths        = LIBRARY_PATHS
 end
 
 TEST_NAME                = "#{name}_test"
@@ -98,7 +100,7 @@ Rake::Builder.new do |builder|
   builder.include_paths        = include_paths + ['test']
   builder.linker_options       = ['-L.']
   builder.library_dependencies = ['gtest', "active_record_#{name}", 'pq', 'sqlite3', 'pthread']
-  builder.library_paths        = ["."]
+  builder.library_paths        = LIBRARY_PATHS + ["."]
   builder.target_prerequisites = [:"rake:build"]
   builder.default_task         = :run
   builder.target_parameters    = test_target_parameters

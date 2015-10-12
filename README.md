@@ -1,4 +1,12 @@
+[![Build Status](https://secure.travis-ci.org/joeyates/cpp-active-record.png)][Continuous Integration]
+
 ActiveRecord - a C++ implementation of the Active Record pattern.
+
+* [Source][Source Code]
+* [Continuous Integration][Continuous Integration]
+
+[Source Code]: https://github.com/joeyates/cpp-active-record "Source code at GitHub"
+[Continuous Integration]: http://travis-ci.org/joeyates/cpp-active-record "Build status by Travis-CI"
 
 Databases supported:
 * PostgreSQL

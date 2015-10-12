@@ -1,0 +1,18 @@
+sudo: false
+addons:
+  apt:
+    packages:
+      - libboost-all-dev
+      - libgtest-dev
+      - libsqlite3-dev
+      - xutils-dev
+    postgresql: "9.4"
+env:
+  - PG_USER=postgres CPPAR_LIBRARYPATHS=$HOME/gtest
+language: cpp
+install:
+  - bundle install --path vendor/bundle
+  - mkdir $HOME/cppar_build $HOME/gtest
+  - cp -r /usr/src/gtest $HOME/cppar_build
+  - cd $HOME/cppar_build/gtest && cmake . && make && mv libg* $HOME/gtest && cd -
+script: ./configure && bundle exec rake test
