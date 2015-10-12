@@ -3,8 +3,6 @@ require 'rake/builder'
 ARCHITECTURE       = 'x86_64'
 PROFILED           = ENV['PROFILED']
 GTEST_FILTER       = ENV['GTEST_FILTER']
-PG_CLIENT_INCLUDES = `pg_config --includedir`.chomp
-PG_SERVER_INCLUDES = `pg_config --includedir-server`.chomp
 
 def running_tests
   tasks = Rake.application.top_level_tasks
@@ -68,13 +66,15 @@ end
 name          = "#{ARCHITECTURE}"
 name          += '_profiled'       if PROFILED
 
+include_paths = ['include', 'include/postgresql', 'include/postgresql/server']
+
 Rake::Builder.new do |builder|
   builder.target               = "libactive_record_#{name}.a"
   builder.architecture         = ARCHITECTURE
   builder.source_search_paths  = %w(src src/attribute src/connection src/row src/table)
   builder.installable_headers  = ['include/**/*.h']
   builder.objects_path         = "objects/#{name}"
-  builder.include_paths        = ['include', PG_SERVER_INCLUDES, PG_CLIENT_INCLUDES]
+  builder.include_paths        = include_paths
   builder.compilation_options  = ['-pg'] if PROFILED
 end
 
@@ -95,7 +95,7 @@ Rake::Builder.new do |builder|
   builder.source_search_paths  = TEST_SOURCE_SEARCH_PATHS
   builder.installable_headers  = ['test']
   builder.objects_path         = "test/objects/#{TEST_NAME}"
-  builder.include_paths        = ['include', 'test', PG_SERVER_INCLUDES, PG_CLIENT_INCLUDES]
+  builder.include_paths        = include_paths + ['test']
   builder.linker_options       = ['-L.']
   builder.library_dependencies = ['gtest', "active_record_#{name}", 'pq', 'sqlite3', 'pthread']
   builder.library_paths        = ["."]
