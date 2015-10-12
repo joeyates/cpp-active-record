@@ -5,11 +5,13 @@
 #include <catalog/pg_type.h>
 #include <postgresql/libpq-fe.h>
 
+extern const char * pg_user;
+
 class PostgresqlAttributesTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     created_database = "active_record_test_database";
-    postgresql_shell_create_database(created_database, "template1", Q(PG_USER));
+    postgresql_shell_create_database(created_database, "template1", pg_user);
     string conninfo     = "dbname=" + created_database;
     pgconn_             = PQconnectdb(conninfo.c_str());
     string create_table = "       \
@@ -29,15 +31,15 @@ INSERT INTO foo                   \
 VALUES                            \
   (42, 9999999999999999, 1.99, '\\''Hello'\\'', '\\''World!'\\'', date '\\''2015-10-11'\\'') \
 ";
-    postgresql_shell_command(created_database, Q(PG_USER), create_table);
-    postgresql_shell_command(created_database, Q(PG_USER), insert_foo);
+    postgresql_shell_command(created_database, pg_user, create_table);
+    postgresql_shell_command(created_database, pg_user, insert_foo);
     string query = "SELECT id, i, bi, n, cv, t, d FROM foo";
     exec_result_ = PQexec(pgconn_, query.c_str());
   }
   virtual void TearDown() {
     PQclear(exec_result_);
     PQfinish(pgconn_);
-    postgresql_shell_drop_database(created_database, "template1", Q(PG_USER));
+    postgresql_shell_drop_database(created_database, "template1", pg_user);
   }
  protected:
   string   created_database;

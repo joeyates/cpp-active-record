@@ -347,7 +347,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 active_record_x86_64_test_SOURCES = test/attribute_test.cpp test/base_associations_test.cpp test/base_test.cpp test/date_test.cpp test/exception_test.cpp test/field_test.cpp test/main.cpp test/postgresql_attribute_test.cpp test/postgresql_connection_test.cpp test/postgresql_table_set_test.cpp test/query_test.cpp test/row_test.cpp test/sqlite3_connection_test.cpp test/table_set_test.cpp test/table_test.cpp test/test_helper.cpp
-active_record_x86_64_test_CPPFLAGS = -Iinclude -Iinclude/postgresql -Iinclude/postgresql/server -Itest -DPG_USER=
+active_record_x86_64_test_CPPFLAGS = -Iinclude -Iinclude/postgresql -Iinclude/postgresql/server -Itest
 active_record_x86_64_test_LDFLAGS = -L.
 active_record_x86_64_test_LDADD = -lgtest -lactive_record_x86_64 -lpq -lsqlite3 -lpthread
 lib_LIBRARIES = libactive_record_x86_64.a

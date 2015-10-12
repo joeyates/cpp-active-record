@@ -5,6 +5,8 @@
 
 #include <active_record/active_record.h>
 
+extern const char * pg_port;
+
 AR_DECLARE( Person )
 
 string database_name = "./test.sqlite3";
@@ -131,31 +133,38 @@ void assert_field( Table &td,
   assert_field_type( td, field_index, type );
 }
 
-strings postgresql_shell_command( const string& database_name, const string &database_user, const string &query ) {
-  string command = "echo '" + query + "' | psql -p 5432 -U " + database_user + " " + database_name;
-  return shell_command(command.c_str());
+strings postgresql_shell_command( const string& database_name,
+    const string &database_user, const string &query ) {
+  stringstream command;
+  command << "echo '" << query << "' | ";
+  command << "psql -p " << pg_port;
+  command << " -U " << database_user << " " << database_name;
+  return shell_command(command.str());
 }
 
 void postgresql_shell_create_database( const string &create_database_name,
-                                       const string &access_database_name,
-                                       const string &database_user ) {
+    const string &access_database_name,
+    const string &database_user ) {
   postgresql_shell_drop_database(create_database_name, access_database_name, database_user);
   string query = "CREATE DATABASE " + create_database_name;
   postgresql_shell_command( access_database_name, database_user, query );
 }
 
 void postgresql_shell_drop_database( const string &drop_database_name,
-                                     const string &access_database_name,
-                                     const string &database_user ) {
+    const string &access_database_name,
+    const string &database_user ) {
   if( ! postgresql_shell_database_exists( drop_database_name, database_user ) )
     return;
   string query = "DROP DATABASE " + drop_database_name;
   postgresql_shell_command( access_database_name, database_user, query );
 }
 
-bool postgresql_shell_database_exists( const string &database_name, const string &database_user ) {
-  string command = "psql -p 5432 -U " + database_user + " -l | grep " + database_name;
-  list< string > output = shell_command( command );
+bool postgresql_shell_database_exists( const string &database_name,
+    const string &database_user ) {
+  stringstream command;
+  command << "psql -p " << pg_port;
+  command << " -U " << database_user << " -l | grep " << database_name;
+  list< string > output = shell_command(command.str());
   return output.size() > 0 ? true : false;
 }
 

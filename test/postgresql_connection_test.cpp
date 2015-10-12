@@ -1,6 +1,8 @@
 #include "test_helper.h"
 #include <active_record/connection/postgresql.h>
 
+extern const char * pg_user;
+
 using namespace ActiveRecord;
 
 /* N.B. These tests assume that a 'template1' database exists
@@ -12,7 +14,7 @@ class PostgresqlTest : public ::testing::Test {
   virtual void SetUp() {
     test_db_ = "active_record_postgresql_test";
     access_db_ = "template1";
-    pg_user_ = Q(PG_USER);
+    pg_user_ = pg_user;
   }
 
  protected:

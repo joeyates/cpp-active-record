@@ -101,7 +101,5 @@ Rake::Builder.new do |builder|
   builder.library_paths        = ["."]
   builder.target_prerequisites = [:"rake:build"]
   builder.default_task         = :run
-  builder.compilation_options  = ["-DPG_USER=#{PG_USER}"]
   builder.target_parameters    = test_target_parameters
 end
-
