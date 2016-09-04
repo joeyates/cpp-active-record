@@ -10,6 +10,9 @@ addons:
 env:
   - PG_USER=postgres CPPAR_LIBRARYPATHS=$HOME/gtest
 language: cpp
+before_install:
+  - rvm install ruby-2.3.1
+  - rvm --default use 2.3.1
 install:
   - bundle install --path vendor/bundle
   - mkdir $HOME/cppar_build $HOME/gtest
