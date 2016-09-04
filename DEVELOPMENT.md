@@ -4,10 +4,6 @@
 
 First, follow INSTALL.md
 
-```shell
-$ rake test
-```
-
 # Project maintenance
 
 As with any Makefile project there is the usual eternal regression of
@@ -28,7 +24,7 @@ regenerate `configure` and `Makefile`.
 Ubuntu:
 
 ```
-# apt-get install automake xutils-dev
+# apt-get install automake
 ```
 
 This project uses the `rake-builder` ruby gem to manage part of this process.
@@ -39,6 +35,17 @@ Install the `rake-builder` Ruby gem:
 
 ```
 bundle install
+```
+
+# Tests
+
+The tests are run against SQLite and PostgreSQL.
+In order to run the PostgreSQL tests you must supply the name of a PostgreSQL
+user that can access the database without a password.
+(You can also supply PG_PORT if your PostgreSQL is not running on port 5432)
+
+```shell
+$ PG_USER=postgres rake test
 ```
 
 # Rebuilding autoconf files
