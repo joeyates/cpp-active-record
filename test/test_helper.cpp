@@ -137,7 +137,7 @@ strings postgresql_shell_command( const string& database_name,
     const string &database_user, const string &query ) {
   stringstream command;
   command << "echo '" << query << "' | ";
-  command << "psql -p " << pg_port;
+  command << "psql -X -p " << pg_port;
   command << " -U " << database_user << " " << database_name;
   return shell_command(command.str());
 }
