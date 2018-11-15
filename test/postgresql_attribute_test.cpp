@@ -1,4 +1,5 @@
 #include "test_helper.h"
+#include "postgresql_connection_test.h"
 #include <active_record/attribute.h>
 
 #include <c.h>
@@ -7,12 +8,14 @@
 
 extern const char * pg_user;
 
-class PostgresqlAttributesTest : public ::testing::Test {
+class PostgresqlAttributesTest : public PostgresqlTest {
  protected:
   virtual void SetUp() {
-    created_database = "active_record_test_database";
-    postgresql_shell_create_database(created_database, "template1", pg_user);
-    string conninfo     = "dbname=" + created_database;
+    PostgresqlTest::SetUp();
+    created_database_ = "active_record_test_database";
+    postgresql_shell_create_database(created_database_, connection_options_);
+    connection_options_["database"] = created_database_;
+    string conninfo     = postgresql_invocation(connection_options_);
     pgconn_             = PQconnectdb(conninfo.c_str());
     string create_table = "       \
 CREATE TABLE foo (                \
@@ -31,18 +34,21 @@ INSERT INTO foo                   \
 VALUES                            \
   (42, 9999999999999999, 1.99, '\\''Hello'\\'', '\\''World!'\\'', date '\\''2015-10-11'\\'') \
 ";
-    postgresql_shell_command(created_database, pg_user, create_table);
-    postgresql_shell_command(created_database, pg_user, insert_foo);
+    postgresql_shell_command(create_table, connection_options_);
+    postgresql_shell_command(insert_foo, connection_options_);
     string query = "SELECT id, i, bi, n, cv, t, d FROM foo";
     exec_result_ = PQexec(pgconn_, query.c_str());
   }
+
   virtual void TearDown() {
     PQclear(exec_result_);
     PQfinish(pgconn_);
-    postgresql_shell_drop_database(created_database, "template1", pg_user);
+    connection_options_["database"] = "template1";
+    postgresql_shell_drop_database(created_database_, connection_options_);
   }
+
  protected:
-  string   created_database;
+  string   created_database_;
   PGconn * pgconn_;
   PGresult * exec_result_;
 };
@@ -86,4 +92,3 @@ TEST_F(PostgresqlAttributesTest, FromFieldsHandlesAllTypes) {
   ASSERT_EQ(10, date.month());
   ASSERT_EQ(2015, date.year());
 }
-

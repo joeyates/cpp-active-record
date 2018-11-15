@@ -5,8 +5,6 @@
 
 #include <active_record/active_record.h>
 
-extern const char * pg_port;
-
 AR_DECLARE( Person )
 
 string database_name = "./test.sqlite3";
@@ -133,37 +131,59 @@ void assert_field( Table &td,
   assert_field_type( td, field_index, type );
 }
 
-strings postgresql_shell_command( const string& database_name,
-    const string &database_user, const string &query ) {
+string postgresql_invocation(const OptionsHash& options) {
+  stringstream command;
+  command << "psql -X";
+  if(options.find("port") != options.end()) {
+    command << " -p " << options.find("port")->second;
+  }
+  if(options.find("host") != options.end()) {
+    command << " -h " << options.find("host")->second;
+  }
+  command << " -U " << options.find("username")->second;
+  if(options.find("database") != options.end()) {
+    command << " " << options.find("database")->second;
+  }
+  return command.str();
+}
+
+strings postgresql_shell_command(
+  const string& query,
+  const OptionsHash& connection_options
+) {
   stringstream command;
   command << "echo '" << query << "' | ";
-  command << "psql -X -p " << pg_port;
-  command << " -U " << database_user << " " << database_name;
+  command << postgresql_invocation(connection_options);
   return shell_command(command.str());
 }
 
-void postgresql_shell_create_database( const string &create_database_name,
-    const string &access_database_name,
-    const string &database_user ) {
-  postgresql_shell_drop_database(create_database_name, access_database_name, database_user);
+void postgresql_shell_create_database(
+  const string& create_database_name,
+  const OptionsHash& connection_options
+) {
+  if(postgresql_shell_database_exists(create_database_name, connection_options))
+    postgresql_shell_drop_database(create_database_name, connection_options);
   string query = "CREATE DATABASE " + create_database_name;
-  postgresql_shell_command( access_database_name, database_user, query );
+  postgresql_shell_command(query, connection_options);
 }
 
-void postgresql_shell_drop_database( const string &drop_database_name,
-    const string &access_database_name,
-    const string &database_user ) {
-  if( ! postgresql_shell_database_exists( drop_database_name, database_user ) )
+void postgresql_shell_drop_database(
+  const string &drop_database_name,
+  const OptionsHash& connection_options
+) {
+  if(!postgresql_shell_database_exists(drop_database_name, connection_options))
     return;
   string query = "DROP DATABASE " + drop_database_name;
-  postgresql_shell_command( access_database_name, database_user, query );
+  postgresql_shell_command(query, connection_options);
 }
 
-bool postgresql_shell_database_exists( const string &database_name,
-    const string &database_user ) {
+bool postgresql_shell_database_exists(
+  const string &database_name,
+  const OptionsHash& connection_options
+) {
   stringstream command;
-  command << "psql -p " << pg_port;
-  command << " -U " << database_user << " -l | grep " << database_name;
+  command << postgresql_invocation(connection_options);
+  command << " -l | grep " << database_name;
   list< string > output = shell_command(command.str());
   return output.size() > 0 ? true : false;
 }

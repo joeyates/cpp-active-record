@@ -1,6 +1,8 @@
 #include "test_helper.h"
-#include <active_record/connection/postgresql.h>
+#include "postgresql_connection_test.h"
 
+extern const char * pg_host;
+extern const char * pg_port;
 extern const char * pg_user;
 
 using namespace ActiveRecord;
@@ -9,73 +11,58 @@ using namespace ActiveRecord;
  *      and that the supplied user can access that database
  *      and can create new databases */
 
-class PostgresqlTest : public ::testing::Test {
- protected:
-  virtual void SetUp() {
-    test_db_ = "active_record_postgresql_test";
-    access_db_ = "template1";
-    pg_user_ = pg_user;
+void PostgresqlTest::SetUp() {
+  test_db_ = "active_record_postgresql_test";
+  if(pg_user) {
+    connection_options_["username"] = pg_user;
+  } else {
+    connection_options_["username"] = "postgres";
   }
-
- protected:
-   string test_db_;
-   string access_db_;
-   string pg_user_;
-   PostgresqlConnection connection_;
-};
+  connection_options_["database"] = "template1";
+  if(pg_host) {
+    connection_options_["host"] = pg_host;
+  }
+  if(pg_port) {
+    connection_options_["port"] = pg_port;
+  }
+}
 
 TEST_F(PostgresqlTest, ConnectToExistentDatabase) {
-  ASSERT_NO_THROW(
-    connection_.connect(
-      options
-        ("database", access_db_)
-        ("username", pg_user_)
-    )
-  );
+  ASSERT_NO_THROW(connection_.connect(connection_options_));
 }
 
 TEST_F(PostgresqlTest, ConnectToNonExistentDatabase) {
+  connection_options_["database"] = "database_that_does_not_exist";
   ASSERT_THROW(
-    connection_.connect(
-      options
-        ("database", "database_that_does_not_exist")
-        ("username", pg_user_)
-    ),
+    connection_.connect(connection_options_),
     ActiveRecord::ActiveRecordException
   );
 }
 
 TEST_F(PostgresqlTest, DropDatabase) {
-  postgresql_shell_create_database(test_db_, access_db_, pg_user_);
-  ASSERT_TRUE(postgresql_shell_database_exists(test_db_, pg_user_));
+  postgresql_shell_create_database(test_db_, connection_options_);
+  ASSERT_TRUE(postgresql_shell_database_exists(test_db_, connection_options_));
 
   // Connect *after* we've used template1 via command line to avoid
-  // "ERROR:  source database access_db_ is being accessed by other users"
-  connection_.connect(
-    options
-      ("database", access_db_)
-      ("username", pg_user_)
-  );
+  // "ERROR:  source database template1 is being accessed by other users"
+  connection_.connect(connection_options_);
 
   ASSERT_NO_THROW(
     PostgresqlConnection::drop_database(connection_, test_db_)
   );
-  ASSERT_FALSE(postgresql_shell_database_exists(test_db_, pg_user_));
+  ASSERT_FALSE(postgresql_shell_database_exists(test_db_, connection_options_));
 }
 
 class PostgresqlWithTemplate1ConnectionTest : public PostgresqlTest {
  protected:
   virtual void SetUp() {
     PostgresqlTest::SetUp();
-    connection_.connect(
-      options
-        ("database", access_db_)
-        ("username", pg_user_)
-    );
+    connection_.connect(connection_options_);
   }
+
   virtual void TearDown() {
     connection_.disconnect();
-    postgresql_shell_drop_database(test_db_, access_db_, pg_user_);
+    postgresql_shell_drop_database(test_db_, connection_options_);
   }
 };
 
@@ -84,16 +71,20 @@ TEST_F(PostgresqlWithTemplate1ConnectionTest, CreateDatabase) {
     connection_,
     options
       ("database", test_db_)
-      ("owner",    pg_user_)
+      ("owner",    connection_options_["username"])
   );
   ASSERT_TRUE(created);
   ASSERT_TRUE(
-    postgresql_shell_database_exists(test_db_, pg_user_)
+    postgresql_shell_database_exists(test_db_, connection_options_)
   );
 }
 
 TEST_F(PostgresqlWithTemplate1ConnectionTest, DatabaseExists) {
-  ASSERT_TRUE(PostgresqlConnection::database_exists(connection_, access_db_));
+  ASSERT_TRUE(
+    PostgresqlConnection::database_exists(
+      connection_, connection_options_["database"]
+    )
+  );
   ASSERT_FALSE(
     PostgresqlConnection::database_exists(
       connection_, "database_that_does_not_exist"
@@ -105,25 +96,23 @@ class PostgresqlWithConnectionTest : public PostgresqlTest {
  protected:
   virtual void SetUp() {
     PostgresqlTest::SetUp();
-    postgresql_shell_create_database(test_db_, access_db_, pg_user_);
-    connection_.connect(
-      options
-        ("database", test_db_)
-        ("username", pg_user_)
-    );
+    postgresql_shell_create_database(test_db_, connection_options_);
+    connection_options_["database"] = test_db_;
+    connection_.connect(connection_options_);
   }
   virtual void TearDown() {
     connection_.disconnect();
-    postgresql_shell_drop_database(test_db_, access_db_, pg_user_);
+    connection_options_["database"] = "template1";
+    postgresql_shell_drop_database(test_db_, connection_options_);
   }
 };
 
 TEST_F(PostgresqlWithConnectionTest, TableExists) {
-  postgresql_shell_command(test_db_, pg_user_, "CREATE TABLE foo ()");
+  postgresql_shell_command("CREATE TABLE foo ()", connection_options_);
 
   ASSERT_TRUE(connection_.table_exists("foo"));
   ASSERT_FALSE(connection_.table_exists("bar"));
-} 
+}
 
 TEST_F(PostgresqlWithConnectionTest, Execute) {
   connection_.execute("CREATE TABLE bar ()");
@@ -136,11 +125,11 @@ class PostgresqlWithConnectionAndTableTest : public PostgresqlWithConnectionTest
   virtual void SetUp() {
     PostgresqlWithConnectionTest::SetUp();
     postgresql_shell_command(
-      test_db_, pg_user_, "\
+      "\
       CREATE TABLE foo (\
         pk SERIAL PRIMARY KEY, num INTEGER, word TEXT, f NUMERIC\
       )\
-      "
+      ", connection_options_
     );
   }
 };
@@ -150,7 +139,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, Insert) {
 
   ASSERT_EQ(id, 1);
   list<string> output = postgresql_shell_command(
-    test_db_, pg_user_, "SELECT num FROM foo"
+    "SELECT num FROM foo", connection_options_
   );
   ASSERT_EQ(" num \n", output.front());
   output.pop_front();

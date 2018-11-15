@@ -5,30 +5,19 @@ PROFILED           = ENV['PROFILED']
 GTEST_FILTER       = ENV['GTEST_FILTER']
 LIBRARY_PATHS      = (ENV['CPPAR_LIBRARYPATHS'] || '').split(',')
 
-def running_tests
-  tasks = Rake.application.top_level_tasks
-  tasks.any? { |task| task =~ /^test(\W|$)/ }
-end
-
-raise "Supply a PG_USER for tests" if running_tests && ENV['PG_USER'].nil?
-
-PG_USER = ENV['PG_USER']
-
 task :default => 'build'
 
 desc 'Print help information for this Rakefile'
 task :help do
   puts <<-EOT
+    Run all tests:
+      $ rake test
+    Test only certain files:
+      $ GTEST_FILTER=Foo* rake test
+    (See https://github.com/google/googletest/blob/master/googletest/docs/advanced.md#running-a-subset-of-the-tests)
     Build for profiling:
       $ PROFILED=1 rake ...
-    When running tests, set up postgresql:
-    - arrange for password-less access (via .pg_pass)
-    - pass the name of a user on the command line:
-      $ PG_USER=foo rake test
-      the user must have the necessary privileges to create databases
-    Test only certain files:
-      $ PG_USER=foo GTEST_FILTER=Foo* rake test
-    (See https://github.com/google/googletest/blob/master/googletest/docs/advanced.md#running-a-subset-of-the-tests)
+    See DEVELOPMENT.md for further options.
    EOT
 end
 

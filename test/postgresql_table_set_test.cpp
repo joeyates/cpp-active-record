@@ -1,29 +1,25 @@
 #include "test_helper.h"
+#include "postgresql_connection_test.h"
 #include <active_record/connection/postgresql.h>
 
-extern string database_name;
-extern const char * pg_user;
-
-class PostgresqlTableSetTest : public ::testing::Test {
+class PostgresqlTableSetTest : public PostgresqlTest {
  protected:
   virtual void SetUp() {
-    postgresql_shell_create_database(
-      "active_record_postgresql_test", "template1", pg_user
-    );
-    connection.connect(
-      options
-        ("database", "active_record_postgresql_test")
-        ("username", pg_user)
-      );
+    created_database_ = "active_record_test_database";
+    postgresql_shell_create_database(created_database_, connection_options_);
+    connection_options_["database"] = created_database_;
+    connection.connect(connection_options_);
    }
+
   virtual void TearDown() {
     connection.disconnect();
-    postgresql_shell_drop_database(
-      "active_record_postgresql_test", "template1", pg_user
-    );
+    connection_options_["database"] = "template1";
+    postgresql_shell_drop_database(created_database_, connection_options_);
   }
+
  protected:
   PostgresqlConnection connection;
+  string created_database_;
 };
 
 TEST_F(PostgresqlTableSetTest, CreateTable) {
@@ -32,5 +28,5 @@ TEST_F(PostgresqlTableSetTest, CreateTable) {
   TableSet::create_table(td);
 
   // TODO
-  //assert_postgresql_table_exists(database_name, "people", pg_user);
+  //assert_postgresql_table_exists(created_database_, "people", connection_options_);
 }

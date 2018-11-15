@@ -34,13 +34,22 @@ void assert_file_exists( const string &file_name );
 void assert_file_non_zero_length( const string &file_name );
 
 // postgresql helpers
-strings postgresql_shell_command( const string& database_name, const string &database_user, const string &query );
-void postgresql_shell_create_database( const string &create_database_name,
-                                       const string &access_database_name,
-                                       const string &database_user );
-void postgresql_shell_drop_database( const string &drop_database_name,
-                                     const string &access_database_name,
-                                     const string &database_user );
-bool postgresql_shell_database_exists( const string &database_name, const string &database_user );
+string postgresql_invocation(const OptionsHash& options);
+strings postgresql_shell_command(
+  const string& query,
+  const OptionsHash& connection_options
+);
+void postgresql_shell_create_database(
+  const string& create_database_name,
+  const OptionsHash& connection_options
+);
+void postgresql_shell_drop_database(
+  const string& drop_database_name,
+  const OptionsHash& connection_options
+);
+bool postgresql_shell_database_exists(
+  const string& database_name,
+  const OptionsHash& connection_options
+);
 
 #endif // ndef _ACTIVE_RECORD_TEST_HELPER_H_

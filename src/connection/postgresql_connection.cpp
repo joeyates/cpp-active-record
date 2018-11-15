@@ -62,7 +62,7 @@ void PostgresqlConnection::connect(OptionsHash options) {
     connection_stream << "user=" << options[ "username" ] << " ";
   if(options.find("port") != options.end())
     connection_stream << "port=" << options[ "port" ] << " ";
-  string conninfo = connection_stream.str(); 
+  string conninfo = connection_stream.str();
 
   pgconn_ = PQconnectdb(conninfo.c_str());
 
@@ -282,7 +282,7 @@ void PostgresqlConnection::remove_field(const string &table_name,
 PGresult * PostgresqlConnection::execute_params(const string &query,
     const AttributeList &parameters) {
   int param_count = parameters.size();
-  if(param_count == 0) 
+  if(param_count == 0)
     return PQexec(pgconn_, query.c_str());
 
   char ** paramValues = new char *[param_count];
