@@ -19,6 +19,17 @@ Make
 If changes need to be made to the build system, edit `Makefile.in` and
 regenerate `configure` and `Makefile`.
 
+# Updating automake requirements
+
+If a file, such as `missing` needs updating, remove it and run
+
+```shell
+$ automake --add-missing
+```
+
+A symlink will be created to the correct file. Simply replace the symlink
+with a copy of the file.
+
 # Dependencies
 
 Ubuntu:
