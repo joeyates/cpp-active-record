@@ -19,6 +19,7 @@ $ git clone git://github.com/joeyates/cpp-active-record.git
 
 ```shell
 $ sudo apt-get install \
+  automake \
   libboost-all-dev \
   libgtest-dev \
   libsqlite3-dev \

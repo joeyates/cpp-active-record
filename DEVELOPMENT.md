@@ -1,63 +1,10 @@
-# Tests
-
 # Dependencies
 
-First, follow INSTALL.md
+See INSTALL.md
 
-# Project maintenance
+# Configuration
 
-As with any Makefile project there is the usual eternal regression of
-build files and templates:
-
-```
-Make
-  <- configure
-  <- configure.ac, Makefile.am
-  <- aclocal.m4, Makefile.in
-```
-
-If changes need to be made to the build system, edit `Makefile.in` and
-regenerate `configure` and `Makefile`.
-
-# Updating
-
-## aclocal.m4
-
-Delete it and run
-
-```
-$ aclocal
-$ automake
-```
-
-## automake requirements
-
-If a file, such as `missing` needs updating, remove it and run
-
-```shell
-$ automake --add-missing
-```
-
-A symlink will be created to the correct file. Simply replace the symlink
-with a copy of the file.
-
-# Dependencies
-
-Ubuntu:
-
-```
-# apt-get install automake
-```
-
-This project uses the `rake-builder` ruby gem to manage part of this process.
-
-Install a recent (>= 2.0) version of Ruby and the `bundler` gem.
-
-Install the `rake-builder` Ruby gem:
-
-```
-bundle install
-```
+See MAINTENANCE.md
 
 # Tests
 
@@ -68,13 +15,4 @@ user that can access the database without a password.
 
 ```shell
 $ PG_USER=postgres rake test
-```
-
-# Rebuilding autoconf files
-
-This project uses Rake::Builder to generate autoconf files.
-
-
-```shell
-$ rake configure:rebuild
 ```
