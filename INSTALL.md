@@ -20,6 +20,7 @@ $ git clone git://github.com/joeyates/cpp-active-record.git
 ```shell
 $ sudo apt-get install \
   automake \
+  cmake \
   libboost-all-dev \
   libgtest-dev \
   libsqlite3-dev \
@@ -29,7 +30,7 @@ $ sudo apt-get install \
 Compile gtest:
 
 ```shell
-# cd /usr/src/gtest && cmake . && make && mv libg* /usr/lib/ && cd -
+# cd /usr/src/gtest && cmake . && make && mv libg* /usr/local/lib/
 ```
 
 # Install the library
