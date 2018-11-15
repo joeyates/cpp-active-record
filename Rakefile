@@ -24,11 +24,11 @@ task :help do
     When running tests, set up postgresql:
     - arrange for password-less access (via .pg_pass)
     - pass the name of a user on the command line:
-      $ PG_USER=foo rake test:run
+      $ PG_USER=foo rake test
       the user must have the necessary privileges to create databases
     Test only certain files:
-      $ PG_USER=foo GTEST_FILTER=Foo* rake test:run
-    (See https://code.google.com/p/googletest/wiki/AdvancedGuide#Running_a_Subset_of_the_Tests)
+      $ PG_USER=foo GTEST_FILTER=Foo* rake test
+    (See https://github.com/google/googletest/blob/master/googletest/docs/advanced.md#running-a-subset-of-the-tests)
    EOT
 end
 
