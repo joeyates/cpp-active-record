@@ -147,6 +147,18 @@ string postgresql_invocation(const OptionsHash& options) {
   return command.str();
 }
 
+string postgresql_conninfo(const OptionsHash& options) {
+  stringstream connection_stream;
+  connection_stream << "dbname=" << options.find("database")->second << " ";
+  if(options.find("host") != options.end())
+    connection_stream << "host=" << options.find("host")->second << " ";
+  if(options.find("username") != options.end())
+    connection_stream << "user=" << options.find("username")->second << " ";
+  if(options.find("port") != options.end())
+    connection_stream << "port=" << options.find("port")->second << " ";
+  return connection_stream.str();
+}
+
 strings postgresql_shell_command(
   const string& query,
   const OptionsHash& connection_options

@@ -35,6 +35,7 @@ void assert_file_non_zero_length( const string &file_name );
 
 // postgresql helpers
 string postgresql_invocation(const OptionsHash& options);
+string postgresql_conninfo(const OptionsHash& options);
 strings postgresql_shell_command(
   const string& query,
   const OptionsHash& connection_options
