@@ -378,4 +378,3 @@ void PostgresqlConnection::log_error(PGresult *exec_result) {
 }
 
 } // namespace ActiveRecord
-
