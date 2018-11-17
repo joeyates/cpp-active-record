@@ -5,6 +5,7 @@
 class PostgresqlTableSetTest : public PostgresqlTest {
  protected:
   virtual void SetUp() {
+    PostgresqlTest::SetUp();
     created_database_ = "active_record_test_database";
     postgresql_shell_create_database(created_database_, connection_options_);
     connection_options_["database"] = created_database_;
