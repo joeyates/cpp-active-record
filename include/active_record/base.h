@@ -20,7 +20,7 @@
 // The model needs to know it's own name
 #define AR_DECLARE(klass)                                                    \
   template <>                                                                \
-  ActiveRecord::Connection* ActiveRecord::Base<klass>::connection__ = NULL ; \
+  ActiveRecord::Connection* ActiveRecord::Base<klass>::connection_ = NULL ; \
   template <>                                                                \
   string ActiveRecord::Base<klass>::class_name = #klass;
 
@@ -51,7 +51,7 @@ class Base {
 
   // Static members
   static string class_name;
-  static Connection* connection__;
+  static Connection* connection_;
   static void setup(Connection* connection);
 
   // Constructors
@@ -113,8 +113,8 @@ class Base {
     if(state_ < loaded)
       throw ActiveRecordException("Instance not loaded", __FILE__, __LINE__);
 
-    Query<T1> query(*connection__);
-    Table t1 = connection__->get_table(T1::class_name);
+    Query<T1> query(*connection_);
+    Table t1 = connection_->get_table(T1::class_name);
     stringstream where;
     where << singular_name_ << "_id = ?";
     return query.where(where.str(), id()).all();
@@ -125,8 +125,8 @@ class Base {
     if(state_ < loaded)
       throw ActiveRecordException("Instance not loaded", __FILE__, __LINE__);
 
-    Query< T1 > query(*connection__);
-    Table t1 = connection__->get_table(T1::class_name);
+    Query< T1 > query(*connection_);
+    Table t1 = connection_->get_table(T1::class_name);
     string primary_key = t1.primary_key();
     stringstream where;
     where << primary_key << " = ?";
@@ -222,15 +222,15 @@ void Base< T >::setup(Connection* connection) {
   if(connection == NULL)
     throw ActiveRecordException("connection is NULL", __FILE__, __LINE__);
 
-  T::connection__ = connection;
-  Table td = T::table(connection__);
+  T::connection_ = connection;
+  Table td = T::table(connection_);
 
   if(td.table_name().empty()) {
     throw ActiveRecordException(
       "set the table name when returning Table", __FILE__, __LINE__
     );
   }
-  connection__->set_table(T::class_name, td);
+  connection_->set_table(T::class_name, td);
 }
 
 template<class T >
@@ -271,7 +271,7 @@ bool Base< T >::load() {
   AttributeList parameters;
   parameters.push_back(id());
 
-  Row row = connection__->select_one(ss.str(), parameters);
+  Row row = connection_->select_one(ss.str(), parameters);
   if(!row.has_data())
     throw ActiveRecordException("Record not found", __FILE__, __LINE__);
 
@@ -304,12 +304,13 @@ bool Base< T >::create() {
     parameters.push_back(it->second);
     columns_added = true;
   }
+
   if(columns_added)
     ss << "(" << columns.str() << ") VALUES (" << placeholders.str() << ")";
   else // Handle INSERT with no data
     ss << "(" << primary_key_ << ") VALUES (NULL )";
 
-  id_ = (int) connection__->insert(ss.str(), parameters);
+  id_ = (int) connection_->insert(ss.str(), parameters);
   state_ = loaded;
 
   return true;
@@ -344,7 +345,8 @@ bool Base< T >::update() {
   ss << "SET " << columns.str() << " ";
   ss << "WHERE " << primary_key_ << " = ?;";
   parameters.push_back(id());
-  return connection__->execute(ss.str(), parameters);
+
+  return connection_->execute(ss.str(), parameters);
 }
 
 // State
@@ -359,8 +361,9 @@ void Base< T >::prepare() {
     return;
 
   log(T::class_name);
-  log("connection__.get_table");
-  Table t = connection__->get_table(T::class_name);
+  log("connection_.get_table");
+
+  Table t = connection_->get_table(T::class_name);
   primary_key_ = t.primary_key();
   table_name_ = t.table_name();
 
