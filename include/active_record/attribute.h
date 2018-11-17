@@ -62,6 +62,10 @@ typedef assign_detail::generic_list<AttributePair> GenericAttributePairList;
 
 } // namespace ActiveRecord
 
+ostream& operator<<(
+  ostream &cout, const ActiveRecord::GenericAttributePairList& attributes
+);
+
 // Instantiate boost::assign::list_of for our option type
 // so we can define 'attribute_pairs' below
 // Warning: this *may* be GCC STL-specific

@@ -37,3 +37,25 @@ ostream& operator<<(ostream& cout, ActiveRecord::Date const& date) {
 }
 
 } // namespace ActiveRecord
+
+ostream& operator<<(
+  ostream& cout, const ActiveRecord::GenericAttributePairList& attributes
+) {
+  cout << "attributes: ";
+
+  for(
+    ActiveRecord::GenericAttributePairList::const_iterator it =
+      attributes.begin();
+    it != attributes.end();
+    ++it
+  ) {
+    if(it != attributes.begin()) {
+      cout << ", ";
+    }
+    cout << it->first << ": " << it->second;
+  }
+
+  cout << endl;
+
+  return cout;
+}

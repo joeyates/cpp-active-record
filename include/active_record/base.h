@@ -65,14 +65,14 @@ class Base {
   }
 
   // Initialization
-  Base& init(const GenericAttributePairList &attributes) {
+  Base& init(const GenericAttributePairList& attributes) {
     ensure_prepared();
 
     for(
       GenericAttributePairList::const_iterator it = attributes.begin();
        it != attributes.end();
-       ++it)
-    {
+       ++it
+    ) {
       attributes_[it->first] = it->second;
     }
 
@@ -87,22 +87,22 @@ class Base {
     return attributes_[name];
   }
 
-  string text(const string &name) {
+  string text(const string& name) {
     load_unless_new();
     return boost::get<string>(attributes_[name]);
   }
 
-  int integer(const string &name) {
+  int integer(const string& name) {
     load_unless_new();
     return boost::get<int>(attributes_[name]);
   }
 
-  double floating_point(const string &name) {
+  double floating_point(const string& name) {
     load_unless_new();
     return boost::get<double>(attributes_[name]);
   }
 
-  Date date(const string &name) {
+  Date date(const string& name) {
     load_unless_new();
     return boost::get< Date>(attributes_[name]);
   }
