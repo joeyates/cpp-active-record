@@ -13,49 +13,57 @@ namespace ActiveRecord {
 class Field;
 }
 
-ostream & operator<<(ostream &cout, const ActiveRecord::Field& field);
+ostream& operator<<(ostream& cout, const ActiveRecord::Field& field);
 
 namespace ActiveRecord {
 
 class Field {
- friend ostream & ::operator<<(ostream &cout, const Field& field);
- public:
-  Field(const string &name, ActiveRecord::Type::Type type)
-    : name_(name),
-      type_(type) {}
+  friend ostream& ::operator<<(ostream& cout, const Field& field);
 
-  inline const string&      name() const { return name_; }
+  public:
+
+  Field(const string &name, ActiveRecord::Type::Type type):
+    name_(name),
+    type_(type) {}
+
+  inline const string& name() const { return name_; }
   inline ActiveRecord::Type::Type type() const { return type_; }
 
- private:
-  string             name_;
+  private:
+
+  string                   name_;
   ActiveRecord::Type::Type type_;
 };
 
-typedef assign_detail::generic_list< Field>  GenericFieldList;
+typedef assign_detail::generic_list<Field>  GenericFieldList;
 
-class Fields : public vector< Field> {
- public:
+class Fields: public vector<Field> {
+  public:
+
   Fields() {}
 
   // Allow Fields foo(fields (...) ... );
-  Fields(const assign_detail::generic_list< Field> &other) {
-    for(assign_detail::generic_list< Field>::const_iterator it = other.begin();
-         it != other.end();
-         ++it) {
+  Fields(const assign_detail::generic_list<Field> &other) {
+    for(
+      assign_detail::generic_list<Field>::const_iterator it = other.begin();
+      it != other.end();
+      ++it
+    ) {
       push_back(*it);
     }
   }
+
   Fields operator-(Fields &other) {
     Fields fields;
     for(Fields::iterator it = this->begin(); it != this->end(); ++it) {
-      if( ! other.has_field(it->name()) )
+      if(!other.has_field(it->name()) )
         fields.push_back(Field(it->name(), it->type()) );
     }
     return fields;
   }
 
- private:
+  private:
+
   bool has_field(const string &field_name) {
     for(Fields::iterator it = this->begin(); it != this->end(); ++it) {
       if(it->name() == field_name) {
@@ -74,9 +82,9 @@ namespace assign
 {
 
 template<>
-inline assign_detail::generic_list< ActiveRecord::Field>
+inline assign_detail::generic_list<ActiveRecord::Field>
 list_of(const ActiveRecord::Field &f) {
-  return assign_detail::generic_list< ActiveRecord::Field>()(f);
+  return assign_detail::generic_list<ActiveRecord::Field>()(f);
 }
 
 } // namespace boost
@@ -84,8 +92,10 @@ list_of(const ActiveRecord::Field &f) {
 
 namespace ActiveRecord {
 
-inline assign_detail::generic_list< Field> fields(const char * name,
-                                                     ActiveRecord::Type::Type type) {
+inline assign_detail::generic_list< Field> fields(
+  const char * name,
+  ActiveRecord::Type::Type type
+) {
   return assign::list_of(Field(name, type));
 }
 
