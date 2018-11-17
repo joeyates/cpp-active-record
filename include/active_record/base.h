@@ -149,6 +149,11 @@ class Base {
   bool has_data() const {
     return (attributes_.size() > 0) ? true : false;
   }
+
+  bool new_record() const {
+    return (state_ != loaded) ? true : false;
+  }
+
   // No need to load either instance:
   // if states and attributes are the same,
   // we accept they're the same
