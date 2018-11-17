@@ -1,9 +1,9 @@
 #include "test_helper.h"
 #include "postgresql_connection_test.h"
 
-extern const char * pg_host;
-extern const char * pg_port;
-extern const char * pg_user;
+extern const char* pg_host;
+extern const char* pg_port;
+extern const char* pg_user;
 
 using namespace ActiveRecord;
 
@@ -54,7 +54,8 @@ TEST_F(PostgresqlTest, DropDatabase) {
 }
 
 class PostgresqlWithTemplate1ConnectionTest : public PostgresqlTest {
- protected:
+  protected:
+
   virtual void SetUp() {
     PostgresqlTest::SetUp();
     connection_.connect(connection_options_);
@@ -92,14 +93,16 @@ TEST_F(PostgresqlWithTemplate1ConnectionTest, DatabaseExists) {
   );
 }
 
-class PostgresqlWithConnectionTest : public PostgresqlTest {
- protected:
+class PostgresqlWithConnectionTest: public PostgresqlTest {
+  protected:
+
   virtual void SetUp() {
     PostgresqlTest::SetUp();
     postgresql_shell_create_database(test_db_, connection_options_);
     connection_options_["database"] = test_db_;
     connection_.connect(connection_options_);
   }
+
   virtual void TearDown() {
     connection_.disconnect();
     connection_options_["database"] = "template1";
@@ -120,27 +123,33 @@ TEST_F(PostgresqlWithConnectionTest, Execute) {
   ASSERT_TRUE(connection_.table_exists("bar"));
 }
 
-class PostgresqlWithConnectionAndTableTest : public PostgresqlWithConnectionTest {
- protected:
+class PostgresqlWithConnectionAndTableTest:
+  public PostgresqlWithConnectionTest
+{
+  protected:
+
   virtual void SetUp() {
     PostgresqlWithConnectionTest::SetUp();
     postgresql_shell_command(
-      "\
-      CREATE TABLE foo (\
-        pk SERIAL PRIMARY KEY, num INTEGER, word TEXT, f NUMERIC\
-      )\
-      ", connection_options_
+      "CREATE TABLE foo ("
+      "pk SERIAL PRIMARY KEY, num INTEGER, word TEXT, f NUMERIC "
+      ")",
+      connection_options_
     );
   }
 };
 
 TEST_F(PostgresqlWithConnectionAndTableTest, Insert) {
-  long id = connection_.insert("INSERT INTO foo (num) VALUES (1) RETURNING pk;");
+  long id = connection_.insert(
+    "INSERT INTO foo (num) VALUES (1) RETURNING pk;"
+  );
 
   ASSERT_EQ(id, 1);
+
   list<string> output = postgresql_shell_command(
     "SELECT num FROM foo", connection_options_
   );
+
   ASSERT_EQ(" num \n", output.front());
   output.pop_front();
   output.pop_front();
@@ -200,7 +209,9 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectAllWithParameter) {
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectValue) {
   connection_.execute("INSERT INTO foo (num) VALUES (42);");
 
-  ActiveRecord::Attribute result = connection_.select_value("SELECT num FROM foo");
+  ActiveRecord::Attribute result = connection_.select_value(
+    "SELECT num FROM foo"
+  );
   ASSERT_TRUE(result.has_data());
   ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
   ASSERT_EQ(boost::get<int>(result), 42);
@@ -248,7 +259,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithFloatParam) {
   params.push_back(9.9);
   params.push_back(10.0);
   ActiveRecord::Attribute result = connection_.select_value(
-    "SELECT pk FROM foo WHERE f > $1 AND f < $2", params
+    "SELECT pk FROM foo WHERE f> $1 AND f < $2", params
   );
   ASSERT_TRUE(result.has_data());
   ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
@@ -273,7 +284,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValuesWithParameter) {
   connection_.execute("INSERT INTO foo (num) VALUES (99);");
 
   AttributeList attributes = connection_.select_values(
-    "SELECT num FROM foo WHERE pk >= $1", parameters (2)
+    "SELECT num FROM foo WHERE pk>= $1", parameters (2)
   );
 
   ASSERT_EQ(1, attributes.size());

@@ -18,42 +18,47 @@ using namespace boost;
 
 namespace ActiveRecord {
 
-typedef boost::variant< int, long long, string, double, Date > AttributeType;
+typedef boost::variant<int, long long, string, double, Date> AttributeType;
 
-// N.B. boost::variant.which() returns a 0-based index into the AttributeType list
-class Attribute : public AttributeType {
- friend class Connection;
- friend class Row;
- // static
- public:
+// N.B. boost::variant.which() returns a 0-based index into the
+// AttributeType list
+class Attribute: public AttributeType {
+  friend class Connection;
+  friend class Row;
+
+  // static
+  public:
+
   static Attribute from_field(sqlite3_stmt *pStmt, int i);
   static Attribute from_field(PGresult * exec_result, int row, int column);
   static Type::Type pg_type_to_ar_type(Oid pg_type);
 
- // instance methods
- public:
-  Attribute() :                  AttributeType(), initialised_( false ) {}
-  Attribute( int i ) :           AttributeType( i ), initialised_( true ) {}
-  Attribute( long long i ) :     AttributeType( i ), initialised_( true ) {}
-  Attribute( const string &s ) : AttributeType( s ), initialised_( true ) {}
-  Attribute( const char *s ) :   AttributeType( string( s ) ), initialised_( true ) {}
-  Attribute( double d ) :        AttributeType( d ), initialised_( true ) {}
-  Attribute( Date date ) :       AttributeType( date ), initialised_( true ) {}
+  // instance methods
+  public:
+
+  Attribute():                AttributeType(), initialised_(false) {}
+  Attribute(int i):           AttributeType(i), initialised_(true) {}
+  Attribute(long long i):     AttributeType(i), initialised_(true) {}
+  Attribute(const string& s): AttributeType(s), initialised_(true) {}
+  Attribute(const char* s):   AttributeType(string(s)), initialised_(true) {}
+  Attribute(double d):        AttributeType(d), initialised_(true) {}
+  Attribute(Date date):       AttributeType(date), initialised_(true) {}
 
   bool has_data() const { return initialised_; }
   Type::Type type() const;
-  bool operator==( const Attribute& other ) const;
+  bool operator==(const Attribute& other) const;
 
- private:
+  private:
+
   bool initialised_;
 };
 
-typedef pair< string, Attribute >             AttributePair;
-typedef map< string, Attribute >              AttributeHash;
-typedef list< AttributePair >                 AttributePairList;
-typedef list< Attribute >                     AttributeList;
-typedef pair< string, AttributeList >         QueryParametersPair;
-typedef assign_detail::generic_list< AttributePair > GenericAttributePairList;
+typedef pair<string, Attribute>             AttributePair;
+typedef map<string, Attribute>              AttributeHash;
+typedef list<AttributePair>                 AttributePairList;
+typedef list<Attribute>                     AttributeList;
+typedef pair<string, AttributeList>         QueryParametersPair;
+typedef assign_detail::generic_list<AttributePair> GenericAttributePairList;
 
 } // namespace ActiveRecord
 
@@ -67,8 +72,8 @@ namespace assign
 
 template<>
 inline ActiveRecord::GenericAttributePairList
-list_of( const ActiveRecord::AttributePair &t ) {
-  return ActiveRecord::GenericAttributePairList()( t );
+list_of(const ActiveRecord::AttributePair& t) {
+  return ActiveRecord::GenericAttributePairList()(t);
 }
 
 } // namespace assign
@@ -77,11 +82,12 @@ list_of( const ActiveRecord::AttributePair &t ) {
 namespace ActiveRecord {
 
 /*
- ( attribute_pairs ( "foo" 13 ) ( "bar" "hello" ) ( "baz" 15.5 ) )
+ (attribute_pairs ("foo" 13) ("bar" "hello") ("baz" 15.5))
 */
-inline GenericAttributePairList attribute_pairs( const char * name,
-    const Attribute &value ) {
-  return boost::assign::list_of( AttributePair( name, value ) );
+inline GenericAttributePairList attribute_pairs(
+  const char* name, const Attribute& value
+) {
+  return boost::assign::list_of(AttributePair(name, value));
 }
 
 } // namespace ActiveRecord

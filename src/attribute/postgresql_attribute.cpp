@@ -19,7 +19,7 @@ Attribute Attribute::from_field(PGresult * exec_result, int row, int column) {
     case Type::long_long: {
       // if it's small enough, stuff it in a normal int
       long long ll = atoll(raw);
-      if(ll >= INT_MIN and ll <= INT_MAX)
+      if(ll>= INT_MIN and ll <= INT_MAX)
         return (int) ll;
       else
         return ll;
@@ -30,7 +30,7 @@ Attribute Attribute::from_field(PGresult * exec_result, int row, int column) {
       return Date::parse(raw);
     default: {
       stringstream error;
-      error << "Value '" << raw << "' has unhandled data type " << pg_type;
+      error << "Value '" <<raw << "' has unhandled data type " <<pg_type;
       throw ActiveRecordException(error.str(), __FILE__, __LINE__);
     }
   }

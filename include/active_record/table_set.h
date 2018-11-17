@@ -7,10 +7,10 @@ namespace ActiveRecord {
 
 class Connection;
 
-class TableSet : public map< string, Table > {
+class TableSet : public map<string, Table> {
  public:
-  static void      create_table( Table &td );
-  static void      update_table( Table &td );
+  static void      create_table(Table &td);
+  static void      update_table(Table &td);
 
   // Data Definition / Database Structure
   void      update_database();

@@ -22,11 +22,11 @@ enum Type {
 
 } // namespace Type
 
-typedef pair< ActiveRecord::Type::Type, string >    TypeNamePair;
-typedef map< ActiveRecord::Type::Type, string >     TypeNameMap;
+typedef pair< ActiveRecord::Type::Type, string>    TypeNamePair;
+typedef map< ActiveRecord::Type::Type, string>     TypeNameMap;
 
-Type::Type index_to_type( int index );
-Type::Type to_type( const string &type_name );
+Type::Type index_to_type(int index);
+Type::Type to_type(const string &type_name);
 
 } // namespace ActiveRecord
 

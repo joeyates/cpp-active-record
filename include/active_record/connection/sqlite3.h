@@ -11,25 +11,25 @@ class Sqlite3Connection : public Connection {
   Sqlite3Connection();
   virtual ~Sqlite3Connection();
 
-  virtual void  connect( OptionsHash options );
+  virtual void  connect(OptionsHash options);
   virtual void  disconnect();
   virtual bool  connected();
 
   // Database Structure
-  virtual bool  table_exists( const string &table_name );
+  virtual bool  table_exists(const string &table_name);
   // Queries
-  virtual bool          execute( const string &query,
-      const AttributeList &parameters = AttributeList() );
-  virtual long          insert( const string &query,
-      const AttributeList &parameters = AttributeList() );
-  virtual Attribute     select_value( const string &query,
-      const AttributeList &parameters = AttributeList() );
-  virtual AttributeList select_values( const string &query,
-      const AttributeList &parameters = AttributeList() );
-  virtual Row           select_one( const string &query,
-      const AttributeList &parameters = AttributeList() );
-  virtual RowSet        select_all( const string &query,
-      const AttributeList &parameters = AttributeList() );
+  virtual bool          execute(const string &query,
+      const AttributeList &parameters = AttributeList());
+  virtual long          insert(const string &query,
+      const AttributeList &parameters = AttributeList());
+  virtual Attribute     select_value(const string &query,
+      const AttributeList &parameters = AttributeList());
+  virtual AttributeList select_values(const string &query,
+      const AttributeList &parameters = AttributeList());
+  virtual Row           select_one(const string &query,
+      const AttributeList &parameters = AttributeList());
+  virtual RowSet        select_all(const string &query,
+      const AttributeList &parameters = AttributeList());
   virtual string        primary_key(const string &table_name);
   virtual TableSet      schema();
   virtual Table         table_data(const string &table_name);
@@ -37,13 +37,13 @@ class Sqlite3Connection : public Connection {
       const string &field_name);
 
  private:
-  Sqlite3Connection( const Sqlite3Connection& other );
-  Sqlite3Connection operator=( const Sqlite3Connection& other );
+  Sqlite3Connection(const Sqlite3Connection& other);
+  Sqlite3Connection operator=(const Sqlite3Connection& other);
 
-  bool           sqlite_initialize( string database_path_name );
-  static string  sqlite_error( int error_code );
-  sqlite3_stmt * prepare( const string &query, const AttributeList &parameters );
-  void           bind_parameters( sqlite3_stmt *ppStmt, const AttributeList &parameters );
+  bool           sqlite_initialize(string database_path_name);
+  static string  sqlite_error(int error_code);
+  sqlite3_stmt * prepare(const string &query, const AttributeList &parameters);
+  void           bind_parameters(sqlite3_stmt *ppStmt, const AttributeList &parameters);
 
   sqlite3 *      db_;
 };

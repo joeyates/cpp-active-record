@@ -16,16 +16,16 @@ using namespace std;
 
 namespace ActiveRecord {
 
-template < class T >
+template <class T >
 class Query {
  public:
- Query( Connection& connection ) : limit_( INVALID_LIMIT ), connection_( &connection ) {};
-  Query( const Query< T > &other );
-  Query< T >             operator=( const Query< T > &other );
+ Query(Connection& connection) : limit_(INVALID_LIMIT ), connection_( &connection) {};
+  Query(const Query< T > &other);
+  Query< T >             operator=(const Query< T > &other);
 
-  Query< T >             where( const string &condition, const Attribute &value );
-  Query< T >             order( string order );
-  Query< T >             limit( int limit );
+  Query< T >             where(const string &condition, const Attribute &value);
+  Query< T >             order(string order);
+  Query< T >             limit(int limit);
   // Results
   T                      first();
   vector< T >            all();
@@ -33,7 +33,7 @@ class Query {
  protected:
   AttributePairList      conditions_;
   int                    limit_;
-  vector< string >       orderings_;
+  vector<string>       orderings_;
   Connection*            connection_;
 
  private:
@@ -43,105 +43,105 @@ class Query {
   QueryParametersPair    query_and_parameters();
 };
 
-template < class T >
-Query< T >::Query( const Query< T > &other ) {
+template <class T >
+Query< T >::Query(const Query< T > &other) {
   conditions_ = other.conditions_;
   limit_      = other.limit_;
   orderings_  = other.orderings_;
   connection_ = other.connection_;
 }
 
-template < class T >
-Query< T > Query< T >::operator=( const Query< T > &other ) {
-  Query< T > result( other );
+template <class T >
+Query< T > Query< T >::operator=(const Query< T > &other) {
+  Query< T > result(other);
   return result;
 }
 
-// foo.where( "name = ?", "Joe" );
-template < class T >
-Query< T > Query< T >::where( const string &condition, const Attribute &value ) {
-  conditions_.push_back( AttributePair( condition, value ) );
+// foo.where("name = ?", "Joe");
+template <class T >
+Query< T > Query< T >::where(const string &condition, const Attribute &value) {
+  conditions_.push_back(AttributePair(condition, value));
   return *this;
 }
 
-// foo.limit( 50 );
-template < class T >
-Query< T > Query< T >::limit( int limit ) {
+// foo.limit( 50);
+template <class T >
+Query< T > Query< T >::limit(int limit) {
   limit_ = limit;
   return *this;
 }
 
-// foo.order( "bar DESC" );
-template < class T >
-Query< T > Query< T >::order( string order ) {
-  orderings_.push_back( order );
+// foo.order("bar DESC");
+template <class T >
+Query< T > Query< T >::order(string order) {
+  orderings_.push_back(order);
   return *this;
 }
-template < class T >
+template <class T >
 string Query< T >::limit_clause() {
-  if( limit_ == INVALID_LIMIT )
+  if(limit_ == INVALID_LIMIT )
     return "";
   stringstream ss;
-  ss << " LIMIT " << limit_;
+  ss << " LIMIT " <<limit_;
   return ss.str();
 }
 
-template < class T >
+template <class T >
 QueryParametersPair Query< T >::condition_clause() {
   AttributeList parameters;
-  if( conditions_.size() == 0 )
-    return QueryParametersPair( "", parameters );
+  if(conditions_.size() == 0)
+    return QueryParametersPair("", parameters);
   stringstream ss;
   ss << " ";
-  for( AttributePairList::const_iterator it = conditions_.begin(); it != conditions_.end(); ++it ) {
-    if( it == conditions_.begin() )
+  for(AttributePairList::const_iterator it = conditions_.begin(); it != conditions_.end(); ++it) {
+    if(it == conditions_.begin())
       ss << "WHERE ";
     else
       ss << " AND ";
-    ss << it->first;
-    parameters.push_back( it->second );
+    ss <<it->first;
+    parameters.push_back(it->second);
   }
-  return QueryParametersPair( ss.str(), parameters );
+  return QueryParametersPair(ss.str(), parameters);
 }
 
-template < class T >
+template <class T >
 QueryParametersPair Query< T >::query_and_parameters() {
-  Table t = connection_->get_table( T::class_name );
+  Table t = connection_->get_table(T::class_name);
   stringstream ss;
   ss << "SELECT ";
-  ss << t.primary_key() << " ";
+  ss <<t.primary_key() << " ";
   ss << "FROM ";
-  ss << t.table_name();
+  ss <<t.table_name();
   QueryParametersPair conditions = condition_clause();
-  ss << conditions.first;
-  ss << order_clause();
-  ss << limit_clause();
+  ss <<conditions.first;
+  ss <<order_clause();
+  ss <<limit_clause();
   ss << ";";
-  return QueryParametersPair( ss.str(), conditions.second );
+  return QueryParametersPair(ss.str(), conditions.second);
 }
 
-template < class T >
+template <class T >
 vector< T > Query< T >::all() {
   QueryParametersPair query = query_and_parameters();
-  AttributeList ids         = connection_->select_values( query.first, query.second );
+  AttributeList ids         = connection_->select_values(query.first, query.second);
   vector< T > results;
-  for( AttributeList::iterator it = ids.begin(); it != ids.end(); ++it ) {
-    T record( boost::get< int >( *it ) );
-    results.push_back( record );
+  for(AttributeList::iterator it = ids.begin(); it != ids.end(); ++it) {
+    T record(boost::get<int>(*it));
+    results.push_back(record);
   }
   return results;
 }
 
-template < class T >
+template <class T >
 T Query< T >::first() {
   QueryParametersPair query = query_and_parameters();
-  Row row                   = connection_->select_one( query.first, query.second );
-  if( ! row.has_data() )
-    throw ActiveRecordException( "No data", __FILE__, __LINE__ );
+  Row row                   = connection_->select_one(query.first, query.second);
+  if( ! row.has_data())
+    throw ActiveRecordException("No data", __FILE__, __LINE__);
 
-  Table t                   = connection_->get_table( T::class_name );
+  Table t                   = connection_->get_table(T::class_name);
   string primary_key        = t.primary_key();
-  T record( row.get_integer( primary_key ) );
+  T record(row.get_integer(primary_key));
 
   return record;
 }
@@ -149,18 +149,18 @@ T Query< T >::first() {
 /////////////////////////////////////////////
 // Private
 
-template < class T >
+template <class T >
 string Query< T >::order_clause() {
-  if( orderings_.size() == 0 )
+  if(orderings_.size() == 0)
     return "";
   stringstream ss;
   ss << " ";
-  for( vector< string >::const_iterator it = orderings_.begin(); it != orderings_.end(); ++it ) {
-    if( it == orderings_.begin() )
+  for(vector<string>::const_iterator it = orderings_.begin(); it != orderings_.end(); ++it) {
+    if(it == orderings_.begin())
       ss << "ORDER BY ";
     else
       ss << ", ";
-    ss << *it;
+    ss <<*it;
   }
   return ss.str();
 }
@@ -173,9 +173,9 @@ namespace assign
 {
 
 template<>
-inline assign_detail::generic_list< ActiveRecord::Attribute >
-list_of( const ActiveRecord::Attribute &t ) {
-  return assign_detail::generic_list< ActiveRecord::Attribute >()( t );
+inline assign_detail::generic_list< ActiveRecord::Attribute>
+list_of(const ActiveRecord::Attribute &t) {
+  return assign_detail::generic_list< ActiveRecord::Attribute>()(t);
 }
 
 } // namespace assign
@@ -186,8 +186,8 @@ namespace ActiveRecord {
 /*
  parameters (13 "hello" 15.5)
 */
-inline AttributeList parameters( const Attribute &value ) {
-  return boost::assign::list_of( ActiveRecord::Attribute( value ) );
+inline AttributeList parameters(const Attribute &value) {
+  return boost::assign::list_of(ActiveRecord::Attribute(value));
 }
 
 } // namespace ActiveRecord

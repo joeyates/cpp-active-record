@@ -3,9 +3,13 @@
 
 #include <active_record/connection/postgresql.h>
 
-class PostgresqlTest : public ::testing::Test {
- protected:
+class PostgresqlTest: public ::testing::Test {
+  protected:
+
   virtual void SetUp();
+
+  protected:
+
   string test_db_;
   PostgresqlConnection connection_;
   OptionsHash connection_options_;

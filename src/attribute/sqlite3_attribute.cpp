@@ -13,11 +13,11 @@ Attribute Attribute::from_field(sqlite3_stmt *pStmt, int i) {
       return value;
     else
       return Attribute();
-  } else if(strcasecmp( type, "INTEGER") == 0) {
-    return sqlite3_column_int( pStmt, i );
-  } else if(strcasecmp( type, "FLOAT") == 0) {
-    return sqlite3_column_double( pStmt, i);
-  } else if(strcasecmp( type, "TEXT") == 0) {
+  } else if(strcasecmp(type, "INTEGER") == 0) {
+    return sqlite3_column_int(pStmt, i);
+  } else if(strcasecmp(type, "FLOAT") == 0) {
+    return sqlite3_column_double(pStmt, i);
+  } else if(strcasecmp(type, "TEXT") == 0) {
     const char * value = (const char *) sqlite3_column_text(pStmt, i);
     if(value != 0)
       return value;
@@ -31,7 +31,7 @@ Attribute Attribute::from_field(sqlite3_stmt *pStmt, int i) {
       return Attribute(); // DATE hasn't been set
   } else {
     stringstream error;
-    error << "Unhandled data type: " << type;
+    error << "Unhandled data type: " <<type;
     throw ActiveRecordException(error.str(), __FILE__, __LINE__);
   }
 }

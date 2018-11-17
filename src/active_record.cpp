@@ -7,14 +7,12 @@ namespace ActiveRecord {
 
 bool debug = false;
 
-void set_debug( bool new_debug )
-{
+void set_debug(bool new_debug) {
   debug = new_debug;
 }
 
-void log( const string& message )
-{
-  if( ! debug )
+void log(const string& message) {
+  if(!debug)
     return;
   cout << message << endl;
 }

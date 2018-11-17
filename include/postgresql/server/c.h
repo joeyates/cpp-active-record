@@ -249,9 +249,9 @@ typedef unsigned int uint32;	/* == 32 bits */
  * bitsN
  *		Unit of bitwise operation, AT LEAST N BITS IN SIZE.
  */
-typedef uint8 bits8;			/* >= 8 bits */
-typedef uint16 bits16;			/* >= 16 bits */
-typedef uint32 bits32;			/* >= 32 bits */
+typedef uint8 bits8;			/*>= 8 bits */
+typedef uint16 bits16;			/*>= 16 bits */
+typedef uint32 bits32;			/*>= 32 bits */
 
 /*
  * 64-bit integers
@@ -727,7 +727,7 @@ typedef NameData *Name;
 		char * _dst = (dst); \
 		Size _len = (len); \
 \
-		if (_len > 0) \
+		if (_len> 0) \
 		{ \
 			strncpy(_dst, (src), _len); \
 			_dst[_len-1] = '\0'; \
@@ -768,7 +768,7 @@ typedef NameData *Name;
 		{ \
 			long *_start = (long *) _vstart; \
 			long *_stop = (long *) ((char *) _start + _len); \
-			while (_start < _stop) \
+			while (_start <_stop) \
 				*_start++ = 0; \
 		} \
 		else \
@@ -794,7 +794,7 @@ typedef NameData *Name;
 			MEMSET_LOOP_LIMIT != 0) \
 		{ \
 			long *_stop = (long *) ((char *) _start + _len); \
-			while (_start < _stop) \
+			while (_start <_stop) \
 				*_start++ = 0; \
 		} \
 		else \
@@ -811,10 +811,10 @@ typedef NameData *Name;
  * this approach.
  */
 #define MemSetTest(val, len) \
-	( ((len) & LONG_ALIGN_MASK) == 0 && \
+	(((len) & LONG_ALIGN_MASK) == 0 && \
 	(len) <= MEMSET_LOOP_LIMIT && \
 	MEMSET_LOOP_LIMIT != 0 && \
-	(val) == 0 )
+	(val) == 0)
 
 #define MemSetLoop(start, val, len) \
 	do \
@@ -822,7 +822,7 @@ typedef NameData *Name;
 		long * _start = (long *) (start); \
 		long * _stop = (long *) ((char *) _start + (Size) (len)); \
 	\
-		while (_start < _stop) \
+		while (_start <_stop) \
 			*_start++ = 0; \
 	} while (0)
 

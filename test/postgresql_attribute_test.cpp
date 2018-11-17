@@ -6,8 +6,9 @@
 #include <catalog/pg_type.h>
 #include <postgresql/libpq-fe.h>
 
-class PostgresqlAttributesTest : public PostgresqlTest {
- protected:
+class PostgresqlAttributesTest: public PostgresqlTest {
+  protected:
+
   virtual void SetUp() {
     PostgresqlTest::SetUp();
     created_database_ = "active_record_test_database";
@@ -20,32 +21,30 @@ class PostgresqlAttributesTest : public PostgresqlTest {
       throw "Connection failed";
     }
 
-    string create_table = "       \
-CREATE TABLE foo (                \
-  id      SERIAL,                 \
-  i       INTEGER,                \
-  bi      BIGINT,                 \
-  n       NUMERIC,                \
-  cv      CHARACTER VARYING(100), \
-  t       TEXT,                   \
-  d       DATE                    \
-)                                 \
-";
+    string create_table =
+      "CREATE TABLE foo ("
+      "  id      SERIAL, "
+      "  i       INTEGER, "
+      "  bi      BIGINT, "
+      "  n       NUMERIC, "
+      "  cv      CHARACTER VARYING(100), "
+      "  t       TEXT, "
+      "  d       DATE"
+      ")";
     postgresql_shell_command(create_table, connection_options_);
 
-    string insert_foo = "         \
-INSERT INTO foo                   \
-  (i, bi, n, cv, t, d)            \
-VALUES                            \
-  (                               \
-    42,                           \
-    9999999999999999,             \
-    1.99,                         \
-    '\\''Hello'\\'',              \
-    '\\''World!'\\'',             \
-    date '\\''2015-10-11'\\''     \
-  ) \
-";
+    string insert_foo =
+      "INSERT INTO foo "
+      "  (i, bi, n, cv, t, d) "
+      "VALUES "
+      "  ( "
+      "    42, "
+      "    9999999999999999, "
+      "    1.99, "
+      "    '\\''Hello'\\'', "
+      "    '\\''World!'\\'', "
+      "    date '\\''2015-10-11'\\''"
+      ")";
     postgresql_shell_command(insert_foo, connection_options_);
 
     string query = "SELECT id, i, bi, n, cv, t, d FROM foo;";
@@ -59,10 +58,11 @@ VALUES                            \
     postgresql_shell_drop_database(created_database_, connection_options_);
   }
 
- protected:
+  protected:
+
   string created_database_;
-  PGconn * pgconn_;
-  PGresult * exec_result_;
+  PGconn* pgconn_;
+  PGresult* exec_result_;
 };
 
 TEST_F(PostgresqlAttributesTest, IntegerFromField) {

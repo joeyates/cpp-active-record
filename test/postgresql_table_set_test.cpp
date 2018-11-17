@@ -2,8 +2,9 @@
 #include "postgresql_connection_test.h"
 #include <active_record/connection/postgresql.h>
 
-class PostgresqlTableSetTest : public PostgresqlTest {
- protected:
+class PostgresqlTableSetTest: public PostgresqlTest {
+  protected:
+
   virtual void SetUp() {
     PostgresqlTest::SetUp();
     created_database_ = "active_record_test_database";
@@ -18,7 +19,8 @@ class PostgresqlTableSetTest : public PostgresqlTest {
     postgresql_shell_drop_database(created_database_, connection_options_);
   }
 
- protected:
+  protected:
+
   PostgresqlConnection connection_;
   string created_database_;
 };
@@ -29,5 +31,7 @@ TEST_F(PostgresqlTableSetTest, CreateTable) {
   TableSet::create_table(td);
 
   // TODO
-  //assert_postgresql_table_exists(created_database_, "people", connection_options_);
+  //assert_postgresql_table_exists(
+  //  created_database_, "people", connection_options_
+  //);
 }

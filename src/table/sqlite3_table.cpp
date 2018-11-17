@@ -27,13 +27,13 @@ string Table::primary_key(Sqlite3Connection *connection,
 
 /*
 SQLite does not implement DROP COLUMN - needs some hoop jumping
-void Table::remove_field( const Field &field ) {
+void Table::remove_field(const Field &field) {
   assert_connection();
   stringstream ss;
-  ss << "ALTER TABLE " << table_name_;
-  ss << " DROP " << field.name();
+  ss << "ALTER TABLE " <<table_name_;
+  ss << " DROP " <<field.name();
   ss << ";";
-  connection_->execute( ss.str() );
+  connection_->execute(ss.str());
 }
 */
 

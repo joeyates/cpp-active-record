@@ -24,13 +24,13 @@ PostgresqlConnection PostgresqlConnection::operator=(
 bool PostgresqlConnection::create_database(PostgresqlConnection & connection,
     OptionsHash options) {
   stringstream create_stream;
-  create_stream << "CREATE DATABASE " << options[ "database" ] << " ";
+  create_stream << "CREATE DATABASE " <<options["database"] << " ";
   if(options.find("owner") != options.end())
-    create_stream << "WITH OWNER " << options[ "owner" ] << " ";
+    create_stream << "WITH OWNER " <<options["owner"] << " ";
   if(options.find("template") != options.end())
-    create_stream << "TEMPLATE " << options[ "template" ] << " ";
+    create_stream << "TEMPLATE " <<options["template"] << " ";
   if(options.find("encoding") != options.end())
-    create_stream << "ENCODING '" << options[ "encoding" ] << "' ";
+    create_stream << "ENCODING '" <<options["encoding"] << "' ";
   create_stream << ";";
   return connection.execute(create_stream.str());
 }
@@ -38,14 +38,14 @@ bool PostgresqlConnection::create_database(PostgresqlConnection & connection,
 void PostgresqlConnection::drop_database(PostgresqlConnection & connection,
     const string &database_name) {
   stringstream query;
-  query << "DROP DATABASE " << database_name << ";";
+  query << "DROP DATABASE " <<database_name << ";";
   connection.execute(query.str());
 }
 
 bool PostgresqlConnection::database_exists(PostgresqlConnection & connection,
     const string &database_name) {
   stringstream query;
-  query << "SELECT datname FROM pg_database WHERE datname = '" << database_name << "';";
+  query << "SELECT datname FROM pg_database WHERE datname = '" <<database_name << "';";
   Row row = connection.select_one(query.str());
   return row.has_data();
 }
@@ -55,13 +55,13 @@ bool PostgresqlConnection::database_exists(PostgresqlConnection & connection,
 
 void PostgresqlConnection::connect(OptionsHash options) {
   stringstream connection_stream;
-  connection_stream << "dbname=" << options[ "database" ] << " ";
+  connection_stream << "dbname=" <<options["database"] << " ";
   if(options.find("host") != options.end())
-    connection_stream << "host=" << options[ "host" ] << " ";
+    connection_stream << "host=" <<options["host"] << " ";
   if(options.find("username") != options.end())
-    connection_stream << "user=" << options[ "username" ] << " ";
+    connection_stream << "user=" <<options["username"] << " ";
   if(options.find("port") != options.end())
-    connection_stream << "port=" << options[ "port" ] << " ";
+    connection_stream << "port=" <<options["port"] << " ";
   string conninfo = connection_stream.str();
 
   pgconn_ = PQconnectdb(conninfo.c_str());
@@ -147,7 +147,7 @@ RowSet PostgresqlConnection::select_all(const string &query,
     return results;
   }
   int row_count = PQntuples(exec_result);
-  for(int row = 0; row < row_count; ++row) {
+  for(int row = 0; row <row_count; ++row) {
     results.push_back(Row(exec_result, row));
   }
   PQclear(exec_result);
@@ -190,7 +190,7 @@ AttributeList PostgresqlConnection::select_values(const string &query,
     return results;
   }
   int row_count = PQntuples(exec_result);
-  for(int row = 0; row < row_count; ++row) {
+  for(int row = 0; row <row_count; ++row) {
     Attribute value = Attribute::from_field(exec_result, row, 0);
     results.push_back(value);
   }
@@ -210,7 +210,7 @@ Table PostgresqlConnection::table_data(const string &table_name) {
     JOIN   pg_attribute a               \
       ON   a.attrelid = i.indrelid      \
     WHERE  i.indrelid = '" + table_name + "'::regclass \
-      AND  a.attnum > 0                 \
+      AND  a.attnum> 0                 \
       AND  NOT a.attisdropped           \
   ";
   RowSet rows = select_all(query);
@@ -296,7 +296,7 @@ PGresult * PostgresqlConnection::execute_params(const string &query,
     ++it) {
     switch(it->which()) {
       case Type::integer: {
-        int value = boost::get< int >(*it);
+        int value = boost::get<int>(*it);
         // From http://stackoverflow.com/questions/190229/where-is-the-itoa-function-in-linux
         int len = (value == 0) ? 1 : floor(log10l(labs(value))) + 1;
         if(value < 0)
@@ -309,7 +309,7 @@ PGresult * PostgresqlConnection::execute_params(const string &query,
         break;
       }
       case Type::text: {
-        string value = boost::get< string >(*it);
+        string value = boost::get<string>(*it);
         int len = value.size();
 
         paramValues[i] = new char[len + 1];
@@ -319,7 +319,7 @@ PGresult * PostgresqlConnection::execute_params(const string &query,
         break;
       }
       case Type::floating_point: {
-        double value = boost::get< double >(*it);
+        double value = boost::get<double>(*it);
         int len = snprintf(paramValues[i], 0, "%f", value);
 
         paramValues[i] = new char[len + 1];
@@ -331,7 +331,7 @@ PGresult * PostgresqlConnection::execute_params(const string &query,
       case Type::date: {
       }
       default: {
-        cout << "Unrecognized type" << endl;
+        cout << "Unrecognized type" <<endl;
         throw ActiveRecordException("Type not implemented", __FILE__, __LINE__);
       }
     }
@@ -350,7 +350,7 @@ PGresult * PostgresqlConnection::execute_params(const string &query,
     0
   );
 
-  for(int i = 0; i < param_count; ++i)
+  for(int i = 0; i <param_count; ++i)
     delete[] paramValues[i];
 
   delete[] paramValues;
@@ -369,7 +369,7 @@ void PostgresqlConnection::log_error(PGresult *exec_result) {
   stringstream error;
   error << "PQexec returned an error. ";
   ExecStatusType status = PQresultStatus(exec_result);
-  error << "Code: " << status << " ";
+  error << "Code: " <<status << " ";
   error << "Message: " << PQresultErrorMessage(exec_result) << " ";
   error << "" << PQresultErrorField(exec_result, PG_DIAG_MESSAGE_PRIMARY) << " ";
   error << "" << PQresultErrorField(exec_result, PG_DIAG_MESSAGE_DETAIL) << " ";

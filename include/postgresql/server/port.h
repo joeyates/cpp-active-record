@@ -74,7 +74,7 @@ extern void pgfnames_cleanup(char **filenames);
 #define IS_DIR_SEP(ch)	((ch) == '/')
 
 #define is_absolute_path(filename) \
-( \
+(\
 	IS_DIR_SEP((filename)[0]) \
 )
 #else
@@ -82,7 +82,7 @@ extern void pgfnames_cleanup(char **filenames);
 
 /* See path_is_relative_and_below_cwd() for how we handle 'E:abc'. */
 #define is_absolute_path(filename) \
-( \
+(\
 	IS_DIR_SEP((filename)[0]) || \
 	(isalpha((unsigned char) ((filename)[0])) && (filename)[1] == ':' && \
 	 IS_DIR_SEP((filename)[2])) \
@@ -129,7 +129,7 @@ extern unsigned char pg_ascii_tolower(unsigned char ch);
 #ifdef USE_REPL_SNPRINTF
 
 /*
- * Versions of libintl >= 0.13 try to replace printf() and friends with
+ * Versions of libintl>= 0.13 try to replace printf() and friends with
  * macros to their own versions that understand the %$ format.  We do the
  * same, so disable their macros, if they exist.
  */
@@ -195,7 +195,7 @@ __attribute__((format(PG_PRINTF_ATTRIBUTE, 1, 2)));
 
 #if defined(WIN32)
 /*
- * Versions of libintl >= 0.18? try to replace setlocale() with a macro
+ * Versions of libintl>= 0.18? try to replace setlocale() with a macro
  * to their own versions.  Remove the macro, if it exists, because it
  * ends up calling the wrong version when the backend and libintl use
  * different versions of msvcrt.
