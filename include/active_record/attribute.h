@@ -82,8 +82,10 @@ list_of(const ActiveRecord::AttributePair& t) {
 namespace ActiveRecord {
 
 /*
- (attribute_pairs ("foo" 13) ("bar" "hello") ("baz" 15.5))
+ActiveRecord::GenericAttributePairList attrs =
+  attribute_pairs ("foo" 13) ("bar" "hello") ("baz" 15.5)
 */
+
 inline GenericAttributePairList attribute_pairs(
   const char* name, const Attribute& value
 ) {
