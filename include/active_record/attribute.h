@@ -60,6 +60,10 @@ typedef list<Attribute>                     AttributeList;
 typedef pair<string, AttributeList>         QueryParametersPair;
 typedef assign_detail::generic_list<AttributePair> GenericAttributePairList;
 
+ostream& operator<<(
+  ostream& cout, const ActiveRecord::AttributeList& attributes
+);
+
 } // namespace ActiveRecord
 
 ostream& operator<<(

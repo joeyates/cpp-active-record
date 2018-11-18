@@ -36,6 +36,28 @@ ostream& operator<<(ostream& cout, ActiveRecord::Date const& date) {
   return cout;
 }
 
+ostream& operator<<(
+  ostream& cout, const ActiveRecord::AttributeList& attributes
+) {
+  cout << "parameters: ";
+
+  for(
+    ActiveRecord::AttributeList::const_iterator it =
+      attributes.begin();
+    it != attributes.end();
+    ++it
+  ) {
+    if(it != attributes.begin()) {
+      cout << ", ";
+    }
+    cout << *it;
+  }
+
+  cout << endl;
+
+  return cout;
+}
+
 } // namespace ActiveRecord
 
 ostream& operator<<(

@@ -6,6 +6,7 @@
 #include <string>
 
 #include <active_record/active_record.h>
+#include <active_record/attribute.h>
 #include <active_record/exception.h>
 #include <active_record/connection.h>
 #include <active_record/query.h>
