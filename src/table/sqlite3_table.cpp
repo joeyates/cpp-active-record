@@ -28,7 +28,7 @@ string Table::primary_key(
 }
 
 /*
-SQLite does not implement DROP COLUMN - needs some hoop jumping
+TODO: SQLite does not implement DROP COLUMN - needs some hoop jumping
 void Table::remove_field(const Field &field) {
   assert_connection();
   stringstream ss;
