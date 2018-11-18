@@ -21,29 +21,29 @@ PostgresqlConnection PostgresqlConnection::operator=(
   return *this;
 }
 
-bool PostgresqlConnection::create_database(PostgresqlConnection & connection,
+bool PostgresqlConnection::create_database(PostgresqlConnection& connection,
     OptionsHash options) {
   stringstream create_stream;
-  create_stream << "CREATE DATABASE " <<options["database"] << " ";
+  create_stream << "CREATE DATABASE " << options["database"] << " ";
   if(options.find("owner") != options.end())
-    create_stream << "WITH OWNER " <<options["owner"] << " ";
+    create_stream << "WITH OWNER " << options["owner"] << " ";
   if(options.find("template") != options.end())
-    create_stream << "TEMPLATE " <<options["template"] << " ";
+    create_stream << "TEMPLATE " << options["template"] << " ";
   if(options.find("encoding") != options.end())
-    create_stream << "ENCODING '" <<options["encoding"] << "' ";
+    create_stream << "ENCODING '" << options["encoding"] << "' ";
   create_stream << ";";
   return connection.execute(create_stream.str());
 }
 
-void PostgresqlConnection::drop_database(PostgresqlConnection & connection,
-    const string &database_name) {
+void PostgresqlConnection::drop_database(PostgresqlConnection& connection,
+    const string& database_name) {
   stringstream query;
-  query << "DROP DATABASE " <<database_name << ";";
+  query << "DROP DATABASE " << database_name << ";";
   connection.execute(query.str());
 }
 
-bool PostgresqlConnection::database_exists(PostgresqlConnection & connection,
-    const string &database_name) {
+bool PostgresqlConnection::database_exists(PostgresqlConnection& connection,
+    const string& database_name) {
   stringstream query;
   query << "SELECT datname FROM pg_database WHERE datname = '" <<database_name << "';";
   Row row = connection.select_one(query.str());
@@ -55,20 +55,26 @@ bool PostgresqlConnection::database_exists(PostgresqlConnection & connection,
 
 void PostgresqlConnection::connect(OptionsHash options) {
   stringstream connection_stream;
-  connection_stream << "dbname=" <<options["database"] << " ";
+  connection_stream << "dbname=" << options["database"] << " ";
+
   if(options.find("host") != options.end())
-    connection_stream << "host=" <<options["host"] << " ";
+    connection_stream << "host=" << options["host"] << " ";
+
   if(options.find("username") != options.end())
-    connection_stream << "user=" <<options["username"] << " ";
+    connection_stream << "user=" << options["username"] << " ";
+
   if(options.find("port") != options.end())
-    connection_stream << "port=" <<options["port"] << " ";
+    connection_stream << "port=" << options["port"] << " ";
+
   string conninfo = connection_stream.str();
 
   pgconn_ = PQconnectdb(conninfo.c_str());
 
   ConnStatusType status = PQstatus(pgconn_);
   if(status == CONNECTION_BAD) {
-    throw ActiveRecordException("Connection to database failed", __FILE__, __LINE__);
+    throw ActiveRecordException(
+      "Connection to database failed", __FILE__, __LINE__
+    );
   }
 }
 
@@ -83,7 +89,7 @@ bool PostgresqlConnection::connected() {
   return pgconn_ != NULL ? true : false;
 }
 
-bool PostgresqlConnection::table_exists(const string &table_name) {
+bool PostgresqlConnection::table_exists(const string& table_name) {
   string query = \
     "SELECT c.relname as table       \
      FROM pg_catalog.pg_class c      \
@@ -92,54 +98,73 @@ bool PostgresqlConnection::table_exists(const string &table_name) {
   return row.has_data();
 }
 
-bool PostgresqlConnection::execute(const string &query,
-    const AttributeList &parameters) {
+bool PostgresqlConnection::execute(
+  const string& query,
+  const AttributeList& parameters
+) {
   log("PostgresqlConnection::execute");
   log(query);
-  PGresult * exec_result = PQexec(pgconn_, query.c_str());
+
+  PGresult* exec_result = PQexec(pgconn_, query.c_str());
+
   bool success = is_error(exec_result);
   if(!success)
     log_error(exec_result);
+
   PQclear(exec_result);
+
   return success;
 }
 
-long PostgresqlConnection::insert(const string &query,
-    const AttributeList &parameters) {
+long PostgresqlConnection::insert(
+  const string& query,
+  const AttributeList& parameters
+) {
   log("PostgresqlConnection::insert");
   log(query);
+
   Attribute id = select_value(query, parameters);
   if(!id.has_data())
     return 0;
+
   return boost::get<int>(id);
 }
 
-Row PostgresqlConnection::select_one(const string &query,
-    const AttributeList &parameters) {
+Row PostgresqlConnection::select_one(
+  const string& query,
+  const AttributeList& parameters
+) {
   log("PostgresqlConnection::select_one");
   log(query);
-  PGresult * exec_result = execute_params(query, parameters);
+
+  PGresult* exec_result = execute_params(query, parameters);
+
   ExecStatusType status = PQresultStatus(exec_result);
   if(status != PGRES_TUPLES_OK) {
     log_error(exec_result);
     PQclear(exec_result);
     return Row();
   }
+
   int row_count = PQntuples(exec_result);
   if(row_count == 0) {
     log("No data");
     PQclear(exec_result);
     return Row();
   }
+
   Row row(exec_result, 0);
   PQclear(exec_result);
+
   return row;
 }
 
-RowSet PostgresqlConnection::select_all(const string &query,
-    const AttributeList &parameters) {
+RowSet PostgresqlConnection::select_all(
+  const string& query,
+  const AttributeList& parameters
+) {
   RowSet results;
-  PGresult * exec_result = execute_params(query, parameters);
+  PGresult* exec_result = execute_params(query, parameters);
   ExecStatusType status = PQresultStatus(exec_result);
   if(status != PGRES_TUPLES_OK) {
     log_error(exec_result);
@@ -155,50 +180,62 @@ RowSet PostgresqlConnection::select_all(const string &query,
 }
 
 Attribute PostgresqlConnection::select_value(
-    const string &query,
-    const AttributeList &parameters) {
-  PGresult * exec_result = execute_params(query, parameters);
+    const string& query,
+    const AttributeList& parameters
+) {
+  PGresult* exec_result = execute_params(query, parameters);
+
   ExecStatusType status = PQresultStatus(exec_result);
   if(status != PGRES_TUPLES_OK) {
     log_error(exec_result);
     PQclear(exec_result);
     return Attribute();
   }
+
   int row_count = PQntuples(exec_result);
   if(row_count == 0) {
     PQclear(exec_result);
     return Attribute();
   }
+
   int columns = PQnfields(exec_result);
   if(columns == 0) {
     PQclear(exec_result);
     return Attribute();
   }
+
   Attribute value = Attribute::from_field(exec_result, 0, 0);
   PQclear(exec_result);
+
   return value;
 }
 
-AttributeList PostgresqlConnection::select_values(const string &query,
-    const AttributeList &parameters) {
+AttributeList PostgresqlConnection::select_values(
+  const string& query,
+  const AttributeList& parameters
+) {
+  PGresult* exec_result = execute_params(query, parameters);
+
   AttributeList results;
-  PGresult * exec_result = execute_params(query, parameters);
   ExecStatusType status = PQresultStatus(exec_result);
   if(status != PGRES_TUPLES_OK) {
     log_error(exec_result);
     PQclear(exec_result);
     return results;
   }
+
   int row_count = PQntuples(exec_result);
-  for(int row = 0; row <row_count; ++row) {
+  for(int row = 0; row < row_count; ++row) {
     Attribute value = Attribute::from_field(exec_result, row, 0);
     results.push_back(value);
   }
+
   PQclear(exec_result);
+
   return results;
 }
 
-Table PostgresqlConnection::table_data(const string &table_name) {
+Table PostgresqlConnection::table_data(const string& table_name) {
   Table td(this, table_name);
 
   string pk = primary_key(table_name);
@@ -241,15 +278,17 @@ TableSet PostgresqlConnection::schema() {
     AND n.nspname !~ '^pg_toast'           \
     AND pg_catalog.pg_table_is_visible(c.oid) \
   ";
+
   RowSet rows = select_all(query);
   for(RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
     string table_name = it->get_text("relname");
     s[table_name] = table_data(table_name);
   }
+
   return s;
 }
 
-string PostgresqlConnection::primary_key(const string &table_name) {
+string PostgresqlConnection::primary_key(const string& table_name) {
   string query = "                      \
     SELECT a.attname                    \
     FROM   pg_index i                   \
@@ -260,13 +299,16 @@ string PostgresqlConnection::primary_key(const string &table_name) {
       AND  i.indisprimary               \
   ";
   Attribute pk = select_value(query);
-  if(! pk.has_data())
+  if(!pk.has_data())
     return "";
+
   return boost::get<string>(pk);
 }
 
-void PostgresqlConnection::remove_field(const string &table_name,
-    const string &field_name) {
+void PostgresqlConnection::remove_field(
+  const string& table_name,
+  const string& field_name
+) {
   begin_transaction();
   string query = "                \
   ALTER TABLE " + table_name + "  \
@@ -279,16 +321,18 @@ void PostgresqlConnection::remove_field(const string &table_name,
 ////////////////////////////////////////
 // Private
 
-PGresult * PostgresqlConnection::execute_params(const string &query,
-    const AttributeList &parameters) {
+PGresult* PostgresqlConnection::execute_params(
+  const string& query,
+  const AttributeList& parameters
+) {
   int param_count = parameters.size();
   if(param_count == 0)
     return PQexec(pgconn_, query.c_str());
 
-  char ** paramValues = new char *[param_count];
-  Oid * paramTypes = new Oid[param_count];
-  int * paramLengths = new int[param_count];
-  int * paramFormats = new int[param_count];
+  char** paramValues = new char *[param_count];
+  Oid* paramTypes = new Oid[param_count];
+  int* paramLengths = new int[param_count];
+  int* paramFormats = new int[param_count];
 
   int i = 0;
   for(AttributeList::const_iterator it = parameters.begin();
@@ -339,7 +383,7 @@ PGresult * PostgresqlConnection::execute_params(const string &query,
     ++i;
   }
 
-  PGresult * result = PQexecParams(
+  PGresult* result = PQexecParams(
     pgconn_,
     query.c_str(),
     param_count,
@@ -360,12 +404,12 @@ PGresult * PostgresqlConnection::execute_params(const string &query,
   return result;
 }
 
-bool PostgresqlConnection::is_error(PGresult *exec_result) {
+bool PostgresqlConnection::is_error(PGresult* exec_result) {
   ExecStatusType status = PQresultStatus(exec_result);
   return (status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK) ? false : true;
  }
 
-void PostgresqlConnection::log_error(PGresult *exec_result) {
+void PostgresqlConnection::log_error(PGresult* exec_result) {
   stringstream error;
   error << "PQexec returned an error. ";
   ExecStatusType status = PQresultStatus(exec_result);

@@ -27,7 +27,7 @@ Type::Type index_to_type(int index) {
   type_list[index];
 }
 
-Type::Type to_type(const string &type_name) {
+Type::Type to_type(const string& type_name) {
   if(type_name == "INTEGER")
     return Type::integer;
   else if(type_name == "LONG_LONG")

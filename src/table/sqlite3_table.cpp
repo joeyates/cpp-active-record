@@ -7,8 +7,10 @@ namespace ActiveRecord {
 
 extern TypeNameMap type_name;
 
-string Table::primary_key(Sqlite3Connection *connection,
-    const string &table_name) {
+string Table::primary_key(
+  Sqlite3Connection* connection,
+  const string& table_name
+) {
   string row_query = "PRAGMA table_info(\"" + table_name + "\");";
   RowSet rows = connection->select_all(row_query);
   for(RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
@@ -30,8 +32,8 @@ SQLite does not implement DROP COLUMN - needs some hoop jumping
 void Table::remove_field(const Field &field) {
   assert_connection();
   stringstream ss;
-  ss << "ALTER TABLE " <<table_name_;
-  ss << " DROP " <<field.name();
+  ss << "ALTER TABLE " << table_name_;
+  ss << " DROP " << field.name();
   ss << ";";
   connection_->execute(ss.str());
 }

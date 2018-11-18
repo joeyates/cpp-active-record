@@ -304,12 +304,15 @@ bool Base< T >::create() {
   ) {
     if(it->first == primary_key_)
       continue;
+
     if(columns_added) {
-      columns      << ", ";
+      columns << ", ";
       placeholders << ", ";
     }
-    columns      << it->first;
+
+    columns << it->first;
     placeholders << "?";
+
     parameters.push_back(it->second);
     columns_added = true;
   }

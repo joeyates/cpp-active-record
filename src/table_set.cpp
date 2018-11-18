@@ -13,7 +13,7 @@ extern TypeNameMap type_name;
 //////////////////////////////////////////////////////////
 // static methods
 
-void TableSet::create_table(Table &td) {
+void TableSet::create_table(Table& td) {
   log("TableSet::create_table");
   log(td.table_name());
 
@@ -57,7 +57,7 @@ void TableSet::create_table(Table &td) {
   td.connection()->execute(ss.str());
 }
 
-void TableSet::update_table(Table &required) {
+void TableSet::update_table(Table& required) {
   log("TableSet::update_table");
   log(required.table_name());
 
