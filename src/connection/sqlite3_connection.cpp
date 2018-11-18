@@ -311,10 +311,10 @@ sqlite3_stmt* Sqlite3Connection::prepare(
     db_, query.c_str(), query.size(), &ppStmt, 0
   );
 
-  if(prepare_result != SQLITE_OK ) {
+  if(prepare_result != SQLITE_OK) {
     stringstream error;
-    error << "SQL error: \"" <<sqlite_error(prepare_result) << "\" ";
-    error << "in \"" <<query << "\"";
+    error << "SQL error: \"" << sqlite_error(prepare_result) << "\" ";
+    error << "in \"" << query << "\"";
 
     bool added = false;
     for(
@@ -341,12 +341,16 @@ sqlite3_stmt* Sqlite3Connection::prepare(
   return ppStmt;
 }
 
-void Sqlite3Connection::bind_parameters(sqlite3_stmt *ppStmt,
-                                  const AttributeList &parameters) {
+void Sqlite3Connection::bind_parameters(
+  sqlite3_stmt* ppStmt,
+  const AttributeList& parameters
+) {
   int i = 0;
-  for(AttributeList::const_iterator it = parameters.begin();
-       it != parameters.end();
-       ++it) {
+  for(
+    AttributeList::const_iterator it = parameters.begin();
+    it != parameters.end();
+    ++it
+  ) {
     switch(it->which()) {
     case Type::integer: {
       int value = boost::get<int>(*it);
@@ -364,7 +368,7 @@ void Sqlite3Connection::bind_parameters(sqlite3_stmt *ppStmt,
       break;
     }
     case Type::date: {
-      Date value = boost::get< Date>(*it);
+      Date value = boost::get<Date>(*it);
       string s   = value.to_string();
       sqlite3_bind_text(ppStmt, i + 1, s.c_str(), s.size(), 0);
       break;

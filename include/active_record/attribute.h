@@ -67,7 +67,7 @@ ostream& operator<<(
 } // namespace ActiveRecord
 
 ostream& operator<<(
-  ostream &cout, const ActiveRecord::GenericAttributePairList& attributes
+  ostream& cout, const ActiveRecord::GenericAttributePairList& attributes
 );
 
 // Instantiate boost::assign::list_of for our option type

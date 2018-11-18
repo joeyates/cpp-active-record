@@ -341,7 +341,8 @@ PGresult* PostgresqlConnection::execute_params(
     switch(it->which()) {
       case Type::integer: {
         int value = boost::get<int>(*it);
-        // From http://stackoverflow.com/questions/190229/where-is-the-itoa-function-in-linux
+        // From
+        // http://stackoverflow.com/questions/190229/where-is-the-itoa-function-in-linux
         int len = (value == 0) ? 1 : floor(log10l(labs(value))) + 1;
         if(value < 0)
           ++len; // room for negative sign '-'
