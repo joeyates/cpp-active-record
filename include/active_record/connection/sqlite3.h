@@ -16,27 +16,39 @@ class Sqlite3Connection : public Connection {
   virtual bool  connected();
 
   // Database Structure
-  virtual bool  table_exists(const string &table_name);
+  virtual bool  table_exists(const string& table_name);
   // Queries
-  virtual bool          execute(const string &query,
-      const AttributeList &parameters = AttributeList());
-  virtual long          insert(const string &query,
-      const AttributeList &parameters = AttributeList());
-  virtual Attribute     select_value(const string &query,
-      const AttributeList &parameters = AttributeList());
-  virtual AttributeList select_values(const string &query,
-      const AttributeList &parameters = AttributeList());
-  virtual Row           select_one(const string &query,
-      const AttributeList &parameters = AttributeList());
-  virtual RowSet        select_all(const string &query,
-      const AttributeList &parameters = AttributeList());
-  virtual string        primary_key(const string &table_name);
-  virtual TableSet      schema();
-  virtual Table         table_data(const string &table_name);
-  virtual void          remove_field(const string &table_name,
-      const string &field_name);
+  virtual bool execute(
+    const string& query,
+    const AttributeList& parameters = AttributeList()
+  );
+  virtual long insert(
+    const string& query,
+    const AttributeList& parameters = AttributeList()
+  );
+  virtual Attribute select_value(
+    const string& query,
+    const AttributeList& parameters = AttributeList()
+  );
+  virtual AttributeList select_values(
+    const string& query,
+    const AttributeList& parameters = AttributeList()
+  );
+  virtual Row select_one(
+    const string& query,
+    const AttributeList& parameters = AttributeList()
+  );
+  virtual RowSet select_all(
+    const string& query,
+    const AttributeList& parameters = AttributeList()
+  );
+  virtual string primary_key(const string& table_name);
+  virtual TableSet schema();
+  virtual Table table_data(const string& table_name);
+  virtual void remove_field(const string& table_name, const string& field_name);
 
- private:
+  private:
+
   Sqlite3Connection(const Sqlite3Connection& other);
   Sqlite3Connection operator=(const Sqlite3Connection& other);
 
@@ -45,7 +57,7 @@ class Sqlite3Connection : public Connection {
   sqlite3_stmt * prepare(const string &query, const AttributeList &parameters);
   void           bind_parameters(sqlite3_stmt *ppStmt, const AttributeList &parameters);
 
-  sqlite3 *      db_;
+  sqlite3* db_;
 };
 
 } // namespace ActiveRecord

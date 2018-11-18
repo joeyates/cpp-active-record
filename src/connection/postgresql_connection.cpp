@@ -329,7 +329,7 @@ PGresult* PostgresqlConnection::execute_params(
   if(param_count == 0)
     return PQexec(pgconn_, query.c_str());
 
-  char** paramValues = new char *[param_count];
+  char** paramValues = new char* [param_count];
   Oid* paramTypes = new Oid[param_count];
   int* paramLengths = new int[param_count];
   int* paramFormats = new int[param_count];
@@ -395,7 +395,7 @@ PGresult* PostgresqlConnection::execute_params(
     0
   );
 
-  for(int i = 0; i <param_count; ++i)
+  for(int i = 0; i < param_count; ++i)
     delete[] paramValues[i];
 
   delete[] paramValues;

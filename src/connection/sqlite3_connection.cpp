@@ -433,4 +433,3 @@ string Sqlite3Connection::sqlite_error(int error_code) {
 }
 
 } // namespace ActiveRecord
-

@@ -276,6 +276,7 @@ bool Base< T >::load() {
   ss << "FROM " << table_name_ << " ";
   ss << "WHERE ";
   ss << primary_key_ << " = ?";
+
   AttributeList parameters;
   parameters.push_back(id());
 

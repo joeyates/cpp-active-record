@@ -18,7 +18,7 @@ Attribute Attribute::from_field(sqlite3_stmt* pStmt, int i) {
   } else if(strcasecmp(type, "FLOAT") == 0) {
     return sqlite3_column_double(pStmt, i);
   } else if(strcasecmp(type, "TEXT") == 0) {
-    const char * value = (const char *) sqlite3_column_text(pStmt, i);
+    const char* value = (const char *) sqlite3_column_text(pStmt, i);
     if(value != 0)
       return value;
     else
