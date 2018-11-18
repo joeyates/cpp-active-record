@@ -22,8 +22,8 @@ string Row::get_text(const string& name) {
   return boost::get<string>(attributes_[name]);
 }
 
-int Row::get_integer(const string& name) {
-  return boost::get<int>(attributes_[name]);
+int64 Row::get_integer(const string& name) {
+  return boost::get<int64>(attributes_[name]);
 }
 
 double Row::get_floating_point(const string& name) {
@@ -38,16 +38,12 @@ string Row::to_string() const {
   stringstream row;
   row << "{" << endl;
 
-  for(
-    AttributeHash::const_iterator it = attributes_.begin();
-    it != attributes_.end();
-    ++it
-  ) {
-    row << it->first << ": ";
-    row << it->second << endl;
+  for(auto& attribute: attributes_) {
+    row << attribute.first << ": ";
+    row << attribute.second << endl;
   }
 
-  row << "}" <<endl;
+  row << "}" << endl;
 
   return row.str();
 }

@@ -93,7 +93,7 @@ class Base {
 
   int integer(const string& name) {
     load_unless_new();
-    return boost::get<int>(attributes_[name]);
+    return boost::get<int64>(attributes_[name]);
   }
 
   double floating_point(const string& name) {
@@ -109,8 +109,9 @@ class Base {
   // Associations
   template<class T1 >
   vector< T1 > has_many() {
-    if(state_ < loaded)
+    if(state_ < loaded) {
       throw ActiveRecordException("Instance not loaded", __FILE__, __LINE__);
+    }
 
     Query<T1> query(*connection_);
     Table t1 = connection_->get_table(T1::class_name);
@@ -121,8 +122,9 @@ class Base {
 
   template<class T1 >
   T1 belongs_to() {
-    if(state_ < loaded)
+    if(state_ < loaded) {
       throw ActiveRecordException("Instance not loaded", __FILE__, __LINE__);
+    }
 
     Query< T1 > query(*connection_);
     Table t1 = connection_->get_table(T1::class_name);
@@ -137,10 +139,11 @@ class Base {
   // Other
   bool save() {
     ensure_prepared();
-    if(id_ == ACTIVE_RECORD_UNSAVED)
+    if(id_ == ACTIVE_RECORD_UNSAVED) {
       return create();
-    else
+    } else {
       return update();
+    }
   }
 
   inline int id() const {
@@ -159,14 +162,17 @@ class Base {
   // if states and attributes are the same,
   // we accept they're the same
   bool operator==(const Base& other) const {
-    if(id() != other.id())
+    if(id() != other.id()) {
       return false;
+    }
 
-    if(state_ != other.state_)
+    if(state_ != other.state_) {
       return false;
+    }
 
-    if(attributes_.size() != other.attributes_.size())
+    if(attributes_.size() != other.attributes_.size()) {
       return false;
+    }
 
     for(
       AttributeHash::const_iterator it = attributes_.begin();

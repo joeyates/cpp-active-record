@@ -146,7 +146,7 @@ vector< T > Query< T >::all() {
   vector< T > results;
 
   for(AttributeList::iterator it = ids.begin(); it != ids.end(); ++it) {
-    T record(boost::get<int>(*it));
+    T record(boost::get<int64>(*it));
     results.push_back(record);
   }
 

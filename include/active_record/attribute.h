@@ -1,6 +1,7 @@
 #ifndef _ACTIVE_RECORD_ATTRIBUTE_H_
 #define _ACTIVE_RECORD_ATTRIBUTE_H_
 
+#include <c.h>
 #include <map>
 #include <list>
 #include <boost/assign.hpp>
@@ -18,7 +19,7 @@ using namespace boost;
 
 namespace ActiveRecord {
 
-typedef boost::variant<int, long long, string, double, Date> AttributeType;
+typedef boost::variant<int64, string, double, Date> AttributeType;
 
 // N.B. boost::variant.which() returns a 0-based index into the
 // AttributeType list
@@ -29,16 +30,16 @@ class Attribute: public AttributeType {
   // static
   public:
 
-  static Attribute from_field(sqlite3_stmt *pStmt, int i);
-  static Attribute from_field(PGresult * exec_result, int row, int column);
+  static Attribute from_field(sqlite3_stmt* pStmt, int i);
+  static Attribute from_field(PGresult* exec_result, int row, int column);
   static Type::Type pg_type_to_ar_type(Oid pg_type);
 
   // instance methods
   public:
 
   Attribute():                AttributeType(), initialised_(false) {}
-  Attribute(int i):           AttributeType(i), initialised_(true) {}
-  Attribute(long long i):     AttributeType(i), initialised_(true) {}
+  Attribute(int i):           AttributeType((int64) i), initialised_(true) {}
+  Attribute(int64 i):         AttributeType(i), initialised_(true) {}
   Attribute(const string& s): AttributeType(s), initialised_(true) {}
   Attribute(const char* s):   AttributeType(string(s)), initialised_(true) {}
   Attribute(double d):        AttributeType(d), initialised_(true) {}

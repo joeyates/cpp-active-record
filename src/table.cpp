@@ -3,10 +3,8 @@
 #include <sstream>
 
 #include <active_record/active_record.h>
-#include <active_record/exception.h>
 #include <active_record/connection.h>
-
-using namespace std;
+#include <active_record/exception.h>
 
 namespace ActiveRecord {
 
@@ -15,7 +13,7 @@ extern TypeNameMap type_name;
 void Table::add_field(const Field& field) {
   assert_connection(__FILE__, __LINE__);
 
-  stringstream ss;
+  std::stringstream ss;
   ss << "ALTER TABLE " << table_name_;
   ss << " ADD " << field.name() << " " << type_name[field.type()];
   ss << ";";
@@ -38,8 +36,9 @@ void Table::fields(const GenericFieldList& f) {
 // private
 
 void Table::assert_connection(const char* file, int line) {
-  if(connection_ != NULL )
+  if(connection_ != nullptr) {
     return;
+  }
 
   throw ActiveRecordException("No connection", file, line);
 }
@@ -49,13 +48,10 @@ void Table::assert_connection(const char* file, int line) {
 ostream& operator<<(ostream& cout, const ActiveRecord::Table& table) {
   cout << table.table_name_ << ": ";
 
-  for(
-    ActiveRecord::Fields::const_iterator it = table.fields_.begin();
-     it != table.fields_.end();
-     ++it
-  ) {
-    if(it != table.fields_.begin())
+  for(auto it = table.fields_.begin(); it != table.fields_.end(); ++it) {
+    if(it != table.fields_.begin()) {
       cout << ", ";
+    }
     cout << *it;
   }
 
