@@ -59,9 +59,11 @@ bool Sqlite3Connection::execute(
   log("Sqlite3Connection::execute");
   log(query);
 
-  sqlite3_stmt* ppStmt = prepare(query, parameters);
+  ParameterAllocations pa;
+  sqlite3_stmt* ppStmt = prepare(query, parameters, pa);
   sqlite3_step(ppStmt);
   sqlite3_finalize(ppStmt);
+  cleanup(pa);
 
   return true;
 }
@@ -73,9 +75,11 @@ long Sqlite3Connection::insert(
   log("Sqlite3Connection::insert");
   log(query);
 
-  sqlite3_stmt* ppStmt = prepare(query, parameters);
+  ParameterAllocations pa;
+  sqlite3_stmt* ppStmt = prepare(query, parameters, pa);
   sqlite3_step(ppStmt);
   sqlite3_finalize(ppStmt);
+  cleanup(pa);
 
   return sqlite3_last_insert_rowid(db_);
 }
@@ -84,14 +88,18 @@ Row Sqlite3Connection::select_one(
   const string& query,
   const AttributeList& parameters
 ) {
-  sqlite3_stmt* ppStmt = prepare(query, parameters);
+  ParameterAllocations pa;
+  sqlite3_stmt* ppStmt = prepare(query, parameters, pa);
   int step_result = sqlite3_step(ppStmt);
-  if(step_result != SQLITE_ROW ) {
+  if(step_result != SQLITE_ROW) {
+    sqlite3_finalize(ppStmt);
+    cleanup(pa);
     return Row();
   }
 
   Row row(ppStmt);
   sqlite3_finalize(ppStmt);
+  cleanup(pa);
 
   return row;
 }
@@ -100,14 +108,16 @@ RowSet Sqlite3Connection::select_all(
   const string& query,
   const AttributeList& parameters
 ) {
-  sqlite3_stmt* ppStmt = prepare(query, parameters);
+  ParameterAllocations pa;
+  sqlite3_stmt* ppStmt = prepare(query, parameters, pa);
 
   RowSet results;
-  while(sqlite3_step(ppStmt) == SQLITE_ROW ) {
+  while(sqlite3_step(ppStmt) == SQLITE_ROW) {
     results.push_back(Row(ppStmt));
   }
 
   sqlite3_finalize(ppStmt);
+  cleanup(pa);
 
   return results;
 }
@@ -116,14 +126,16 @@ AttributeList Sqlite3Connection::select_values(
   const string& query,
   const AttributeList& parameters
 ) {
-  sqlite3_stmt* ppStmt = prepare(query, parameters);
+  ParameterAllocations pa;
+  sqlite3_stmt* ppStmt = prepare(query, parameters, pa);
 
   AttributeList results;
-  while(sqlite3_step(ppStmt) == SQLITE_ROW ) {
+  while(sqlite3_step(ppStmt) == SQLITE_ROW) {
     results.push_back(Attribute::from_field(ppStmt, 0));
   }
 
   sqlite3_finalize(ppStmt);
+  cleanup(pa);
 
   return results;
 }
@@ -132,15 +144,17 @@ Attribute Sqlite3Connection::select_value(
   const string& query,
   const AttributeList& parameters
 ) {
-  sqlite3_stmt* ppStmt = prepare(query, parameters);
+  ParameterAllocations pa;
+  sqlite3_stmt* ppStmt = prepare(query, parameters, pa);
 
   Attribute result;
   int step_result = sqlite3_step(ppStmt);
-  if(step_result != SQLITE_ROW )
+  if(step_result != SQLITE_ROW)
     return result;
 
   result = Attribute::from_field(ppStmt, 0);
   sqlite3_finalize(ppStmt);
+  cleanup(pa);
 
   return result;
 }
@@ -301,7 +315,8 @@ void Sqlite3Connection::remove_field(
 
 sqlite3_stmt* Sqlite3Connection::prepare(
   const string& query,
-  const AttributeList& parameters
+  const AttributeList& parameters,
+  ParameterAllocations& pa
 ) {
   if(db_ == NULL )
     throw ActiveRecordException("Database not connected", __FILE__, __LINE__);
@@ -337,14 +352,23 @@ sqlite3_stmt* Sqlite3Connection::prepare(
     throw ActiveRecordException(error.str(), __FILE__, __LINE__);
   }
 
-  bind_parameters(ppStmt, parameters);
+  bind_parameters(ppStmt, parameters, pa);
   return ppStmt;
 }
 
 void Sqlite3Connection::bind_parameters(
   sqlite3_stmt* ppStmt,
-  const AttributeList& parameters
+  const AttributeList& parameters,
+  ParameterAllocations& pa
 ) {
+  pa.param_count = parameters.size();
+  if(pa.param_count == 0) {
+    pa.param_values = NULL;
+    return;
+  }
+
+  pa.param_values = new char* [pa.param_count];
+
   int i = 0;
   for(
     AttributeList::const_iterator it = parameters.begin();
@@ -354,23 +378,33 @@ void Sqlite3Connection::bind_parameters(
     switch(it->which()) {
     case Type::integer: {
       int value = boost::get<int>(*it);
+      pa.param_values[i] = NULL;
       sqlite3_bind_int(ppStmt, i + 1, value);
       break;
     }
     case Type::text: {
       string value = boost::get<std::string>(*it);
-      sqlite3_bind_text(ppStmt, i + 1, value.c_str(), value.size(), 0);
+      int len = value.size();
+
+      pa.param_values[i] = new char[len + 1];
+      strncpy(pa.param_values[i], value.c_str(), len + 1);
+      sqlite3_bind_text(ppStmt, i + 1, pa.param_values[i], len, 0);
       break;
     }
     case Type::floating_point: {
       double value = boost::get<double>(*it);
+      pa.param_values[i] = NULL;
       sqlite3_bind_double(ppStmt, i + 1, value);
       break;
     }
     case Type::date: {
-      Date value = boost::get<Date>(*it);
-      string s   = value.to_string();
-      sqlite3_bind_text(ppStmt, i + 1, s.c_str(), s.size(), 0);
+      Date date = boost::get<Date>(*it);
+      string value = date.to_string();
+      int len = value.size();
+
+      pa.param_values[i] = new char[len + 1];
+      strncpy(pa.param_values[i], value.c_str(), len + 1);
+      sqlite3_bind_text(ppStmt, i + 1, pa.param_values[i], len, 0);
       break;
     }
     default: {
@@ -379,6 +413,25 @@ void Sqlite3Connection::bind_parameters(
     }
     ++i;
   }
+}
+
+void Sqlite3Connection::cleanup(ParameterAllocations& pa) {
+  if(pa.param_count == 0)
+    return;
+
+  if(pa.param_values == NULL)
+    return;
+
+  for(int i = 0; i < pa.param_count; ++i) {
+    if(pa.param_values[i] != NULL) {
+      delete[] pa.param_values[i];
+      pa.param_values[i] = NULL;
+    }
+  }
+
+  delete[] pa.param_values;
+  pa.param_count = 0;
+  pa.param_values = NULL;
 }
 
 //////////////////////

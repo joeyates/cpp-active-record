@@ -6,8 +6,14 @@
 
 namespace ActiveRecord {
 
-class Sqlite3Connection : public Connection {
- public:
+class Sqlite3Connection: public Connection {
+  struct ParameterAllocations {
+    int param_count;
+    char** param_values;
+  };
+
+  public:
+
   Sqlite3Connection();
   virtual ~Sqlite3Connection();
 
@@ -52,10 +58,21 @@ class Sqlite3Connection : public Connection {
   Sqlite3Connection(const Sqlite3Connection& other);
   Sqlite3Connection operator=(const Sqlite3Connection& other);
 
-  bool           sqlite_initialize(string database_path_name);
-  static string  sqlite_error(int error_code);
-  sqlite3_stmt * prepare(const string &query, const AttributeList &parameters);
-  void           bind_parameters(sqlite3_stmt *ppStmt, const AttributeList &parameters);
+  bool sqlite_initialize(string database_path_name);
+  static string sqlite_error(int error_code);
+  sqlite3_stmt* prepare(
+    const string& query,
+    const AttributeList& parameters,
+    ParameterAllocations& pa
+  );
+  void bind_parameters(
+    sqlite3_stmt* ppStmt,
+    const AttributeList& parameters,
+    ParameterAllocations& pa
+  );
+  void cleanup(ParameterAllocations& pa);
+
+  private:
 
   sqlite3* db_;
 };
