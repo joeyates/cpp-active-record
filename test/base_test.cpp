@@ -294,7 +294,7 @@ TEST_F(BaseSaveTest, SavedAttributes) {
       ("height", 1.80)
       ("dob", Date(1965, 7, 31))
   );
-  joe.save();
+  ASSERT_TRUE(joe.save());
 
   Person first(1);
   assert_string("Joe",                first.text("name"));
