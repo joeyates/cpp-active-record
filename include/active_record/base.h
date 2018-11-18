@@ -55,7 +55,7 @@ class Base {
   static void setup(Connection* connection);
 
   // Constructors
-  Base(int id = ACTIVE_RECORD_UNSAVED ): state_(blank) {
+  Base(int id = ACTIVE_RECORD_UNSAVED): state_(blank) {
     id_ = id;
   }
 
@@ -70,11 +70,9 @@ class Base {
 
     for(
       GenericAttributePairList::const_iterator it = attributes.begin();
-       it != attributes.end();
-       ++it
-    ) {
-      attributes_[it->first] = it->second;
-    }
+      it != attributes.end();
+      ++it
+    ) { attributes_[it->first] = it->second; }
 
     state_ = unsaved;
 
@@ -82,7 +80,7 @@ class Base {
   }
 
   // Attributes
-  Attribute& operator[](const string &name) {
+  Attribute& operator[](const string& name) {
     load_unless_new();
     return attributes_[name];
   }
@@ -128,8 +126,10 @@ class Base {
     Query< T1 > query(*connection_);
     Table t1 = connection_->get_table(T1::class_name);
     string primary_key = t1.primary_key();
+
     stringstream where;
     where << primary_key << " = ?";
+
     return query.where(where.str(), id()).first();
   }
 
@@ -199,24 +199,26 @@ class Base {
 
   void load_unless_new() {
     ensure_prepared();
-    if(id() == ACTIVE_RECORD_UNSAVED )
+    if(id() == ACTIVE_RECORD_UNSAVED) {
       return;
+    }
     ensure_loaded();
   }
 
   void ensure_loaded() {
     ensure_prepared();
-    if(state_ == loaded)
+    if(state_ == loaded) {
       return;
+    }
     load();
   }
 
   private:
 
   // Load/save
-  bool          load();
-  bool          create();
-  bool          update();
+  bool load();
+  bool create();
+  bool update();
 
   // Setup
   void prepare();
@@ -290,9 +292,11 @@ template <class T >
 bool Base< T >::create() {
   stringstream ss;
   ss << "INSERT INTO " << table_name_ << " ";
+
   bool columns_added = false;
   stringstream columns, placeholders;
   AttributeList parameters;
+
   for(
     AttributeHash::iterator it = attributes_.begin();
     it != attributes_.end();
@@ -313,7 +317,7 @@ bool Base< T >::create() {
   if(columns_added)
     ss << "(" << columns.str() << ") VALUES (" << placeholders.str() << ")";
   else // Handle INSERT with no data
-    ss << "(" << primary_key_ << ") VALUES (NULL )";
+    ss << "(" << primary_key_ << ") VALUES (NULL)";
 
   id_ = (int) connection_->insert(ss.str(), parameters);
   state_ = loaded;

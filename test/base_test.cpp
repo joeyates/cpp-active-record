@@ -118,6 +118,7 @@ class BaseLoadTest: public ::testing::Test {
   virtual void TearDown() {
     delete_database();
   }
+
   protected:
 
   Sqlite3Connection connection;

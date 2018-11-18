@@ -23,11 +23,11 @@ class Query {
   Query(Connection& connection):
     limit_(INVALID_LIMIT),
     connection_(&connection) {};
-  Query(const Query< T > &other);
+  Query(const Query< T >& other);
 
-  Query< T > operator=(const Query< T > &other);
+  Query< T > operator=(const Query< T >& other);
 
-  Query< T > where(const string &condition, const Attribute &value);
+  Query< T > where(const string& condition, const Attribute& value);
   Query< T > order(string order);
   Query< T > limit(int limit);
   // Results
@@ -36,10 +36,10 @@ class Query {
 
   protected:
 
-  AttributePairList      conditions_;
-  int                    limit_;
-  vector<string>       orderings_;
-  Connection*            connection_;
+  AttributePairList conditions_;
+  int               limit_;
+  vector<string>    orderings_;
+  Connection*       connection_;
 
   private:
 
@@ -50,7 +50,7 @@ class Query {
 };
 
 template <class T >
-Query< T >::Query(const Query< T > &other) {
+Query< T >::Query(const Query< T >& other) {
   conditions_ = other.conditions_;
   limit_      = other.limit_;
   orderings_  = other.orderings_;
@@ -58,14 +58,14 @@ Query< T >::Query(const Query< T > &other) {
 }
 
 template <class T >
-Query< T > Query< T >::operator=(const Query< T > &other) {
+Query< T > Query< T >::operator=(const Query< T >& other) {
   Query< T > result(other);
   return result;
 }
 
 // foo.where("name = ?", "Joe");
 template <class T >
-Query< T > Query< T >::where(const string &condition, const Attribute &value) {
+Query< T > Query< T >::where(const string& condition, const Attribute& value) {
   conditions_.push_back(AttributePair(condition, value));
   return *this;
 }
@@ -85,11 +85,11 @@ Query< T > Query< T >::order(string order) {
 }
 template <class T >
 string Query< T >::limit_clause() {
-  if(limit_ == INVALID_LIMIT )
+  if(limit_ == INVALID_LIMIT)
     return "";
 
   stringstream ss;
-  ss << " LIMIT " <<limit_;
+  ss << " LIMIT " << limit_;
 
   return ss.str();
 }
@@ -216,7 +216,8 @@ namespace ActiveRecord {
 /*
  parameters (13 "hello" 15.5)
 */
-inline AttributeList parameters(const Attribute &value) {
+
+inline AttributeList parameters(const Attribute& value) {
   return boost::assign::list_of(ActiveRecord::Attribute(value));
 }
 

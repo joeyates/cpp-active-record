@@ -31,7 +31,7 @@ class Row {
   bool is_type(const string& name, Type::Type type);
   string get_text(const string& name);
   int get_integer(const string& name);
-  double get_floating_point(const string &name);
+  double get_floating_point(const string& name);
   Date get_date(const string& name);
   string to_string() const;
   const AttributeHash& attributes() { return attributes_; };
