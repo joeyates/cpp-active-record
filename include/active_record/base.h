@@ -103,12 +103,12 @@ class Base {
 
   Date date(const string& name) {
     load_unless_new();
-    return boost::get< Date>(attributes_[name]);
+    return boost::get<Date>(attributes_[name]);
   }
 
   // Associations
-  template<class T1 >
-  vector< T1 > has_many() {
+  template<class T1>
+  vector<T1> has_many() {
     if(state_ < loaded) {
       throw ActiveRecordException("Instance not loaded", __FILE__, __LINE__);
     }
@@ -120,13 +120,13 @@ class Base {
     return query.where(where.str(), id()).all();
   }
 
-  template<class T1 >
+  template<class T1>
   T1 belongs_to() {
     if(state_ < loaded) {
       throw ActiveRecordException("Instance not loaded", __FILE__, __LINE__);
     }
 
-    Query< T1 > query(*connection_);
+    Query<T1> query(*connection_);
     Table t1 = connection_->get_table(T1::class_name);
     string primary_key = t1.primary_key();
 
@@ -231,8 +231,8 @@ class Base {
   void prepare();
 };
 
-template <class T >
-void Base< T >::setup(Connection* connection) {
+template <class T>
+void Base<T>::setup(Connection* connection) {
   if(connection == NULL)
     throw ActiveRecordException("connection is NULL", __FILE__, __LINE__);
 
@@ -247,9 +247,9 @@ void Base< T >::setup(Connection* connection) {
   connection_->set_table(T::class_name, td);
 }
 
-template<class T >
-string Base< T >::to_string() const {
-  const_cast<Base< T > *>(this)->load_unless_new();
+template<class T>
+string Base<T>::to_string() const {
+  const_cast<Base<T>*>(this)->load_unless_new();
   stringstream ss;
   ss << T::class_name << ": ";
 
@@ -266,8 +266,8 @@ string Base< T >::to_string() const {
   return ss.str();
 }
 
-template<class T >
-ostream& operator<<(ostream& cout, const ActiveRecord::Base< T >& record) {
+template<class T>
+ostream& operator<<(ostream& cout, const ActiveRecord::Base<T>& record) {
   cout << record.to_string();
   return cout;
 }
@@ -275,8 +275,8 @@ ostream& operator<<(ostream& cout, const ActiveRecord::Base< T >& record) {
 /////////////////////////////////////////
 // Private
 
-template <class T >
-bool Base< T >::load() {
+template <class T>
+bool Base<T>::load() {
   stringstream ss;
   ss << "SELECT * ";
   ss << "FROM " << table_name_ << " ";
@@ -296,8 +296,8 @@ bool Base< T >::load() {
 }
 
 // TODO: Re-read the record afterwards to get default values?
-template <class T >
-bool Base< T >::create() {
+template <class T>
+bool Base<T>::create() {
   stringstream ss;
   ss << "INSERT INTO " << table_name_ << " ";
 
@@ -336,8 +336,8 @@ bool Base< T >::create() {
   return true;
 }
 
-template <class T >
-bool Base< T >::update() {
+template <class T>
+bool Base<T>::update() {
   ensure_loaded();
   stringstream ss;
   ss << "UPDATE " << table_name_ << " ";
@@ -371,8 +371,8 @@ bool Base< T >::update() {
 
 // State
 
-template <class T >
-void Base< T >::prepare() {
+template <class T>
+void Base<T>::prepare() {
   log("Base::prepare");
   if(state_ >= prepared)
     return;

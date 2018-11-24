@@ -29,7 +29,7 @@ class BaseAttributeTest: public ::testing::Test {
   virtual void SetUp() {
     delete_database();
     connect_database(connection, database_name);
-    Person::setup( &connection);
+    Person::setup(&connection);
     connection.update_database();
   }
 
@@ -105,7 +105,7 @@ class BaseLoadTest: public ::testing::Test {
 
   virtual void SetUp() {
     connect_database(connection, database_name);
-    Person::setup( &connection);
+    Person::setup(&connection);
     connection.update_database();
     connection.execute(
       "INSERT INTO people"

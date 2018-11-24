@@ -19,7 +19,7 @@ using namespace boost;
 
 namespace ActiveRecord {
 
-typedef boost::variant<int64, string, double, Date> AttributeType;
+typedef boost::variant< int64, string, double, ActiveRecord::Date > AttributeType;
 
 // N.B. boost::variant.which() returns a 0-based index into the
 // AttributeType list

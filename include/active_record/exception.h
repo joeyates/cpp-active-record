@@ -35,13 +35,13 @@ class ActiveRecordException: public std::exception {
   string to_string() const {
     stringstream ss;
     if(file_.size() > 0) {
-      ss <<file_;
-      if(line_> 0) {
+      ss << file_;
+      if(line_ > 0) {
         ss << ":" << line_;
       }
       ss << ": ";
     }
-    ss <<message_;
+    ss << message_;
     return ss.str();
   }
 

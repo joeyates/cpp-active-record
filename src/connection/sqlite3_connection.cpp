@@ -16,8 +16,8 @@ Sqlite3Connection::~Sqlite3Connection() {
 // Connection
 
 void Sqlite3Connection::connect(OptionsHash options) {
-  log(options["database"] );
-  sqlite_initialize(options["database"] );
+  log(options["database"]);
+  sqlite_initialize(options["database"]);
 }
 
 void Sqlite3Connection::disconnect() {
@@ -323,7 +323,7 @@ sqlite3_stmt* Sqlite3Connection::prepare(
   if(db_ == nullptr)
     throw ActiveRecordException("Database not connected", __FILE__, __LINE__);
 
-  sqlite3_stmt *ppStmt = 0;
+  sqlite3_stmt* ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2(
     db_, query.c_str(), query.size(), &ppStmt, 0
   );
@@ -444,8 +444,8 @@ bool Sqlite3Connection::sqlite_initialize(string database_path_name) {
   int nResult = sqlite3_open(database_path_name.c_str(), &db_);
   if(nResult) {
     stringstream error;
-    error << "Can't open database '" <<database_path_name << "'";
-    error <<sqlite3_errmsg(db_);
+    error << "Can't open database '" << database_path_name << "'";
+    error << sqlite3_errmsg(db_);
     sqlite3_close(db_);
     throw ActiveRecordException(error.str(), __FILE__, __LINE__);
   }

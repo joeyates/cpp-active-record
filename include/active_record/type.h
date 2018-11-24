@@ -14,19 +14,18 @@ namespace Type {
 enum Type {
   unknown        = -1,
   integer        = 0,
-  long_long      = 1,
-  text           = 2,
-  floating_point = 3,
-  date           = 4
+  text           = 1,
+  floating_point = 2,
+  date           = 3
 };
 
 } // namespace Type
 
-typedef pair<ActiveRecord::Type::Type, string>    TypeNamePair;
-typedef map<ActiveRecord::Type::Type, string>     TypeNameMap;
+typedef pair<ActiveRecord::Type::Type, string> TypeNamePair;
+typedef map<ActiveRecord::Type::Type, string> TypeNameMap;
 
 Type::Type index_to_type(int index);
-Type::Type to_type(const string &type_name);
+Type::Type to_type(const string& type_name);
 
 } // namespace ActiveRecord
 

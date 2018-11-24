@@ -26,9 +26,9 @@ namespace assign
 {
 
 template<>
-inline assign_detail::generic_list< ActiveRecord::OptionPair>
-list_of(const ActiveRecord::OptionPair &t) {
-  return assign_detail::generic_list< ActiveRecord::OptionPair>()(t);
+inline assign_detail::generic_list<ActiveRecord::OptionPair>
+list_of(const ActiveRecord::OptionPair& t) {
+  return assign_detail::generic_list<ActiveRecord::OptionPair>()(t);
 }
 
 } // namespace boost
@@ -37,10 +37,14 @@ list_of(const ActiveRecord::OptionPair &t) {
 namespace ActiveRecord {
 
 // Define a method that takes a list of OptionPairs to define options
-inline assign_detail::generic_list< ActiveRecord::OptionPair> options(const char * name, const char * value) {
+inline assign_detail::generic_list<ActiveRecord::OptionPair> options(
+  const char* name, const char* value
+) {
   return assign::list_of(ActiveRecord::OptionPair(name, value));
 }
-inline assign_detail::generic_list< ActiveRecord::OptionPair> options(const string &name, const string &value) {
+inline assign_detail::generic_list<ActiveRecord::OptionPair> options(
+  const string& name, const string& value
+) {
   return assign::list_of(ActiveRecord::OptionPair(name, value));
 }
 

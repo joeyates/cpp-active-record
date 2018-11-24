@@ -32,7 +32,7 @@ class Date {
   }
 
   Date(int year, int month, int day) {
-    init( 0);
+    init(0);
     tm_.tm_year = year - 1900;
     tm_.tm_mon  = month - 1;
     tm_.tm_mday = day;
@@ -50,13 +50,13 @@ class Date {
     stringstream ss;
     ss.fill('0');
     ss.width(0);
-    ss <<year() << "-";
+    ss << year() << "-";
     ss.fill('0');
     ss.width(2);
-    ss <<month() << "-";
+    ss << month() << "-";
     ss.fill('0');
     ss.width(2);
-    ss <<day();
+    ss << day();
     return ss.str();
   }
 
@@ -69,7 +69,7 @@ class Date {
     gmtime_r(&t, &tm_);
   }
 
-  static bool parse(const string &date, struct tm &tm) {
+  static bool parse(const string& date, struct tm& tm) {
     int year, month, day;
     int found = sscanf(date.c_str(), "%u-%u-%u", &year, &month, &day);
     if(found != 3)
