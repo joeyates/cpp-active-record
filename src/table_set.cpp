@@ -64,8 +64,9 @@ void TableSet::update_table(Table& required) {
   Table existing = required.connection()->table_data(required.table_name());
 
   Fields missing = required.fields() - existing.fields();
-  for(Fields::iterator it = missing.begin(); it != missing.end(); ++it)
+  for(Fields::iterator it = missing.begin(); it != missing.end(); ++it) {
     existing.add_field(*it);
+  }
 
   Fields remove = existing.fields() - required.fields();
   for(Fields::iterator it = remove.begin(); it != remove.end(); ++it) {

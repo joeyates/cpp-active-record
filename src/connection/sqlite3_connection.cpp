@@ -320,8 +320,9 @@ sqlite3_stmt* Sqlite3Connection::prepare(
   const AttributeList& parameters,
   ParameterAllocations& pa
 ) {
-  if(db_ == nullptr)
+  if(db_ == nullptr) {
     throw ActiveRecordException("Database not connected", __FILE__, __LINE__);
+  }
 
   sqlite3_stmt* ppStmt = 0;
   int prepare_result = sqlite3_prepare_v2(
@@ -418,8 +419,9 @@ void Sqlite3Connection::bind_parameters(
 }
 
 void Sqlite3Connection::cleanup(ParameterAllocations& pa) {
-  if(pa.param_count == 0)
+  if(pa.param_count == 0) {
     return;
+  }
 
   if(pa.param_values == nullptr) {
     return;

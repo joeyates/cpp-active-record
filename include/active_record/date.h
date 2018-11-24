@@ -27,8 +27,9 @@ class Date {
   Date(const string &date) {
     init(0);
     bool parsed = parse(date, tm_);
-    if(!parsed)
+    if(!parsed) {
       throw ActiveRecordException("Date format incorrect", __FILE__, __LINE__);
+    }
   }
 
   Date(int year, int month, int day) {
@@ -72,14 +73,17 @@ class Date {
   static bool parse(const string& date, struct tm& tm) {
     int year, month, day;
     int found = sscanf(date.c_str(), "%u-%u-%u", &year, &month, &day);
-    if(found != 3)
+    if(found != 3) {
       return false;
+    }
 
-    if(month < 1 || month> 12)
+    if(month < 1 || month > 12) {
       return false;
+    }
 
-    if(day < 1 || day> 31)
+    if(day < 1 || day > 31) {
       return false;
+    }
 
     tm.tm_year = year - 1900;
     tm.tm_mon  = month - 1;
