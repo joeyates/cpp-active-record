@@ -52,6 +52,21 @@ ostream& operator<<(
   return cout;
 }
 
+ostream& operator<<(
+  ostream& cout, const ActiveRecord::AttributeHash& attributes
+) {
+  for(auto& attribute: attributes) {
+    if(attribute != *attributes.begin()) {
+      cout << ", ";
+    }
+    cout << attribute.first << ": " << attribute.second;
+  }
+
+  cout << endl;
+
+  return cout;
+}
+
 } // namespace ActiveRecord
 
 ostream& operator<<(
