@@ -131,7 +131,11 @@ class PostgresqlWithConnectionAndTableTest: public PostgresqlWithConnectionTest
     PostgresqlWithConnectionTest::SetUp();
     postgresql_shell_command(
       "CREATE TABLE foo ("
-      "pk SERIAL PRIMARY KEY, num INTEGER, word TEXT, f NUMERIC "
+      "  pk SERIAL PRIMARY KEY,"
+      "  num INTEGER,"
+      "  word TEXT,"
+      "  fp NUMERIC,"
+      "  dt DATE"
       ")",
       connection_options_
     );
@@ -159,24 +163,65 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectOne) {
   connection_.execute("INSERT INTO foo (num) VALUES (42);");
 
   Row row = connection_.select_one("SELECT num FROM foo");
-  ASSERT_EQ(42, row.get_integer("num"));
+
+  ASSERT_EQ(row.get_integer("num"), 42);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectOneNoResult) {
   connection_.execute("INSERT INTO foo (num) VALUES (42);");
 
-  Row row = connection_.select_one("SELECT num FROM foo WHERE pk = 3");
+  Row row = connection_.select_one("SELECT * FROM foo WHERE num < 3");
   ASSERT_FALSE(row.has_data());
 }
 
-TEST_F(PostgresqlWithConnectionAndTableTest, SelectOneWithParam) {
-  connection_.execute("INSERT INTO foo (num) VALUES (42);");
-  connection_.execute("INSERT INTO foo (num) VALUES (99);");
+TEST_F(PostgresqlWithConnectionAndTableTest, SelectOneWithIntegerParam) {
+  connection_.execute("INSERT INTO foo (num, word) VALUES (42, '42');");
+  connection_.execute("INSERT INTO foo (num, word) VALUES (99, '99');");
 
   Row row = connection_.select_one(
-    "SELECT num FROM foo WHERE pk = $1", parameters (2)
+    "SELECT * FROM foo WHERE num = $1", parameters (99)
   );
-  ASSERT_EQ(99, row.get_integer("num"));
+  assert_string(row.get_text("word"), "99");
+}
+
+TEST_F(PostgresqlWithConnectionAndTableTest, SelectOneWithTextParam) {
+  connection_.execute("INSERT INTO foo (num, word) VALUES (1, 'Hello');");
+  connection_.execute("INSERT INTO foo (num, word) VALUES (2, 'World');");
+
+  Row row = connection_.select_one(
+    "SELECT * FROM foo WHERE word = $1", parameters ("World")
+  );
+
+  ASSERT_TRUE(row.has_data());
+  ASSERT_EQ(row.get_integer("num"), 2);
+}
+
+TEST_F(PostgresqlWithConnectionAndTableTest, SelectOneWithFloatingPointParam) {
+  connection_.execute("INSERT INTO foo (fp, word) VALUES (1.5, '1.5');");
+  connection_.execute("INSERT INTO foo (fp, word) VALUES (2.5, '2.5');");
+
+  Row row = connection_.select_one(
+    "SELECT * FROM foo WHERE fp > $1 AND fp < $2", parameters (2.0) (3.0)
+  );
+
+  ASSERT_TRUE(row.has_data());
+  assert_string(row.get_text("word"), "2.5");
+}
+
+TEST_F(PostgresqlWithConnectionAndTableTest, SelectOneWithDateParam) {
+  connection_.execute(
+    "INSERT INTO foo (dt, word) VALUES ('1999-09-09', '1999');"
+  );
+  connection_.execute(
+   "INSERT INTO foo (dt, word) VALUES ('2001-09-11', '9-11');"
+  );
+
+  Row row = connection_.select_one(
+    "SELECT * FROM foo WHERE dt = $1", parameters (Date("2001-09-11"))
+  );
+
+  ASSERT_TRUE(row.has_data());
+  assert_string(row.get_text("word"), "9-11");
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectAll) {
@@ -187,9 +232,9 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectAll) {
 
   ASSERT_EQ(2, rows.size());
   RowSet::iterator it = rows.begin();
-  ASSERT_EQ(42, it->get_integer("num"));
+  ASSERT_EQ(it->get_integer("num"), 42);
   ++it;
-  ASSERT_EQ(99, it->get_integer("num"));
+  ASSERT_EQ(it->get_integer("num"), 99);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectAllWithParameter) {
@@ -202,7 +247,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectAllWithParameter) {
 
   ASSERT_EQ(1, rows.size());
   RowSet::iterator it = rows.begin();
-  ASSERT_EQ(99, it->get_integer("num"));
+  ASSERT_EQ(it->get_integer("num"), 99);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectValue) {
@@ -225,41 +270,17 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithNoResult) {
   ASSERT_FALSE(result.has_data());
 }
 
-TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithIntParam) {
-  connection_.execute("INSERT INTO foo (num) VALUES (42);");
-  connection_.execute("INSERT INTO foo (num) VALUES (113);");
+TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithParam) {
+  connection_.execute("INSERT INTO foo (num, fp) VALUES (42, 1.1);");
+  connection_.execute("INSERT INTO foo (num, fp) VALUES (113, 2.2);");
 
   ActiveRecord::Attribute result = connection_.select_value(
-    "SELECT pk FROM foo WHERE num = $1", parameters (113)
+    "SELECT num FROM foo WHERE fp > $1", parameters (2.0)
   );
+
   ASSERT_TRUE(result.has_data());
   ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
-  ASSERT_EQ(boost::get<int64>(result), 2);
-}
-
-TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithTextParam) {
-  connection_.execute("INSERT INTO foo (word) VALUES ('Hello');");
-  connection_.execute("INSERT INTO foo (word) VALUES ('World');");
-
-  ActiveRecord::Attribute result = connection_.select_value(
-    "SELECT pk FROM foo WHERE word = $1", parameters ("World")
-  );
-  ASSERT_TRUE(result.has_data());
-  ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
-  ASSERT_EQ(boost::get<int64>(result), 2);
-}
-
-TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithFloatParam) {
-  connection_.execute("INSERT INTO foo (f) VALUES (-5.0);");
-  connection_.execute("INSERT INTO foo (f) VALUES (9.99);");
-
-  AttributeList params = parameters (9.9) (10.0);
-  ActiveRecord::Attribute result = connection_.select_value(
-    "SELECT pk FROM foo WHERE f > $1 AND f < $2", params
-  );
-  ASSERT_TRUE(result.has_data());
-  ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
-  ASSERT_EQ(boost::get<int64>(result), 2);
+  ASSERT_EQ(boost::get<int64>(result), 113);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectValues) {
@@ -270,9 +291,9 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValues) {
 
   ASSERT_EQ(2, attributes.size());
   AttributeList::iterator it = attributes.begin();
-  assert_attribute(42, *it);
+  assert_attribute(*it, 42);
   ++it;
-  assert_attribute(99, *it);
+  assert_attribute(*it, 99);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectValuesWithParameter) {
@@ -285,17 +306,18 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValuesWithParameter) {
 
   ASSERT_EQ(1, attributes.size());
   AttributeList::iterator it = attributes.begin();
-  assert_attribute(99, *it);
+  assert_attribute(*it, 99);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, TableData) {
   Table t = connection_.table_data("foo");
 
   ASSERT_EQ(t.primary_key(), "pk");
-  ASSERT_EQ(t.fields().size(), 3);
+  ASSERT_EQ(t.fields().size(), 4);
   assert_field(t, 0, "num", Type::integer);
   assert_field(t, 1, "word", Type::text);
-  assert_field(t, 2, "f", Type::floating_point);
+  assert_field(t, 2, "fp", Type::floating_point);
+  assert_field(t, 3, "dt", Type::date);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, Schema) {
@@ -303,7 +325,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, Schema) {
 
   ASSERT_EQ(1, t.size());
   TableSet::const_iterator it = t.begin();
-  ASSERT_EQ("foo", it->first);
+  ASSERT_EQ(it->first, "foo");
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, FindsPrimaryKey) {
@@ -316,7 +338,8 @@ TEST_F(PostgresqlWithConnectionAndTableTest, RemovesField) {
   Table t = connection_.table_data("foo");
 
   ASSERT_EQ(t.primary_key(), "pk");
-  ASSERT_EQ(t.fields().size(), 2);
+  ASSERT_EQ(t.fields().size(), 3);
   assert_field(t, 0, "word", Type::text);
-  assert_field(t, 1, "f", Type::floating_point);
+  assert_field(t, 1, "fp", Type::floating_point);
+  assert_field(t, 2, "dt", Type::date);
 }
