@@ -12,17 +12,34 @@ Attribute Attribute::from_field(PGresult* exec_result, int row, int column) {
 
   // TYPE_LIST
   switch(type) {
-    case Type::integer:
-      return string_to_int64(raw);
+    case Type::integer: {
+      bool found = false;
+      int64 i = string_to_int64(raw, found);
+      if(!found) {
+        return Attribute();
+      }
+      return i;
+    }
 
     case Type::text:
       return raw;
 
-    case Type::floating_point:
-      return string_to_double(raw);
+    case Type::floating_point: {
+      bool found = false;
+      double d = string_to_double(raw, found);
+      if(!found) {
+        return Attribute();
+      }
+      return d;
+    }
 
-    case Type::date:
+    case Type::date: {
+      bool valid = Date::is_valid(raw);
+      if(!valid) {
+        return Attribute();
+      }
       return Date::parse(raw);
+    }
 
     default: {
       stringstream error;

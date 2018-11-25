@@ -5,51 +5,28 @@
 
 namespace ActiveRecord {
 
-int64 string_to_int64(const char* raw) {
+int64 string_to_int64(const char* raw, bool& found) {
   errno = 0;
   int64 result = strtol(raw, nullptr, 10);
 
-  switch(errno) {
-    case 0:
-      return result;
-
-    case EINVAL: {
-      std::stringstream error;
-      error << "Expected an int, but got '" << raw << "'";
-      throw ActiveRecord::ActiveRecordException(
-        error.str(), __FILE__, __LINE__
-      );
-    }
-
-    case ERANGE: {
-      std::stringstream error;
-      error << "The value '" << raw << "' is out of range for an integer";
-      throw ActiveRecord::ActiveRecordException(
-        error.str(), __FILE__, __LINE__
-      );
-    }
-
-    default: {
-      std::stringstream error;
-      error << "Unexpected error " << errno;
-      error << " when parsing '" << raw << "' as an integer";
-      throw ActiveRecord::ActiveRecordException(
-        error.str(), __FILE__, __LINE__
-      );
-    }
+  if(errno != 0) {
+    return Attribute();
   }
+
+  found = true;
+  return result;
 }
 
-double string_to_double(const char* raw) {
+double string_to_double(const char* raw, bool& found) {
   char* end;
   double d = std::strtod(raw, &end);
 
   if(end == raw) {
-    std::stringstream error;
-    error << "Expected a floating point number, but got '" << raw << "'";
-    throw ActiveRecord::ActiveRecordException(error.str(), __FILE__, __LINE__);
+    found = false;
+    return 0;
   }
 
+  found = true;
   return d;
 }
 

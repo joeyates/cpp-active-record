@@ -21,6 +21,11 @@ class Date {
     return Date(date);
   }
 
+  static bool is_valid(const string& date) {
+    struct tm tm;
+    return parse(date, tm);
+  }
+
   Date() { init(0); }
   Date(time_t t) { init(t); }
 
