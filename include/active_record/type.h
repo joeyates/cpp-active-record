@@ -27,6 +27,7 @@ typedef map<ActiveRecord::Type::Type, string> TypeNameMap;
 
 Type::Type index_to_type(int index);
 Type::Type to_type(const string& type_name);
+const char* type_string(const Type::Type& type);
 
 } // namespace ActiveRecord
 

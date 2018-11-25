@@ -1,17 +1,14 @@
 #include <string>
-#include <active_record/connection/sqlite3.h>
 
-using namespace std;
+#include <active_record/connection/sqlite3.h>
 
 namespace ActiveRecord {
 
-extern TypeNameMap type_name;
-
 string Table::primary_key(
   Sqlite3Connection* connection,
-  const string& table_name
+  const std::string& table_name
 ) {
-  connection->primary_key(table_name);
+  return connection->primary_key(table_name);
 }
 
 /*

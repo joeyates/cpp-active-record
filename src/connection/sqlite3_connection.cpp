@@ -4,8 +4,6 @@
 
 namespace ActiveRecord {
 
-extern TypeNameMap type_name;
-
 Sqlite3Connection::Sqlite3Connection(): db_(nullptr) {}
 
 Sqlite3Connection::~Sqlite3Connection() {

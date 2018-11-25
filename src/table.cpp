@@ -8,14 +8,12 @@
 
 namespace ActiveRecord {
 
-extern TypeNameMap type_name;
-
 void Table::add_field(const Field& field) {
   assert_connection(__FILE__, __LINE__);
 
   std::stringstream ss;
   ss << "ALTER TABLE " << table_name_;
-  ss << " ADD " << field.name() << " " << type_name[field.type()];
+  ss << " ADD " << field.name() << " " << type_string(field.type());
   ss << ";";
 
   log(ss.str());

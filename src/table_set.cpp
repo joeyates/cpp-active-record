@@ -9,8 +9,6 @@
 
 namespace ActiveRecord {
 
-extern TypeNameMap type_name;
-
 //////////////////////////////////////////////////////////
 // static methods
 
@@ -36,7 +34,7 @@ void TableSet::create_table(Table& td) {
     } else {
       ss << ", ";
     }
-    ss << field.name() << " " << type_name[field.type()];
+    ss << field.name() << " " << type_string(field.type());
   }
 
   if(td.timestamps()) {

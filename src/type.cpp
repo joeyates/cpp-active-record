@@ -1,44 +1,72 @@
 #include <active_record/type.h>
 
+#include <sstream>
+
+#include <active_record/exception.h>
+
 namespace ActiveRecord {
 
 // TYPE_LIST
-TypeNamePair type_pairs[] = {
-  TypeNamePair(Type::integer,        "INTEGER"),
-  TypeNamePair(Type::text,           "TEXT"),
-  TypeNamePair(Type::floating_point, "FLOAT"),
-  TypeNamePair(Type::date,           "DATE")
-};
-
-// TYPE_LIST
-Type::Type type_list[] = {
-  Type::integer,
-  Type::text,
-  Type::floating_point,
-  Type::date
-};
-
-TypeNameMap type_name(
-  type_pairs,
-  type_pairs + sizeof(type_pairs) / sizeof(type_pairs[0])
-);
-
 Type::Type index_to_type(int index) {
-  type_list[index];
+  switch(index) {
+    case 0:
+      return Type::integer;
+    case 1:
+      return Type::text;
+    case 2:
+      return Type::floating_point;
+    case 3:
+      return Type::date;
+    default: {
+      std::stringstream message;
+      message << "No type has index " << index;
+      throw ActiveRecordException(message.str(), __FILE__, __LINE__);
+    }
+  }
 }
 
 // TYPE_LIST
 Type::Type to_type(const string& type_name) {
-  if(type_name == "INTEGER")
+  if(type_name == "INTEGER") {
     return Type::integer;
-  else if(type_name == "TEXT")
+  }
+
+  if(type_name == "TEXT") {
     return Type::text;
-  else if(type_name == "FLOAT")
+  }
+
+  if(type_name == "FLOAT") {
     return Type::floating_point;
-  else if(type_name == "DATE")
+  }
+
+  if(type_name == "DATE") {
     return Type::date;
-  else
-    return Type::unknown;
+  }
+
+  return Type::unknown;
+}
+
+// TYPE_LIST
+const char* type_string(const Type::Type& type) {
+  if(type == Type::integer) {
+    return "INTEGER";
+  }
+
+  if(type == Type::text) {
+    return "TEXT";
+  }
+
+  if(type == Type::floating_point) {
+    return "FLOAT";
+  }
+
+  if(type == Type::date) {
+    return "DATE";
+  }
+
+  std::stringstream message;
+  message << "Unknown type " << type;
+  throw ActiveRecordException(message.str(), __FILE__, __LINE__);
 }
 
 } // namespace ActiveRecord
