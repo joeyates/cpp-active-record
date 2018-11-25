@@ -80,14 +80,15 @@ void TableSet::update_table(Table& required) {
 // Data Definition / Database Structure
 
 void TableSet::update_database() {
-  log("TableSet::update_database");
   for(TableSet::iterator it = begin(); it != end(); ++it) {
     Table td = it->second;
-    log(td.table_name());
-    if(td.connection()->table_exists(td.table_name()))
+    string name = td.table_name();
+    bool exists = td.connection()->table_exists(name);
+    if(exists) {
       update_table(td);
-    else
+    } else {
       create_table(td);
+    }
   }
 }
 
