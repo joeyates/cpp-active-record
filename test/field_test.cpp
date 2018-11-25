@@ -39,18 +39,14 @@ TEST_F(FieldTest, SubtractsAccordingToName) {
   ASSERT_STREQ("b", ab[1].name().c_str());
 }
 
-/*
-TODO: FIXME
-
 TEST_F(FieldTest, Ostream) {
   stringstream field_out;
   Field a("a", Type::integer);
 
   field_out << a;
 
-  assert_string("", field_out.str());
+  assert_string(field_out.str(), "a INTEGER");
 }
-*/
 
 class FieldsTest: public ::testing::Test {
   protected:
