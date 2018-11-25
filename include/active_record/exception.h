@@ -30,6 +30,8 @@ class ActiveRecordException: public std::runtime_error {
     file_(file),
     line_(line) {}
 
+  virtual ~ActiveRecordException() throw() {}
+
   string message() const { return message_; }
   string file() const { return file_; }
   long line() const { return line_; }
