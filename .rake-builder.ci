@@ -1,0 +1,7 @@
+---
+:rake_builder:
+  :config_file:
+    :version: '1.1'
+:include_paths: []
+:compilation_options:
+  - -std=c++11

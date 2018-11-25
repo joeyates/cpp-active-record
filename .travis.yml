@@ -18,4 +18,5 @@ install:
   - mkdir $HOME/cppar_build $HOME/gtest
   - cp -r /usr/src/gtest $HOME/cppar_build
   - cd $HOME/cppar_build/gtest && cmake . && make && mv libg* $HOME/gtest && cd -
+  - cp .rake-builder.ci .rake-builder
 script: ./configure && bundle exec rake test
