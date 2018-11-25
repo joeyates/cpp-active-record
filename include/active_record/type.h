@@ -11,6 +11,7 @@ namespace ActiveRecord {
 
 namespace Type {
 // Attributes are typed
+// TYPE_LIST
 enum Type {
   unknown        = -1,
   integer        = 0,

@@ -2,6 +2,7 @@
 
 namespace ActiveRecord {
 
+// TYPE_LIST
 TypeNamePair type_pairs[] = {
   TypeNamePair(Type::integer,        "INTEGER"),
   TypeNamePair(Type::text,           "TEXT"),
@@ -9,6 +10,7 @@ TypeNamePair type_pairs[] = {
   TypeNamePair(Type::date,           "DATE")
 };
 
+// TYPE_LIST
 Type::Type type_list[] = {
   Type::integer,
   Type::text,
@@ -25,6 +27,7 @@ Type::Type index_to_type(int index) {
   type_list[index];
 }
 
+// TYPE_LIST
 Type::Type to_type(const string& type_name) {
   if(type_name == "INTEGER")
     return Type::integer;

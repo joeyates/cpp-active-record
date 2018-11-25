@@ -371,6 +371,7 @@ void PostgresqlConnection::bind_parameters(
 
   int i = 0;
   for(auto& parameter: parameters) {
+    // TYPE_LIST
     switch(parameter.which()) {
       case Type::integer: {
         int64 value = boost::get<int64>(parameter);

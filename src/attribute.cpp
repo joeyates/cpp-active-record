@@ -14,6 +14,7 @@ bool Attribute::operator==(const Attribute& other) const {
     return false;
   }
 
+  // TYPE_LIST
   switch(which()) {
     case 0:
       return boost::get<int64>(*this) == boost::get<int64>(other);

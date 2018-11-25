@@ -54,6 +54,7 @@ Attribute Attribute::from_field(PGresult* exec_result, int row, int column) {
   Type::Type type = pg_type_to_ar_type(pg_type);
   char* raw = PQgetvalue(exec_result, row, column);
 
+  // TYPE_LIST
   switch(type) {
     case Type::text:
       return raw;
@@ -75,6 +76,7 @@ Attribute Attribute::from_field(PGresult* exec_result, int row, int column) {
   }
 }
 
+// TYPE_LIST
 Type::Type Attribute::pg_type_to_ar_type(Oid pg_type) {
   switch(pg_type) {
     case TEXTOID:

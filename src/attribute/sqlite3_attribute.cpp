@@ -15,6 +15,7 @@ Attribute Attribute::from_field(sqlite3_stmt* pStmt, int i) {
     return value;
   }
 
+  // TYPE_LIST
   if(strcasecmp(type, "INTEGER") == 0) {
     return static_cast<int64>(sqlite3_column_int(pStmt, i));
   }

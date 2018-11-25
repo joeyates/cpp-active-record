@@ -19,7 +19,8 @@ using namespace boost;
 
 namespace ActiveRecord {
 
-typedef boost::variant< int64, string, double, ActiveRecord::Date > AttributeType;
+// TYPE_LIST
+typedef boost::variant<int64, string, double, Date> AttributeType;
 
 // N.B. boost::variant.which() returns a 0-based index into the
 // AttributeType list
@@ -39,6 +40,7 @@ class Attribute: public AttributeType {
 
   Attribute():                AttributeType(), initialised_(false) {}
   Attribute(int i):           AttributeType((int64) i), initialised_(true) {}
+  // TYPE_LIST
   Attribute(int64 i):         AttributeType(i), initialised_(true) {}
   Attribute(const string& s): AttributeType(s), initialised_(true) {}
   Attribute(const char* s):   AttributeType(string(s)), initialised_(true) {}

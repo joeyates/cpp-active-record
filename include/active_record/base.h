@@ -86,14 +86,15 @@ class Base {
     return attributes_[name];
   }
 
+  // TYPE_LIST
+  int64 integer(const string& name) {
+    load_unless_new();
+    return boost::get<int64>(attributes_[name]);
+  }
+
   string text(const string& name) {
     load_unless_new();
     return boost::get<string>(attributes_[name]);
-  }
-
-  int integer(const string& name) {
-    load_unless_new();
-    return boost::get<int64>(attributes_[name]);
   }
 
   double floating_point(const string& name) {

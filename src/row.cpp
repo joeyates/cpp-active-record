@@ -18,12 +18,13 @@ bool Row::is_type(const string& name, Type::Type type) {
   return (actual == type)? true : false;
 }
 
-string Row::get_text(const string& name) {
-  return boost::get<string>(attributes_[name]);
-}
-
+// TYPE_LIST
 int64 Row::get_integer(const string& name) {
   return boost::get<int64>(attributes_[name]);
+}
+
+string Row::get_text(const string& name) {
+  return boost::get<string>(attributes_[name]);
 }
 
 double Row::get_floating_point(const string& name) {
