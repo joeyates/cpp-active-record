@@ -120,14 +120,14 @@ bool PostgresqlConnection::execute(
   ParameterAllocations pa;
   PGresult* exec_result = prepare(query, parameters, pa);
 
-  bool success = is_error(exec_result);
-  if(!success) {
+  bool error = is_error(exec_result);
+  if(error) {
     log_error(exec_result);
   }
 
   PQclear(exec_result);
 
-  return success;
+  return !error;
 }
 
 int64 PostgresqlConnection::insert(
