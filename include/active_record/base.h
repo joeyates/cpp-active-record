@@ -201,8 +201,9 @@ class Base {
 
   // State
   void ensure_prepared() {
-    if(state_ < prepared)
+    if(state_ < prepared) {
       prepare();
+    }
   }
 
   void load_unless_new() {
@@ -234,8 +235,9 @@ class Base {
 
 template <class T>
 void Base<T>::setup(Connection* connection) {
-  if(connection == NULL)
+  if(connection == NULL) {
     throw ActiveRecordException("connection is NULL", __FILE__, __LINE__);
+  }
 
   T::connection_ = connection;
   Table td = T::table(connection_);
@@ -259,8 +261,9 @@ string Base<T>::to_string() const {
     it != attributes_.end();
     ++it
   ) {
-    if(it != attributes_.begin())
+    if(it != attributes_.begin()) {
       ss << ", ";
+    }
     ss << it->first << " " <<it->second;
   }
 
@@ -288,8 +291,9 @@ bool Base<T>::load() {
   parameters.push_back(id());
 
   Row row = connection_->select_one(ss.str(), parameters);
-  if(!row.has_data())
+  if(!row.has_data()) {
     throw ActiveRecordException("Record not found", __FILE__, __LINE__);
+  }
 
   attributes_ = row.attributes();
   state_ = loaded;
@@ -311,8 +315,9 @@ bool Base<T>::create() {
     it != attributes_.end();
     ++it
   ) {
-    if(it->first == primary_key_)
+    if(it->first == primary_key_) {
       continue;
+    }
 
     if(columns_added) {
       columns << ", ";
@@ -326,10 +331,12 @@ bool Base<T>::create() {
     columns_added = true;
   }
 
-  if(columns_added)
+  if(columns_added) {
     ss << "(" << columns.str() << ") VALUES (" << placeholders.str() << ")";
-  else // Handle INSERT with no data
+  } else {
+    // Handle INSERT with no data
     ss << "(" << primary_key_ << ") VALUES (NULL)";
+  }
 
   id_ = (int) connection_->insert(ss.str(), parameters);
   state_ = loaded;
@@ -352,11 +359,13 @@ bool Base<T>::update() {
     it != attributes_.end();
     ++it
   ) {
-    if(it->first == primary_key_)
+    if(it->first == primary_key_) {
       continue;
+    }
 
-    if(columns_added)
+    if(columns_added) {
       columns << ", ";
+    }
 
     columns << it->first << " = ?";
     parameters.push_back(it->second);
@@ -375,11 +384,13 @@ bool Base<T>::update() {
 template <class T>
 void Base<T>::prepare() {
   log("Base::prepare");
-  if(state_ >= prepared)
+  if(state_ >= prepared) {
     return;
+  }
 
-  if(T::class_name.empty())
+  if(T::class_name.empty()) {
     return;
+  }
 
   log(T::class_name);
   log("connection_.get_table");

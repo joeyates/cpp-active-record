@@ -85,8 +85,9 @@ Query<T> Query<T>::order(string order) {
 }
 template <class T>
 string Query<T>::limit_clause() {
-  if(limit_ == INVALID_LIMIT)
+  if(limit_ == INVALID_LIMIT) {
     return "";
+  }
 
   stringstream ss;
   ss << " LIMIT " << limit_;
@@ -98,8 +99,9 @@ template <class T>
 QueryParametersPair Query<T>::condition_clause() {
   AttributeList parameters;
 
-  if(conditions_.size() == 0)
+  if(conditions_.size() == 0) {
     return QueryParametersPair("", parameters);
+  }
 
   stringstream ss;
   ss << " ";
@@ -109,10 +111,11 @@ QueryParametersPair Query<T>::condition_clause() {
     it != conditions_.end();
     ++it
   ) {
-    if(it == conditions_.begin())
+    if(it == conditions_.begin()) {
       ss << "WHERE ";
-    else
+    } else {
       ss << " AND ";
+    }
     ss << it->first;
     parameters.push_back(it->second);
   }
@@ -158,8 +161,9 @@ T Query<T>::first() {
   QueryParametersPair query = query_and_parameters();
 
   Row row = connection_->select_one(query.first, query.second);
-  if(!row.has_data())
+  if(!row.has_data()) {
     throw ActiveRecordException("No data", __FILE__, __LINE__);
+  }
 
   Table t = connection_->get_table(T::class_name);
   string primary_key = t.primary_key();
@@ -173,8 +177,9 @@ T Query<T>::first() {
 
 template <class T >
 string Query< T >::order_clause() {
-  if(orderings_.size() == 0)
+  if(orderings_.size() == 0) {
     return "";
+  }
 
   stringstream ss;
   ss << " ";
@@ -184,10 +189,11 @@ string Query< T >::order_clause() {
     it != orderings_.end();
     ++it
   ) {
-    if(it == orderings_.begin())
+    if(it == orderings_.begin()) {
       ss << "ORDER BY ";
-    else
+    } else {
       ss << ", ";
+    }
 
     ss << *it;
   }

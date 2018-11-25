@@ -27,8 +27,9 @@ void delete_database() {
 
 list<string> shell_command(const string& command) {
   FILE* pipe = popen(command.c_str(), "r");
-  if(!pipe)
+  if(!pipe) {
     throw "Failed to open pipe";
+  }
 
   list<string> output;
   char buffer[100];
@@ -49,8 +50,9 @@ string table_definition(Connection& connection, const string& table_name) {
 
   RowSet rows = connection.select_all(query.str());
 
-  if(rows.size() == 0)
+  if(rows.size() == 0) {
     return "";
+  }
 
   return rows.front().get_text("sql");
 }
@@ -66,8 +68,9 @@ void assert_string(const string& expected, const string& actual) {
 }
 
 void assert_attribute(const Attribute& expected, const Attribute& actual) {
-  if(expected == actual)
+  if(expected == actual) {
     return;
+  }
 
   cout << "Actual: " << actual <<endl;
   cout << "Expected: " << expected << endl;
@@ -100,8 +103,9 @@ void assert_table_exists(
 
   FILE* pipe = popen(row_query.str().c_str(), "r");
 
-  if(!pipe)
+  if(!pipe) {
     throw "Failed to open pipe";
+  }
 
   // We assume that any result means the table exists
   bool found = false;
@@ -148,16 +152,19 @@ string postgresql_invocation(const OptionsHash& options) {
   stringstream command;
   command << "psql -X";
 
-  if(options.find("port") != options.end())
+  if(options.find("port") != options.end()) {
     command << " -p " <<options.find("port")->second;
+  }
 
-  if(options.find("host") != options.end())
+  if(options.find("host") != options.end()) {
     command << " -h " <<options.find("host")->second;
+  }
 
   command << " -U " <<options.find("username")->second;
 
-  if(options.find("database") != options.end())
+  if(options.find("database") != options.end()) {
     command << " " <<options.find("database")->second;
+  }
 
   return command.str();
 }
@@ -166,14 +173,17 @@ string postgresql_conninfo(const OptionsHash& options) {
   stringstream connection_stream;
   connection_stream << "dbname=" << options.find("database")->second << " ";
 
-  if(options.find("host") != options.end())
+  if(options.find("host") != options.end()) {
     connection_stream << "host=" << options.find("host")->second << " ";
+  }
 
-  if(options.find("username") != options.end())
+  if(options.find("username") != options.end()) {
     connection_stream << "user=" << options.find("username")->second << " ";
+  }
 
-  if(options.find("port") != options.end())
+  if(options.find("port") != options.end()) {
     connection_stream << "port=" << options.find("port")->second << " ";
+  }
 
   return connection_stream.str();
 }
@@ -192,8 +202,11 @@ void postgresql_shell_create_database(
   const string& create_database_name,
   const OptionsHash& connection_options
 ) {
-  if(postgresql_shell_database_exists(create_database_name, connection_options))
+  if(
+     postgresql_shell_database_exists(create_database_name, connection_options)
+  ) {
     postgresql_shell_drop_database(create_database_name, connection_options);
+  }
 
   string query = "CREATE DATABASE " + create_database_name;
   postgresql_shell_command(query, connection_options);
@@ -203,8 +216,11 @@ void postgresql_shell_drop_database(
   const string& drop_database_name,
   const OptionsHash& connection_options
 ) {
-  if(!postgresql_shell_database_exists(drop_database_name, connection_options))
+  if(
+    !postgresql_shell_database_exists(drop_database_name, connection_options)
+  ) {
     return;
+  }
 
   string query = "DROP DATABASE " + drop_database_name;
   postgresql_shell_command(query, connection_options);

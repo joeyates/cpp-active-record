@@ -56,8 +56,9 @@ class Fields: public vector<Field> {
   Fields operator-(Fields &other) {
     Fields fields;
     for(Fields::iterator it = this->begin(); it != this->end(); ++it) {
-      if(!other.has_field(it->name()) )
-        fields.push_back(Field(it->name(), it->type()) );
+      if(!other.has_field(it->name())) {
+        fields.push_back(Field(it->name(), it->type()));
+      }
     }
     return fields;
   }
