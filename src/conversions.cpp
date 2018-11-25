@@ -6,11 +6,19 @@
 namespace ActiveRecord {
 
 int64 string_to_int64(const char* raw, bool& found) {
+  size_t length = strlen(raw);
+
+  if(length == 0) {
+    found = false;
+    return 0;
+  }
+
   errno = 0;
   int64 result = strtol(raw, nullptr, 10);
 
   if(errno != 0) {
-    return Attribute();
+    found = false;
+    return 0;
   }
 
   found = true;

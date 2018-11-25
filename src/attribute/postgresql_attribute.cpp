@@ -21,8 +21,13 @@ Attribute Attribute::from_field(PGresult* exec_result, int row, int column) {
       return i;
     }
 
-    case Type::text:
+    case Type::text: {
+      int is_null = PQgetisnull(exec_result, row, column);
+      if(is_null == 1) {
+        return Attribute();
+      }
       return raw;
+    }
 
     case Type::floating_point: {
       bool found = false;
