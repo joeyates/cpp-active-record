@@ -56,11 +56,11 @@ Attribute Attribute::from_field(PGresult* exec_result, int row, int column) {
 
   // TYPE_LIST
   switch(type) {
-    case Type::text:
-      return raw;
-
     case Type::integer:
       return string_to_int64(raw);
+
+    case Type::text:
+      return raw;
 
     case Type::floating_point:
       return string_to_double(raw);
@@ -79,15 +79,15 @@ Attribute Attribute::from_field(PGresult* exec_result, int row, int column) {
 // TYPE_LIST
 Type::Type Attribute::pg_type_to_ar_type(Oid pg_type) {
   switch(pg_type) {
-    case TEXTOID:
-    case NAMEOID:
-    case VARCHAROID:
-      return Type::text;
     case OIDOID:
     case INT2OID:
     case INT4OID:
     case INT8OID:
       return Type::integer;
+    case TEXTOID:
+    case NAMEOID:
+    case VARCHAROID:
+      return Type::text;
     case NUMERICOID:
       return Type::floating_point;
     case DATEOID:
