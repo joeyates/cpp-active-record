@@ -39,8 +39,6 @@ ostream& operator<<(ostream& cout, ActiveRecord::Date const& date) {
 ostream& operator<<(
   ostream& cout, const ActiveRecord::AttributeList& attributes
 ) {
-  cout << "parameters: ";
-
   for(auto it = attributes.begin(); it != attributes.end(); ++it) {
     if(it != attributes.begin()) {
       cout << ", ";
@@ -73,8 +71,6 @@ ostream& operator<<(
 ostream& operator<<(
   ostream& cout, const ActiveRecord::GenericAttributePairList& attributes
 ) {
-  cout << "attributes: ";
-
   for(auto it = attributes.begin(); it != attributes.end(); ++it) {
     if(it != attributes.begin()) {
       cout << ", ";
