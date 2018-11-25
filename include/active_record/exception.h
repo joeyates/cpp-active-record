@@ -16,7 +16,7 @@ ostream& operator<<(
 
 namespace ActiveRecord {
 
-class ActiveRecordException: public std::exception {
+class ActiveRecordException: public std::runtime_error {
   public:
 
   ActiveRecordException(
@@ -24,6 +24,7 @@ class ActiveRecordException: public std::exception {
     const string& file = "",
     long line = -1
   ):
+    std::runtime_error(message),
     message_(message),
     file_(file),
     line_(line) {}
