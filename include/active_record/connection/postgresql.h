@@ -38,7 +38,7 @@ class PostgresqlConnection: public Connection {
    */
   static bool create_database(
     PostgresqlConnection& connection,
-    OptionsHash& options
+    OptionsHash options
   );
   static void drop_database(
     PostgresqlConnection& connection,

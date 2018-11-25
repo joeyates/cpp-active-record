@@ -17,7 +17,7 @@ PostgresqlConnection::~PostgresqlConnection() {
 
 bool PostgresqlConnection::create_database(
   PostgresqlConnection& connection,
-  OptionsHash& options
+  OptionsHash options
 ) {
   stringstream create_stream;
   create_stream << "CREATE DATABASE " << options["database"] << " ";
