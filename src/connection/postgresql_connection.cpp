@@ -412,7 +412,15 @@ void PostgresqlConnection::bind_parameters(
       }
 
       case Type::date: {
-        // TODO
+        Date value = boost::get<Date>(parameter);
+        string s = value.to_string();
+
+        size_t len = s.size();
+        pa.param_values[i] = new char[len + 1];
+        strncpy(pa.param_values[i], s.c_str(), len + 1);
+        pa.param_types[i] = DATEOID;
+        pa.param_lengths[i] = len;
+        break;
       }
 
       default: {
