@@ -167,8 +167,6 @@ TEST_F(Sqlite3WithConnectionTest, TableDataLoadsFieldsAndSkipsPkey) {
   assert_field(foo_table, 3, "derp", Type::date);
 }
 
-// TODO: test for setting pkey
-
 TEST_F(Sqlite3WithConnectionTest, RemoveField) {
   connection.remove_field("foo", "bar");
 

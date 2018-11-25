@@ -98,8 +98,6 @@ TEST_F(BaseAttributeTest, SettingAttributesAfterConstruction) {
   assert_attribute(Date(1965, 7, 31), joe.date("dob"));
 }
 
-// TODO: Setting incorrect attributes raises error
-
 class BaseLoadTest: public ::testing::Test {
   protected:
 

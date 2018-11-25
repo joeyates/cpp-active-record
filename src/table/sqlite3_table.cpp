@@ -11,16 +11,4 @@ string Table::primary_key(
   return connection->primary_key(table_name);
 }
 
-/*
-TODO: SQLite does not implement DROP COLUMN - needs some hoop jumping
-void Table::remove_field(const Field &field) {
-  assert_connection();
-  stringstream ss;
-  ss << "ALTER TABLE " << table_name_;
-  ss << " DROP " << field.name();
-  ss << ";";
-  connection_->execute(ss.str());
-}
-*/
-
 } // namespace ActiveRecord

@@ -105,5 +105,3 @@ TEST_F(RowTest, GetDate) {
 
   assert_attribute(Date(1971, 07, 02), row.get_date("derp"));
 }
-
-// TODO: RowSet
