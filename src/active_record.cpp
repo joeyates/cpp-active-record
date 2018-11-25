@@ -1,7 +1,7 @@
 #include <active_record/active_record.h>
 
-#include <active_record/connection.h>
 #include <active_record/base.h>
+#include <active_record/connection.h>
 
 namespace ActiveRecord {
 
@@ -12,8 +12,9 @@ void set_debug(bool new_debug) {
 }
 
 void log(const string& message) {
-  if(!debug)
+  if(!debug) {
     return;
+  }
   cout << message << endl;
 }
 

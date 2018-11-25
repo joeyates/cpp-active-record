@@ -86,14 +86,15 @@ class Base {
     return attributes_[name];
   }
 
+  // TYPE_LIST
+  int64 integer(const string& name) {
+    load_unless_new();
+    return boost::get<int64>(attributes_[name]);
+  }
+
   string text(const string& name) {
     load_unless_new();
     return boost::get<string>(attributes_[name]);
-  }
-
-  int integer(const string& name) {
-    load_unless_new();
-    return boost::get<int>(attributes_[name]);
   }
 
   double floating_point(const string& name) {
@@ -103,14 +104,15 @@ class Base {
 
   Date date(const string& name) {
     load_unless_new();
-    return boost::get< Date>(attributes_[name]);
+    return boost::get<Date>(attributes_[name]);
   }
 
   // Associations
-  template<class T1 >
-  vector< T1 > has_many() {
-    if(state_ < loaded)
+  template<class T1>
+  vector<T1> has_many() {
+    if(state_ < loaded) {
       throw ActiveRecordException("Instance not loaded", __FILE__, __LINE__);
+    }
 
     Query<T1> query(*connection_);
     Table t1 = connection_->get_table(T1::class_name);
@@ -119,12 +121,13 @@ class Base {
     return query.where(where.str(), id()).all();
   }
 
-  template<class T1 >
+  template<class T1>
   T1 belongs_to() {
-    if(state_ < loaded)
+    if(state_ < loaded) {
       throw ActiveRecordException("Instance not loaded", __FILE__, __LINE__);
+    }
 
-    Query< T1 > query(*connection_);
+    Query<T1> query(*connection_);
     Table t1 = connection_->get_table(T1::class_name);
     string primary_key = t1.primary_key();
 
@@ -137,10 +140,11 @@ class Base {
   // Other
   bool save() {
     ensure_prepared();
-    if(id_ == ACTIVE_RECORD_UNSAVED)
+    if(id_ == ACTIVE_RECORD_UNSAVED) {
       return create();
-    else
+    } else {
       return update();
+    }
   }
 
   inline int id() const {
@@ -159,14 +163,17 @@ class Base {
   // if states and attributes are the same,
   // we accept they're the same
   bool operator==(const Base& other) const {
-    if(id() != other.id())
+    if(id() != other.id()) {
       return false;
+    }
 
-    if(state_ != other.state_)
+    if(state_ != other.state_) {
       return false;
+    }
 
-    if(attributes_.size() != other.attributes_.size())
+    if(attributes_.size() != other.attributes_.size()) {
       return false;
+    }
 
     for(
       AttributeHash::const_iterator it = attributes_.begin();
@@ -225,8 +232,8 @@ class Base {
   void prepare();
 };
 
-template <class T >
-void Base< T >::setup(Connection* connection) {
+template <class T>
+void Base<T>::setup(Connection* connection) {
   if(connection == NULL)
     throw ActiveRecordException("connection is NULL", __FILE__, __LINE__);
 
@@ -241,9 +248,9 @@ void Base< T >::setup(Connection* connection) {
   connection_->set_table(T::class_name, td);
 }
 
-template<class T >
-string Base< T >::to_string() const {
-  const_cast<Base< T > *>(this)->load_unless_new();
+template<class T>
+string Base<T>::to_string() const {
+  const_cast<Base<T>*>(this)->load_unless_new();
   stringstream ss;
   ss << T::class_name << ": ";
 
@@ -260,8 +267,8 @@ string Base< T >::to_string() const {
   return ss.str();
 }
 
-template<class T >
-ostream& operator<<(ostream& cout, const ActiveRecord::Base< T >& record) {
+template<class T>
+ostream& operator<<(ostream& cout, const ActiveRecord::Base<T>& record) {
   cout << record.to_string();
   return cout;
 }
@@ -269,8 +276,8 @@ ostream& operator<<(ostream& cout, const ActiveRecord::Base< T >& record) {
 /////////////////////////////////////////
 // Private
 
-template <class T >
-bool Base< T >::load() {
+template <class T>
+bool Base<T>::load() {
   stringstream ss;
   ss << "SELECT * ";
   ss << "FROM " << table_name_ << " ";
@@ -290,8 +297,8 @@ bool Base< T >::load() {
 }
 
 // TODO: Re-read the record afterwards to get default values?
-template <class T >
-bool Base< T >::create() {
+template <class T>
+bool Base<T>::create() {
   stringstream ss;
   ss << "INSERT INTO " << table_name_ << " ";
 
@@ -330,8 +337,8 @@ bool Base< T >::create() {
   return true;
 }
 
-template <class T >
-bool Base< T >::update() {
+template <class T>
+bool Base<T>::update() {
   ensure_loaded();
   stringstream ss;
   ss << "UPDATE " << table_name_ << " ";
@@ -365,8 +372,8 @@ bool Base< T >::update() {
 
 // State
 
-template <class T >
-void Base< T >::prepare() {
+template <class T>
+void Base<T>::prepare() {
   log("Base::prepare");
   if(state_ >= prepared)
     return;

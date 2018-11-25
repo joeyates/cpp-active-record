@@ -8,8 +8,8 @@ namespace ActiveRecord {
 
 class Sqlite3Connection: public Connection {
   struct ParameterAllocations {
-    int param_count;
-    char** param_values;
+    int param_count = 0;
+    char** param_values = nullptr;
   };
 
   public:
@@ -17,18 +17,18 @@ class Sqlite3Connection: public Connection {
   Sqlite3Connection();
   virtual ~Sqlite3Connection();
 
-  virtual void  connect(OptionsHash options);
-  virtual void  disconnect();
-  virtual bool  connected();
+  virtual void connect(OptionsHash options);
+  virtual void disconnect();
+  virtual bool connected();
 
   // Database Structure
-  virtual bool  table_exists(const string& table_name);
+  virtual bool table_exists(const string& table_name);
   // Queries
   virtual bool execute(
     const string& query,
     const AttributeList& parameters = AttributeList()
   );
-  virtual long insert(
+  virtual int64 insert(
     const string& query,
     const AttributeList& parameters = AttributeList()
   );
@@ -55,10 +55,10 @@ class Sqlite3Connection: public Connection {
 
   private:
 
-  Sqlite3Connection(const Sqlite3Connection& other);
-  Sqlite3Connection operator=(const Sqlite3Connection& other);
+  Sqlite3Connection(const Sqlite3Connection& other) {};
+  Sqlite3Connection operator=(const Sqlite3Connection& other) {};
 
-  bool sqlite_initialize(string database_path_name);
+  bool sqlite_initialize(string& database_path_name);
   static string sqlite_error(int error_code);
   sqlite3_stmt* prepare(
     const string& query,

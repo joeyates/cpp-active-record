@@ -21,7 +21,7 @@ class PostgresqlConnection;
 class Sqlite3Connection;
 
 class Table {
-  friend ostream& ::operator<<(ostream& cout, const Table& e);
+  friend ostream& ::operator<<(ostream& cout, const Table& table);
 
   public:
 
@@ -34,11 +34,11 @@ class Table {
   );
 
   // Constructors
-  Table(Connection* connection = NULL, const string& table_name = "")
-    : connection_(connection),
-      table_name_(table_name),
-      primary_key_("id"),
-      timestamps_(false) {}
+  Table(Connection* connection = NULL, const string& table_name = ""):
+    connection_(connection),
+    table_name_(table_name),
+    primary_key_("id"),
+    timestamps_(false) {}
 
   Connection* connection() const { return connection_; }
   void primary_key(const string& primary_key) { primary_key_ = primary_key; }

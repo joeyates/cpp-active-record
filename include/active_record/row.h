@@ -23,14 +23,14 @@ class Row {
   public:
 
   Row() {};
-  Row(sqlite3_stmt* ppStmt);
+  Row(sqlite3_stmt* pStmt);
   Row(PGresult* exec_result, int row);
 
   bool has_data() { return attributes_.size() > 0; };
   Type::Type get_type(const string& name);
   bool is_type(const string& name, Type::Type type);
   string get_text(const string& name);
-  int get_integer(const string& name);
+  int64 get_integer(const string& name);
   double get_floating_point(const string& name);
   Date get_date(const string& name);
   string to_string() const;

@@ -69,7 +69,7 @@ TEST_F(TableSetWithSqliteConnectionTest, PrimaryKeyField) {
 }
 
 TEST_F(TableSetWithSqliteConnectionTest, Timestamps) {
-  Table td( &connection, "people");
+  Table td(&connection, "people");
   td.timestamps(true);
   td.fields() =
     fields

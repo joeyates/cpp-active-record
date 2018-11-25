@@ -123,8 +123,7 @@ TEST_F(PostgresqlWithConnectionTest, Execute) {
   ASSERT_TRUE(connection_.table_exists("bar"));
 }
 
-class PostgresqlWithConnectionAndTableTest:
-  public PostgresqlWithConnectionTest
+class PostgresqlWithConnectionAndTableTest: public PostgresqlWithConnectionTest
 {
   protected:
 
@@ -214,7 +213,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValue) {
   );
   ASSERT_TRUE(result.has_data());
   ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
-  ASSERT_EQ(boost::get<int>(result), 42);
+  ASSERT_EQ(boost::get<int64>(result), 42);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithNoResult) {
@@ -235,7 +234,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithIntParam) {
   );
   ASSERT_TRUE(result.has_data());
   ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
-  ASSERT_EQ(boost::get<int>(result), 2);
+  ASSERT_EQ(boost::get<int64>(result), 2);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithTextParam) {
@@ -247,7 +246,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithTextParam) {
   );
   ASSERT_TRUE(result.has_data());
   ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
-  ASSERT_EQ(boost::get<int>(result), 2);
+  ASSERT_EQ(boost::get<int64>(result), 2);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithFloatParam) {
@@ -263,7 +262,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithFloatParam) {
   );
   ASSERT_TRUE(result.has_data());
   ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
-  ASSERT_EQ(boost::get<int>(result), 2);
+  ASSERT_EQ(boost::get<int64>(result), 2);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectValues) {

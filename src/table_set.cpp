@@ -1,14 +1,13 @@
 #include <active_record/table_set.h>
 
 #include <sstream>
+
 #include <active_record/active_record.h>
+#include <active_record/connection.h>
 #include <active_record/exception.h>
 #include <active_record/type.h>
-#include <active_record/connection.h>
 
 namespace ActiveRecord {
-
-extern TypeNameMap type_name;
 
 //////////////////////////////////////////////////////////
 // static methods
@@ -24,28 +23,22 @@ void TableSet::create_table(Table& td) {
   bool is_first = true;
 
   string pk = td.primary_key();
-  if(pk != "") {
+  if(!pk.empty()) {
     ss << pk << " INTEGER PRIMARY KEY";
     is_first = false;
   }
 
-  for(
-    Fields::const_iterator it = td.fields().begin();
-    it != td.fields().end();
-    ++it
-  ) {
+  for(auto& field: td.fields()) {
     if(is_first) {
       is_first = false;
     } else {
       ss << ", ";
     }
-    ss << it->name() << " " << type_name[it->type()];
+    ss << field.name() << " " << type_string(field.type());
   }
 
   if(td.timestamps()) {
-    if(is_first) {
-      is_first = false;
-    } else {
+    if(!is_first) {
       ss << ", ";
     }
     ss << "created_at TEXT";
@@ -57,19 +50,20 @@ void TableSet::create_table(Table& td) {
   td.connection()->execute(ss.str());
 }
 
-void TableSet::update_table(Table& required) {
+void TableSet::update_table(Table& td) {
   log("TableSet::update_table");
-  log(required.table_name());
+  log(td.table_name());
 
-  Table existing = required.connection()->table_data(required.table_name());
+  Table existing = td.connection()->table_data(td.table_name());
 
-  Fields missing = required.fields() - existing.fields();
-  for(Fields::iterator it = missing.begin(); it != missing.end(); ++it)
-    existing.add_field(*it);
+  Fields missing = td.fields() - existing.fields();
+  for(auto& field: missing) {
+    existing.add_field(field);
+  }
 
-  Fields remove  = existing.fields() - required.fields();
-  for(Fields::iterator it = remove.begin(); it != remove.end(); ++it) {
-    existing.remove_field(*it);
+  Fields remove = existing.fields() - td.fields();
+  for(auto& field: remove) {
+    existing.remove_field(field);
   }
 }
 
@@ -79,14 +73,15 @@ void TableSet::update_table(Table& required) {
 // Data Definition / Database Structure
 
 void TableSet::update_database() {
-  log("TableSet::update_database");
-  for(TableSet::iterator it = begin(); it != end(); ++it) {
-    Table td = it->second;
-    log(td.table_name());
-    if(td.connection()->table_exists(td.table_name()))
+  for(auto& pair: *this) {
+    Table td = pair.second;
+    string name = td.table_name();
+    bool exists = td.connection()->table_exists(name);
+    if(exists) {
       update_table(td);
-    else
+    } else {
       create_table(td);
+    }
   }
 }
 

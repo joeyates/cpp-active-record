@@ -27,3 +27,20 @@ The user must be set up to access the database without a password.
 You can supply PG_HOST if your PostgreSQL is not running locally.
 
 You can supply PG_PORT if your PostgreSQL is not running on port 5432.
+
+# Linter
+
+Dependencies:
+
+* clang-tidy-6.0
+
+Run linter:
+
+```shell
+clang-tidy-6.0 \
+  src/**/*.cpp \
+  -- \
+  -Iinclude \
+  -Iinclude/postgresql \
+  -Iinclude/postgresql/server
+```

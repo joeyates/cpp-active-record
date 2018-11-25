@@ -2,7 +2,7 @@
 *.o
 *depend.mf
 *.sqlite3
-/.rake-builder*
+/.rake-builder
 /active_record_*_test
 /autom4te.cache/
 /.bundle/

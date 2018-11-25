@@ -11,7 +11,7 @@ string database_name = "./test.sqlite3";
 
 void connect_database(
   ActiveRecord::Connection &connection,
-  const string &database_name
+  const string& database_name
 ) {
   connection.connect(
     options
@@ -90,7 +90,7 @@ void assert_attribute_pair_list(
 
 // TODO: this is sqlite only
 void assert_table_exists(
-  const string &database_name, const string &table_name
+  const string& database_name, const string& table_name
 ) {
   stringstream row_query;
   row_query << "echo '";
@@ -114,13 +114,13 @@ void assert_table_exists(
   ASSERT_TRUE(found);
 }
 
-void assert_file_exists(const string &file_name) {
+void assert_file_exists(const string& file_name) {
   struct stat buffer;
   int status = lstat(file_name.c_str(), &buffer);
   ASSERT_EQ(status, 0);
 }
 
-void assert_file_non_zero_length(const string &file_name) {
+void assert_file_non_zero_length(const string& file_name) {
   struct stat buffer;
   int status = lstat(file_name.c_str(), &buffer);
   ASSERT_EQ(status, 0);
@@ -132,13 +132,13 @@ void assert_field_name(Table& td, int field_index, const string& name) {
 }
 
 void assert_field_type(
-  Table &td, int field_index, ActiveRecord::Type::Type type
+  Table& td, int field_index, ActiveRecord::Type::Type type
 ) {
   ASSERT_EQ(type, td.fields()[field_index].type());
 }
 
 void assert_field(
-  Table &td, int field_index, const string &name, ActiveRecord::Type::Type type
+  Table& td, int field_index, const string& name, ActiveRecord::Type::Type type
 ) {
   assert_field_name(td, field_index, name);
   assert_field_type(td, field_index, type);
@@ -200,7 +200,7 @@ void postgresql_shell_create_database(
 }
 
 void postgresql_shell_drop_database(
-  const string &drop_database_name,
+  const string& drop_database_name,
   const OptionsHash& connection_options
 ) {
   if(!postgresql_shell_database_exists(drop_database_name, connection_options))
@@ -211,7 +211,7 @@ void postgresql_shell_drop_database(
 }
 
 bool postgresql_shell_database_exists(
-  const string &database_name,
+  const string& database_name,
   const OptionsHash& connection_options
 ) {
   stringstream command;
@@ -222,9 +222,9 @@ bool postgresql_shell_database_exists(
 }
 
 void assert_postgresql_table_exists(
-  const string &database_name,
-  const string &table_name,
-  const string &database_user
+  const string& database_name,
+  const string& table_name,
+  const string& database_user
 ) {
   // TODO
 }

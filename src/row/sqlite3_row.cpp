@@ -12,4 +12,4 @@ Row::Row(sqlite3_stmt* pStmt) {
   }
 }
 
-}
+} // namespace ActiveRecord

@@ -139,22 +139,22 @@ QueryParametersPair Query< T >::query_and_parameters() {
   return QueryParametersPair(ss.str(), conditions.second);
 }
 
-template <class T >
-vector< T > Query< T >::all() {
+template <class T>
+vector<T> Query<T>::all() {
   QueryParametersPair query = query_and_parameters();
   AttributeList ids = connection_->select_values(query.first, query.second);
-  vector< T > results;
+  vector<T> results;
 
   for(AttributeList::iterator it = ids.begin(); it != ids.end(); ++it) {
-    T record(boost::get<int>(*it));
+    T record(boost::get<int64>(*it));
     results.push_back(record);
   }
 
   return results;
 }
 
-template <class T >
-T Query< T >::first() {
+template <class T>
+T Query<T>::first() {
   QueryParametersPair query = query_and_parameters();
 
   Row row = connection_->select_one(query.first, query.second);

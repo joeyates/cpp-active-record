@@ -10,24 +10,24 @@ Type::Type Attribute::type() const {
 }
 
 bool Attribute::operator==(const Attribute& other) const {
-  if(which() != other.which())
+  if(which() != other.which()) {
     return false;
+  }
 
+  // TYPE_LIST
   switch(which()) {
-  case 0:
-    return boost::get<int>(*this) == boost::get<int>(other);
-  case 1:
-    return boost::get<long long>(*this) == boost::get<long long>(other);
-  case 2:
-    return boost::get<string>(*this) == boost::get<string>(other);
-  case 3:
-    return boost::get<double>(*this) == boost::get<double>(other);
-  case 4:
-    return boost::get<Date>(*this) == boost::get<Date>(other);
-  default:
-    throw ActiveRecordException(
-      "Unexpected Attribute type", __FILE__, __LINE__
-    );
+    case 0:
+      return boost::get<int64>(*this) == boost::get<int64>(other);
+    case 1:
+      return boost::get<string>(*this) == boost::get<string>(other);
+    case 2:
+      return boost::get<double>(*this) == boost::get<double>(other);
+    case 3:
+      return boost::get<Date>(*this) == boost::get<Date>(other);
+    default:
+      throw ActiveRecordException(
+        "Unexpected Attribute type", __FILE__, __LINE__
+      );
   }
 }
 
@@ -39,18 +39,26 @@ ostream& operator<<(ostream& cout, ActiveRecord::Date const& date) {
 ostream& operator<<(
   ostream& cout, const ActiveRecord::AttributeList& attributes
 ) {
-  cout << "parameters: ";
-
-  for(
-    ActiveRecord::AttributeList::const_iterator it =
-      attributes.begin();
-    it != attributes.end();
-    ++it
-  ) {
+  for(auto it = attributes.begin(); it != attributes.end(); ++it) {
     if(it != attributes.begin()) {
       cout << ", ";
     }
     cout << *it;
+  }
+
+  cout << endl;
+
+  return cout;
+}
+
+ostream& operator<<(
+  ostream& cout, const ActiveRecord::AttributeHash& attributes
+) {
+  for(auto& attribute: attributes) {
+    if(attribute != *attributes.begin()) {
+      cout << ", ";
+    }
+    cout << attribute.first << ": " << attribute.second;
   }
 
   cout << endl;
@@ -63,14 +71,7 @@ ostream& operator<<(
 ostream& operator<<(
   ostream& cout, const ActiveRecord::GenericAttributePairList& attributes
 ) {
-  cout << "attributes: ";
-
-  for(
-    ActiveRecord::GenericAttributePairList::const_iterator it =
-      attributes.begin();
-    it != attributes.end();
-    ++it
-  ) {
+  for(auto it = attributes.begin(); it != attributes.end(); ++it) {
     if(it != attributes.begin()) {
       cout << ", ";
     }

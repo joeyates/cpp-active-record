@@ -75,8 +75,8 @@ TEST_F(PostgresqlAttributesTest, IntegerFromField) {
 TEST_F(PostgresqlAttributesTest, BigIntegerFromField) {
   ASSERT_EQ(INT8OID, PQftype(exec_result_, 2));
   Attribute bi = Attribute::from_field(exec_result_, 0, 2);
-  ASSERT_EQ(Type::long_long, bi.type());
-  ASSERT_EQ(Attribute((long long) 9999999999999999), bi);
+  ASSERT_EQ(Type::integer, bi.type());
+  ASSERT_EQ(Attribute(9999999999999999), bi);
 }
 
 TEST_F(PostgresqlAttributesTest, FloatFromField) {

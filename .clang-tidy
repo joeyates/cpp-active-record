@@ -1,0 +1,3 @@
+---
+Checks: '*,-fuchsia-default-arguments,-fuchsia-overloaded-operator,-cppcoreguidelines-*,-clang-analyzer-optin.cplusplus.VirtualCall,-google-default-arguments,-hicpp-vararg,-google-readability-todo'
+HeaderFilterRegex: 'include/active_record/**/*.h'

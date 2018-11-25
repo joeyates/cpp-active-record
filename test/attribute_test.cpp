@@ -5,7 +5,7 @@ class AttributeTest: public ::testing::Test {};
 using namespace ActiveRecord;
 
 TEST_F(AttributeTest, GetType) {
-  Attribute foo(13);
+  Attribute foo((int64) 13);
   Attribute bar("hello");
   Attribute baz(1.8);
   Attribute qux(Date(1999, 8, 29));
@@ -17,7 +17,7 @@ TEST_F(AttributeTest, GetType) {
 }
 
 TEST_F(AttributeTest, HasData) {
-  Attribute foo(13);
+  Attribute foo((int64) 13);
   Attribute def;
 
   ASSERT_TRUE(foo.has_data());
@@ -25,7 +25,7 @@ TEST_F(AttributeTest, HasData) {
 }
 
 TEST_F(AttributeTest, Equality) {
-  Attribute foo(13);
+  Attribute foo((int64) 13);
   Attribute bar("hello");
   Attribute baz(1.8);
   Attribute qux(Date(1999, 8, 29));
@@ -35,7 +35,7 @@ TEST_F(AttributeTest, Equality) {
 }
 
 TEST_F(AttributeTest, Ostream) {
-  Attribute foo(13);
+  Attribute foo((int64) 13);
   Attribute bar("hello");
   Attribute baz(1.8);
   Attribute qux(Date(1999, 8, 29));
@@ -55,15 +55,17 @@ TEST_F(AttributeTest, Ostream) {
 class AttributeHashTest: public ::testing::Test {};
 
 TEST_F(AttributeHashTest, AttributesFunction) {
-  const AttributePairList attribs = attribute_pairs ("foo", 13)
-                                                    ("bar", "hello")
-                                                    ("baz", 15.5)
-                                                    ("qux", Date(1999, 8, 29));
+  const AttributePairList attribs =
+    attribute_pairs
+      ("foo", (int64) 13)
+      ("bar", "hello")
+      ("baz", 15.5)
+      ("qux", Date(1999, 8, 29));
 
-  ASSERT_EQ( 4, attribs.size());
+  ASSERT_EQ(4, attribs.size());
 
   AttributePairList expected;
-  expected.push_back(AttributePair("foo", 13));
+  expected.push_back(AttributePair("foo", (int64) 13));
   expected.push_back(AttributePair("bar", "hello"));
   expected.push_back(AttributePair("baz", 15.5));
   expected.push_back(AttributePair("qux", Date(1999, 8, 29)));
@@ -72,16 +74,20 @@ TEST_F(AttributeHashTest, AttributesFunction) {
 }
 
 TEST_F(AttributeHashTest, Access) {
-  AttributeHash attribs = attribute_pairs ("foo", 13)
-                                          ("bar", "hello");
+  AttributeHash attribs =
+    attribute_pairs
+      ("foo", (int64) 13)
+      ("bar", "hello");
 
-  assert_attribute(13,      attribs["foo"]);
-  assert_attribute("hello", attribs["bar"]);
+  assert_attribute((int64) 13, attribs["foo"]);
+  assert_attribute("hello",    attribs["bar"]);
 }
 
 TEST_F(AttributeHashTest, MissingKeys) {
-  AttributeHash attribs = attribute_pairs ("foo", 13)
-                                          ("bar", "hello");
+  AttributeHash attribs =
+    attribute_pairs
+      ("foo", (int64) 13)
+      ("bar", "hello");
 
   Attribute a = attribs["xxx"];
   ASSERT_FALSE(a.has_data());

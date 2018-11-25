@@ -4,37 +4,29 @@
 
 namespace ActiveRecord {
 
-extern TypeNameMap type_name;
-
-Sqlite3Connection::Sqlite3Connection(): db_(NULL ) {}
+Sqlite3Connection::Sqlite3Connection(): db_(nullptr) {}
 
 Sqlite3Connection::~Sqlite3Connection() {
   disconnect();
-}
-
-Sqlite3Connection::Sqlite3Connection(const Sqlite3Connection& other) {}
-
-Sqlite3Connection Sqlite3Connection::operator=(const Sqlite3Connection& other) {
-  return *this;
 }
 
 /////////////////////////////////////////////////////
 // Connection
 
 void Sqlite3Connection::connect(OptionsHash options) {
-  log(options["database"] );
-  sqlite_initialize(options["database"] );
+  log(options["database"]);
+  sqlite_initialize(options["database"]);
 }
 
 void Sqlite3Connection::disconnect() {
-  if(db_ != NULL) {
+  if(db_ != nullptr) {
     sqlite3_close(db_);
-    db_ = NULL;
+    db_ = nullptr;
   }
 }
 
 bool Sqlite3Connection::connected() {
-  return db_ != NULL ? true : false;
+  return db_ != nullptr;
 }
 
 /////////////////////////////////////////////////////
@@ -49,7 +41,7 @@ bool Sqlite3Connection::table_exists(const string& table_name) {
     parameters
   );
 
-  return (rows.size() ? true : false);
+  return !rows.empty();
 }
 
 bool Sqlite3Connection::execute(
@@ -68,7 +60,7 @@ bool Sqlite3Connection::execute(
   return true;
 }
 
-long Sqlite3Connection::insert(
+int64 Sqlite3Connection::insert(
   const string& query,
   const AttributeList& parameters
 ) {
@@ -147,12 +139,13 @@ Attribute Sqlite3Connection::select_value(
   ParameterAllocations pa;
   sqlite3_stmt* ppStmt = prepare(query, parameters, pa);
 
-  Attribute result;
   int step_result = sqlite3_step(ppStmt);
-  if(step_result != SQLITE_ROW)
-    return result;
+  if(step_result != SQLITE_ROW) {
+    return Attribute();
+  }
 
-  result = Attribute::from_field(ppStmt, 0);
+  Attribute result = Attribute::from_field(ppStmt, 0);
+
   sqlite3_finalize(ppStmt);
   cleanup(pa);
 
@@ -165,8 +158,9 @@ TableSet Sqlite3Connection::schema() {
   RowSet rows = select_all(
     "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;"
   );
-  for(RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
-    string table_name = it->get_text("name");
+
+  for(auto& row: rows) {
+    string table_name = row.get_text("name");
     s[table_name] = table_data(table_name);
   }
 
@@ -180,22 +174,24 @@ Table Sqlite3Connection::table_data(const string& table_name) {
   td.primary_key(pk);
 
   stringstream row_query;
-  row_query << "PRAGMA table_info(\"" <<table_name << "\");";
+  row_query << "PRAGMA table_info(\"" << table_name << "\");";
 
   RowSet rows = select_all(row_query.str());
-  for(RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
+
+  for(auto& row: rows) {
     // cid | name | type    | notnull | dflt_value | pk
     //   0 |  bar | INTEGER |       0 |            |  0
-    string name      = it->get_text("name");
-    string type_name = it->get_text("type");
+    string name      = row.get_text("name");
+    string type_name = row.get_text("type");
 
-    if(name == pk)
+    if(name == pk) {
       continue;
+    }
 
     ActiveRecord::Type::Type type = ActiveRecord::to_type(type_name);
     if(type == Type::unknown) {
       stringstream error;
-      error << "Unknown type: " <<type_name;
+      error << "Unknown type: " << type_name;
       throw ActiveRecordException(error.str(), __FILE__, __LINE__);
     }
     td.fields().push_back(Field(name, type));
@@ -209,14 +205,13 @@ string Sqlite3Connection::primary_key(const string& table_name) {
 
   RowSet rows = select_all(row_query);
 
-  for(RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
+  for(auto& row: rows) {
     // cid | name | type    | notnull | dflt_value | pk
     //   0 |  bar | INTEGER |       0 |            |  0
-    Type::Type t = it->get_type("pk");
-    string tn = type_name[t];
-    int is_pk = atoi(it->get_text("pk").c_str());
-    if(is_pk != 0) {
-      string name = it->get_text("name");
+    bool is_pk = row.get_text("pk") != "0";
+
+    if(is_pk) {
+      string name = row.get_text("name");
       return name;
     }
   }
@@ -226,10 +221,10 @@ string Sqlite3Connection::primary_key(const string& table_name) {
 
 string temp_table_name() {
   const char* base_name = "ar_rename";
-  time_t t_now = time(0);
+  time_t t_now = time(nullptr);
   struct tm* now = gmtime(&t_now);
 
-  char* buffer;
+  char* buffer = nullptr;
   const char* format = "%s_%u%02u%02u_%02u%02u%02u";
   int len = snprintf(
     buffer, 0, format,
@@ -243,7 +238,7 @@ string temp_table_name() {
   );
 
   buffer = new char[len + 1];
-  int used = snprintf(
+  snprintf(
     buffer, len + 1, format,
     base_name,
     now->tm_year + 1900,
@@ -272,7 +267,7 @@ void Sqlite3Connection::remove_field(
 
   stringstream copy_fields;
   bool first = true;
-  if(pk != "") {
+  if(!pk.empty()) {
     copy_fields << pk;
     first = false;
   }
@@ -280,17 +275,20 @@ void Sqlite3Connection::remove_field(
   Table temp(this, temp_table);
   temp.primary_key(pk);
 
-  for(Fields::const_iterator it = fields.begin(); it != fields.end(); ++it) {
-    string name = it->name();
+  for(auto& field: fields) {
+    const string& name = field.name();
     if(name == field_name) {
       continue;
     }
-    if(first)
+
+    if(first) {
       first = false;
-    else
+    } else {
       copy_fields << ", ";
-    copy_fields <<name;
-    temp.fields().push_back(*it);
+    }
+
+    copy_fields << name;
+    temp.fields().push_back(field);
   }
 
   TableSet::create_table(temp);
@@ -299,15 +297,15 @@ void Sqlite3Connection::remove_field(
   copy << "INSERT INTO " << temp_table ;
   copy << " SELECT " << copy_fields.str();
   copy << " FROM " << table_name;
-  execute(copy.str());
+  execute(copy.str(), AttributeList());
 
   stringstream drop;
   drop << "DROP TABLE " << table_name;
-  execute(drop.str());
+  execute(drop.str(), AttributeList());
 
   stringstream rename;
   rename << "ALTER TABLE " << temp_table << " RENAME TO " << table_name;
-  execute(rename.str());
+  execute(rename.str(), AttributeList());
 }
 
 ////////////////////////////////////////
@@ -318,34 +316,22 @@ sqlite3_stmt* Sqlite3Connection::prepare(
   const AttributeList& parameters,
   ParameterAllocations& pa
 ) {
-  if(db_ == NULL )
+  if(db_ == nullptr) {
     throw ActiveRecordException("Database not connected", __FILE__, __LINE__);
+  }
 
-  sqlite3_stmt *ppStmt = 0;
+  sqlite3_stmt* ppStmt = nullptr;
   int prepare_result = sqlite3_prepare_v2(
-    db_, query.c_str(), query.size(), &ppStmt, 0
+    db_, query.c_str(), query.size(), &ppStmt, nullptr
   );
 
   if(prepare_result != SQLITE_OK) {
     stringstream error;
     error << "SQL error: \"" << sqlite_error(prepare_result) << "\" ";
     error << "in \"" << query << "\"";
-
-    bool added = false;
-    for(
-      AttributeList::const_iterator it = parameters.begin();
-      it != parameters.end();
-      ++it
-    ) {
-      error << ", ";
-      if(!added)
-        error << "[";
-      error << *it;
-      added = true;
+    if(!parameters.empty()) {
+      error << ": " << parameters;
     }
-
-    if(added)
-      error << "]";
 
     log(error.str());
 
@@ -362,87 +348,90 @@ void Sqlite3Connection::bind_parameters(
   ParameterAllocations& pa
 ) {
   pa.param_count = parameters.size();
+
   if(pa.param_count == 0) {
-    pa.param_values = NULL;
+    pa.param_values = nullptr;
     return;
   }
 
   pa.param_values = new char* [pa.param_count];
 
   int i = 0;
-  for(
-    AttributeList::const_iterator it = parameters.begin();
-    it != parameters.end();
-    ++it
-  ) {
-    switch(it->which()) {
-    case Type::integer: {
-      int value = boost::get<int>(*it);
-      pa.param_values[i] = NULL;
-      sqlite3_bind_int(ppStmt, i + 1, value);
-      break;
-    }
-    case Type::text: {
-      string value = boost::get<std::string>(*it);
-      int len = value.size();
+  for(auto& parameter: parameters) {
+    switch(parameter.which()) {
+      case Type::integer: {
+        int64 value = boost::get<int64>(parameter);
+        pa.param_values[i] = nullptr;
+        sqlite3_bind_int(ppStmt, i + 1, value);
+        break;
+      }
 
-      pa.param_values[i] = new char[len + 1];
-      strncpy(pa.param_values[i], value.c_str(), len + 1);
-      sqlite3_bind_text(ppStmt, i + 1, pa.param_values[i], len, 0);
-      break;
-    }
-    case Type::floating_point: {
-      double value = boost::get<double>(*it);
-      pa.param_values[i] = NULL;
-      sqlite3_bind_double(ppStmt, i + 1, value);
-      break;
-    }
-    case Type::date: {
-      Date date = boost::get<Date>(*it);
-      string value = date.to_string();
-      int len = value.size();
+      case Type::text: {
+        string value = boost::get<std::string>(parameter);
+        int len = value.size();
 
-      pa.param_values[i] = new char[len + 1];
-      strncpy(pa.param_values[i], value.c_str(), len + 1);
-      sqlite3_bind_text(ppStmt, i + 1, pa.param_values[i], len, 0);
-      break;
-    }
-    default: {
-      throw ActiveRecordException("Type not implemented", __FILE__, __LINE__);
-    }
+        pa.param_values[i] = new char[len + 1];
+        strncpy(pa.param_values[i], value.c_str(), len + 1);
+        sqlite3_bind_text(ppStmt, i + 1, pa.param_values[i], len, nullptr);
+        break;
+      }
+
+      case Type::floating_point: {
+        double value = boost::get<double>(parameter);
+        pa.param_values[i] = nullptr;
+        sqlite3_bind_double(ppStmt, i + 1, value);
+        break;
+      }
+
+      case Type::date: {
+        Date date = boost::get<Date>(parameter);
+        string value = date.to_string();
+        int len = value.size();
+
+        pa.param_values[i] = new char[len + 1];
+        strncpy(pa.param_values[i], value.c_str(), len + 1);
+        sqlite3_bind_text(ppStmt, i + 1, pa.param_values[i], len, nullptr);
+        break;
+      }
+
+      default: {
+        throw ActiveRecordException("Type not implemented", __FILE__, __LINE__);
+      }
     }
     ++i;
   }
 }
 
 void Sqlite3Connection::cleanup(ParameterAllocations& pa) {
-  if(pa.param_count == 0)
+  if(pa.param_count == 0) {
     return;
+  }
 
-  if(pa.param_values == NULL)
+  if(pa.param_values == nullptr) {
     return;
+  }
 
   for(int i = 0; i < pa.param_count; ++i) {
-    if(pa.param_values[i] != NULL) {
+    if(pa.param_values[i] != nullptr) {
       delete[] pa.param_values[i];
-      pa.param_values[i] = NULL;
+      pa.param_values[i] = nullptr;
     }
   }
 
   delete[] pa.param_values;
   pa.param_count = 0;
-  pa.param_values = NULL;
+  pa.param_values = nullptr;
 }
 
 //////////////////////
 // SQLite-specific
 
-bool Sqlite3Connection::sqlite_initialize(string database_path_name) {
+bool Sqlite3Connection::sqlite_initialize(string& database_path_name) {
   int nResult = sqlite3_open(database_path_name.c_str(), &db_);
-  if(nResult) {
+  if(nResult != 0) {
     stringstream error;
-    error << "Can't open database '" <<database_path_name << "'";
-    error <<sqlite3_errmsg(db_);
+    error << "Can't open database '" << database_path_name << "'";
+    error << sqlite3_errmsg(db_);
     sqlite3_close(db_);
     throw ActiveRecordException(error.str(), __FILE__, __LINE__);
   }
