@@ -13,14 +13,14 @@ string Table::primary_key(
 ) {
   string row_query = "PRAGMA table_info(\"" + table_name + "\");";
   RowSet rows = connection->select_all(row_query);
-  for(RowSet::iterator it = rows.begin(); it != rows.end(); ++it) {
+  for(auto& row: rows) {
     // cid | name | type    | notnull | dflt_value | pk
     //   0 |  bar | INTEGER |       0 |            |  0
-    Type::Type t = it->get_type("pk");
+    Type::Type t = row.get_type("pk");
     string tn = type_name[t];
-    int is_pk = atoi(it->get_text("pk").c_str());
+    int is_pk = atoi(row.get_text("pk").c_str());
     if(is_pk != 0) {
-      string name = it->get_text("name");
+      string name = row.get_text("name");
       return name;
     }
   }

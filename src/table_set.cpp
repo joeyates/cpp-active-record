@@ -29,17 +29,13 @@ void TableSet::create_table(Table& td) {
     is_first = false;
   }
 
-  for(
-    Fields::const_iterator it = td.fields().begin();
-    it != td.fields().end();
-    ++it
-  ) {
+  for(auto& field: td.fields()) {
     if(is_first) {
       is_first = false;
     } else {
       ss << ", ";
     }
-    ss << it->name() << " " << type_name[it->type()];
+    ss << field.name() << " " << type_name[field.type()];
   }
 
   if(td.timestamps()) {
@@ -64,13 +60,13 @@ void TableSet::update_table(Table& required) {
   Table existing = required.connection()->table_data(required.table_name());
 
   Fields missing = required.fields() - existing.fields();
-  for(Fields::iterator it = missing.begin(); it != missing.end(); ++it) {
-    existing.add_field(*it);
+  for(auto& field: missing) {
+    existing.add_field(field);
   }
 
   Fields remove = existing.fields() - required.fields();
-  for(Fields::iterator it = remove.begin(); it != remove.end(); ++it) {
-    existing.remove_field(*it);
+  for(auto& field: remove) {
+    existing.remove_field(field);
   }
 }
 
@@ -80,8 +76,8 @@ void TableSet::update_table(Table& required) {
 // Data Definition / Database Structure
 
 void TableSet::update_database() {
-  for(TableSet::iterator it = begin(); it != end(); ++it) {
-    Table td = it->second;
+  for(auto& pair: *this) {
+    Table td = pair.second;
     string name = td.table_name();
     bool exists = td.connection()->table_exists(name);
     if(exists) {
