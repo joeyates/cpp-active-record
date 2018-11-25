@@ -72,7 +72,7 @@ TEST_F(PostgresqlWithTemplate1ConnectionTest, CreateDatabase) {
     connection_,
     options
       ("database", test_db_)
-      ("owner",    connection_options_["username"].c_str())
+      ("owner",    connection_options_["username"])
   );
   ASSERT_TRUE(created);
   ASSERT_TRUE(
