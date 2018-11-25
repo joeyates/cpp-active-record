@@ -333,21 +333,9 @@ sqlite3_stmt* Sqlite3Connection::prepare(
     stringstream error;
     error << "SQL error: \"" << sqlite_error(prepare_result) << "\" ";
     error << "in \"" << query << "\"";
-
-    bool added = false;
-    for(auto& parameter: parameters) {
-      error << ", ";
-
-      if(!added) {
-        error << "[";
-      }
-
-      error << *it;
-      added = true;
+    if(!parameters.empty()) {
+      error << ": " << parameters;
     }
-
-    if(added)
-      error << "]";
 
     log(error.str());
 
