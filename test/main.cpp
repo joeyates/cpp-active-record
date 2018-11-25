@@ -18,9 +18,9 @@ int main(int argc, char** argv) {
   try {
     result = RUN_ALL_TESTS();
   }
-  catch(ActiveRecord::ActiveRecordException e) {
+  catch(std::exception& e) {
     cout << "Test raised an unexpected exception:" << endl;
-    cout << e.to_string() << endl;
+    cout << e.what() << endl;
   }
 
   return result;

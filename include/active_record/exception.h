@@ -46,6 +46,10 @@ class ActiveRecordException: public std::runtime_error {
     return ss.str();
   }
 
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+
   private:
 
   string message_;
