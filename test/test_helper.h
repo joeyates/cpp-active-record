@@ -53,5 +53,9 @@ bool postgresql_shell_database_exists(
   const string& database_name,
   const OptionsHash& connection_options
 );
+void assert_postgresql_table_exists(
+  const string& table_name,
+  const OptionsHash& connection_options
+);
 
 #endif // ndef _ACTIVE_RECORD_TEST_HELPER_H_

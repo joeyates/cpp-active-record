@@ -30,8 +30,7 @@ TEST_F(PostgresqlTableSetTest, CreateTable) {
 
   TableSet::create_table(td);
 
-  // TODO
-  //assert_postgresql_table_exists(
-  //  created_database_, "people", connection_options_
-  //);
+  assert_postgresql_table_exists(
+    "people", connection_options_
+  );
 }

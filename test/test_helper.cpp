@@ -238,9 +238,21 @@ bool postgresql_shell_database_exists(
 }
 
 void assert_postgresql_table_exists(
-  const string& database_name,
   const string& table_name,
-  const string& database_user
+  const OptionsHash& connection_options
 ) {
-  // TODO
+  stringstream command;
+  command << "echo \"";
+  command <<
+    "SELECT EXISTS ("
+    "  SELECT 1 "
+    "  FROM information_schema.tables "
+    "  WHERE table_name = '" << table_name << "' AND "
+    "  table_type = 'BASE TABLE'"
+    ")";
+  command << "\" | ";
+  command << postgresql_invocation(connection_options);
+  command << " | grep -P '^ t$' >/dev/null && echo ok";
+  strings ss = shell_command(command.str());
+  assert_string(ss.front(), "ok\n");
 }
