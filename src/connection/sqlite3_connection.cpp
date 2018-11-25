@@ -176,7 +176,7 @@ Table Sqlite3Connection::table_data(const string& table_name) {
   td.primary_key(pk);
 
   stringstream row_query;
-  row_query << "PRAGMA table_info(\"" <<table_name << "\");";
+  row_query << "PRAGMA table_info(\"" << table_name << "\");";
 
   RowSet rows = select_all(row_query.str());
 
@@ -193,7 +193,7 @@ Table Sqlite3Connection::table_data(const string& table_name) {
     ActiveRecord::Type::Type type = ActiveRecord::to_type(type_name);
     if(type == Type::unknown) {
       stringstream error;
-      error << "Unknown type: " <<type_name;
+      error << "Unknown type: " << type_name;
       throw ActiveRecordException(error.str(), __FILE__, __LINE__);
     }
     td.fields().push_back(Field(name, type));
