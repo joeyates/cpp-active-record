@@ -1,6 +1,7 @@
 #ifndef _ACTIVE_RECORD_EXCEPTION_H_
 #define _ACTIVE_RECORD_EXCEPTION_H_
 
+#include <stdexcept>
 #include <string>
 #include <sstream>
 
