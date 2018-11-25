@@ -10,7 +10,7 @@ class ConnectionTest: public ::testing::Test {
   protected:
 
   virtual void TearDown() {
-    delete_database();
+    sqlite_delete_database();
   }
 };
 
@@ -41,7 +41,7 @@ class ConnectionQueryTest: public ::testing::Test {
   protected:
 
   virtual void TearDown() {
-    delete_database();
+    sqlite_delete_database();
   }
 
   protected:
@@ -50,15 +50,15 @@ class ConnectionQueryTest: public ::testing::Test {
 };
 
 TEST_F(ConnectionQueryTest, Execute) {
-  connect_database(connection, database_name);
+  sqlite_connect_database(connection, database_name);
 
   connection.execute("CREATE TABLE foo (bar INTEGER);");
 
-  assert_table_exists(database_name, "foo");
+  sqlite_assert_table_exists(database_name, "foo");
 }
 
 TEST_F(ConnectionQueryTest, ExecuteBadSQL) {
-  connect_database(connection, database_name);
+  sqlite_connect_database(connection, database_name);
 
   ASSERT_THROW(
     connection.execute("CREATE THING xxx"), ActiveRecord::ActiveRecordException
@@ -66,7 +66,7 @@ TEST_F(ConnectionQueryTest, ExecuteBadSQL) {
 }
 
 TEST_F(ConnectionQueryTest, SelectOne) {
-  connect_database(connection, database_name);
+  sqlite_connect_database(connection, database_name);
 
   connection.execute("CREATE TABLE foo (bar INTEGER);");
   connection.execute("INSERT INTO foo (bar) VALUES (42);");
@@ -77,7 +77,7 @@ TEST_F(ConnectionQueryTest, SelectOne) {
 }
 
 TEST_F(ConnectionQueryTest, SelectOneNoData) {
-  connect_database(connection, database_name);
+  sqlite_connect_database(connection, database_name);
 
   connection.execute("CREATE TABLE foo (bar INTEGER);");
   connection.execute("INSERT INTO foo (bar) VALUES (42);");
@@ -88,7 +88,7 @@ TEST_F(ConnectionQueryTest, SelectOneNoData) {
 }
 
 TEST_F(ConnectionQueryTest, SelectOneWithAttributes) {
-  connect_database(connection, database_name);
+  sqlite_connect_database(connection, database_name);
 
   connection.execute("CREATE TABLE foo (bar INTEGER, baz TEXT);");
   connection.execute("INSERT INTO foo (bar, baz) VALUES (42, 'hello');");
@@ -101,7 +101,7 @@ TEST_F(ConnectionQueryTest, SelectOneWithAttributes) {
 }
 
 TEST_F(ConnectionQueryTest, SelectOneWithParameters) {
-  connect_database(connection, database_name);
+  sqlite_connect_database(connection, database_name);
 
   connection.execute("CREATE TABLE foo (bar INTEGER, baz TEXT);");
   connection.execute("INSERT INTO foo (bar, baz) VALUES (42, 'hello');");
@@ -115,7 +115,7 @@ TEST_F(ConnectionQueryTest, SelectOneWithParameters) {
 }
 
 TEST_F(ConnectionQueryTest, SelectAll) {
-  connect_database(connection, database_name);
+  sqlite_connect_database(connection, database_name);
 
   connection.execute("CREATE TABLE foo (bar INTEGER);");
   connection.execute("INSERT INTO foo (bar) VALUES (42);");
@@ -133,8 +133,8 @@ class Sqlite3WithConnectionTest : public ::testing::Test {
   protected:
 
   virtual void SetUp() {
-    delete_database();
-    connect_database(connection, database_name);
+    sqlite_delete_database();
+    sqlite_connect_database(connection, database_name);
     string create =
       "CREATE TABLE foo "
       "("
@@ -149,7 +149,7 @@ class Sqlite3WithConnectionTest : public ::testing::Test {
 
   virtual void TearDown() {
     connection.disconnect();
-    delete_database();
+    sqlite_delete_database();
   }
 
   protected:

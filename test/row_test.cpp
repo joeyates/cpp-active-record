@@ -8,7 +8,7 @@ class RowTest: public ::testing::Test {
   protected:
 
   virtual void SetUp() {
-    delete_database();
+    sqlite_delete_database();
 
     pipe_to_sqlite(
       database_name,
@@ -27,7 +27,7 @@ class RowTest: public ::testing::Test {
   }
 
   virtual void TearDown() {
-    delete_database();
+    sqlite_delete_database();
   }
 
   protected:

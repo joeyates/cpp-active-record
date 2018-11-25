@@ -19,7 +19,7 @@ class TableSetWithSqliteConnectionTest: public ::testing::Test {
 
   virtual void TearDown() {
     connection.disconnect();
-    delete_database();
+    sqlite_delete_database();
   }
 
   protected:
@@ -47,7 +47,7 @@ TEST_F(TableSetWithSqliteConnectionTest, UpdateDatabase) {
 
   tables.update_database();
 
-  string sql = table_definition(connection, "people");
+  string sql = sqlite_table_definition(connection, "people");
   assert_string(
     "CREATE TABLE people (id INTEGER PRIMARY KEY, name TEXT, surname TEXT)", sql
   );
@@ -62,7 +62,7 @@ TEST_F(TableSetWithSqliteConnectionTest, PrimaryKeyField) {
   tables["Person"] = td;
   tables.update_database();
 
-  string sql = table_definition(connection, "people");
+  string sql = sqlite_table_definition(connection, "people");
   assert_string(
     "CREATE TABLE people (hi INTEGER PRIMARY KEY, height FLOAT)", sql
   );
@@ -80,7 +80,7 @@ TEST_F(TableSetWithSqliteConnectionTest, Timestamps) {
   tables["Person"] = td;
   tables.update_database();
 
-  string sql = table_definition(connection, "people");
+  string sql = sqlite_table_definition(connection, "people");
   assert_string(
     "CREATE TABLE people "
     "("
@@ -109,7 +109,7 @@ TEST_F(TableSetWithSqliteConnectionTest, UpdateDatabaseAddsFields) {
   tables["Foo"] = td;
   tables.update_database();
 
-  string sql = table_definition(connection, "foo");
+  string sql = sqlite_table_definition(connection, "foo");
   assert_string(
     "CREATE TABLE foo "
     "(id INTEGER PRIMARY KEY, bar INTEGER, baz TEXT, qux FLOAT, derp DATE)",
@@ -128,7 +128,7 @@ TEST_F(TableSetWithSqliteConnectionTest, UpdateTableWithPkeyAddsFields) {
 
   schema.update_table(fooUpdate);
 
-  string sql = table_definition(connection, "foo");
+  string sql = sqlite_table_definition(connection, "foo");
   assert_string(
     "CREATE TABLE foo (id INTEGER PRIMARY KEY, bar INTEGER, baz TEXT)", sql
   );
@@ -145,7 +145,7 @@ TEST_F(TableSetWithSqliteConnectionTest, UpdateTableWithoutPkeyAddsFields) {
 
   schema.update_table(fooUpdate);
 
-  string sql = table_definition(connection, "foo");
+  string sql = sqlite_table_definition(connection, "foo");
   assert_string("CREATE TABLE foo (bar INTEGER, baz TEXT)", sql);
 }
 
@@ -159,7 +159,7 @@ TEST_F(TableSetWithSqliteConnectionTest, UpdateTableWithoutPkeyRemovesFields) {
 
   schema.update_table(fooUpdate);
 
-  string sql = table_definition(connection, "foo");
+  string sql = sqlite_table_definition(connection, "foo");
   assert_string("CREATE TABLE \"foo\" (bar INTEGER)", sql);
 }
 
@@ -175,7 +175,7 @@ TEST_F(
 
   schema.update_table(fooUpdate);
 
-  string sql = table_definition(connection, "foo");
+  string sql = sqlite_table_definition(connection, "foo");
   assert_string("CREATE TABLE foo (bar INTEGER)", sql);
 }
 
@@ -188,6 +188,6 @@ TEST_F(TableSetWithSqliteConnectionTest, UsingTableFromSchemaDoesNothing) {
 
   schema.update_table(foo);
 
-  string sql = table_definition(connection, "foo");
+  string sql = sqlite_table_definition(connection, "foo");
   assert_string("CREATE TABLE foo (bar INTEGER)", sql);
 }

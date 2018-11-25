@@ -9,7 +9,7 @@ AR_DECLARE(Person)
 
 string database_name = "./test.sqlite3";
 
-void connect_database(
+void sqlite_connect_database(
   ActiveRecord::Connection &connection,
   const string& database_name
 ) {
@@ -20,7 +20,7 @@ void connect_database(
   );
 }
 
-void delete_database() {
+void sqlite_delete_database() {
   string remove_database = "rm -f " + database_name;
   system(remove_database.c_str());
 }
@@ -42,7 +42,9 @@ list<string> shell_command(const string& command) {
   return output;
 }
 
-string table_definition(Connection& connection, const string& table_name) {
+string sqlite_table_definition(
+  Connection& connection, const string& table_name
+) {
   stringstream query;
   query << "SELECT sql FROM sqlite_master ";
   query << "WHERE type='table'";
@@ -91,8 +93,7 @@ void assert_attribute_pair_list(
   }
 }
 
-// TODO: this is sqlite only
-void assert_table_exists(
+void sqlite_assert_table_exists(
   const string& database_name, const string& table_name
 ) {
   stringstream row_query;

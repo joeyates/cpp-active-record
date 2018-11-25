@@ -8,8 +8,8 @@ class QueryTest: public ::testing::Test {
   protected:
 
   virtual void SetUp() {
-    delete_database();
-    connect_database(connection, database_name);
+    sqlite_delete_database();
+    sqlite_connect_database(connection, database_name);
     Person::setup(&connection);
     connection.update_database();
     connection.execute(
@@ -39,7 +39,7 @@ class QueryTest: public ::testing::Test {
   }
 
   virtual void TearDown() {
-    delete_database();
+    sqlite_delete_database();
   }
 
   protected:

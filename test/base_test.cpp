@@ -27,14 +27,14 @@ class BaseAttributeTest: public ::testing::Test {
   protected:
 
   virtual void SetUp() {
-    delete_database();
-    connect_database(connection, database_name);
+    sqlite_delete_database();
+    sqlite_connect_database(connection, database_name);
     Person::setup(&connection);
     connection.update_database();
   }
 
   virtual void TearDown() {
-    delete_database();
+    sqlite_delete_database();
   }
 
   private:
@@ -102,7 +102,7 @@ class BaseLoadTest: public ::testing::Test {
   protected:
 
   virtual void SetUp() {
-    connect_database(connection, database_name);
+    sqlite_connect_database(connection, database_name);
     Person::setup(&connection);
     connection.update_database();
     connection.execute(
@@ -114,7 +114,7 @@ class BaseLoadTest: public ::testing::Test {
   }
 
   virtual void TearDown() {
-    delete_database();
+    sqlite_delete_database();
   }
 
   protected:
@@ -175,7 +175,7 @@ class BaseOperators: public ::testing::Test {
   protected:
 
   virtual void SetUp() {
-    connect_database(connection, database_name);
+    sqlite_connect_database(connection, database_name);
     Person::setup(&connection);
     connection.update_database();
     connection.execute(
@@ -192,7 +192,7 @@ class BaseOperators: public ::testing::Test {
   }
 
   virtual void TearDown() {
-    delete_database();
+    sqlite_delete_database();
   }
 
   protected:
@@ -253,14 +253,14 @@ class BaseSaveTest: public ::testing::Test {
   protected:
 
   virtual void SetUp() {
-    delete_database();
-    connect_database(connection, database_name);
+    sqlite_delete_database();
+    sqlite_connect_database(connection, database_name);
     Person::setup(&connection);
     connection.update_database();
   }
 
   virtual void TearDown() {
-    delete_database();
+    sqlite_delete_database();
   }
 
   protected:
