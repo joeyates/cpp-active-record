@@ -210,11 +210,9 @@ string Sqlite3Connection::primary_key(const string& table_name) {
   for(auto& row: rows) {
     // cid | name | type    | notnull | dflt_value | pk
     //   0 |  bar | INTEGER |       0 |            |  0
-    Type::Type t = row.get_type("pk");
-    string tn = type_name[t];
-    int is_pk = atoi(row.get_text("pk").c_str());
+    bool is_pk = row.get_text("pk") != "0";
 
-    if(is_pk != 0) {
+    if(is_pk) {
       string name = row.get_text("name");
       return name;
     }
