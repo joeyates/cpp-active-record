@@ -22,7 +22,7 @@ class Field {
 
   public:
 
-  Field(const string &name, ActiveRecord::Type::Type type):
+  Field(const string& name, ActiveRecord::Type::Type type):
     name_(name),
     type_(type) {}
 
@@ -35,7 +35,7 @@ class Field {
   ActiveRecord::Type::Type type_;
 };
 
-typedef assign_detail::generic_list<Field>  GenericFieldList;
+typedef assign_detail::generic_list<Field> GenericFieldList;
 
 class Fields: public vector<Field> {
   public:
@@ -43,7 +43,7 @@ class Fields: public vector<Field> {
   Fields() {}
 
   // Allow Fields foo(fields (...) ... );
-  Fields(const assign_detail::generic_list<Field> &other) {
+  Fields(const assign_detail::generic_list<Field>& other) {
     for(
       assign_detail::generic_list<Field>::const_iterator it = other.begin();
       it != other.end();
@@ -64,7 +64,7 @@ class Fields: public vector<Field> {
 
   private:
 
-  bool has_field(const string &field_name) {
+  bool has_field(const string& field_name) {
     for(Fields::iterator it = this->begin(); it != this->end(); ++it) {
       if(it->name() == field_name) {
         return true;
@@ -83,7 +83,7 @@ namespace assign
 
 template<>
 inline assign_detail::generic_list<ActiveRecord::Field>
-list_of(const ActiveRecord::Field &f) {
+list_of(const ActiveRecord::Field& f) {
   return assign_detail::generic_list<ActiveRecord::Field>()(f);
 }
 
@@ -92,8 +92,8 @@ list_of(const ActiveRecord::Field &f) {
 
 namespace ActiveRecord {
 
-inline assign_detail::generic_list< Field> fields(
-  const char * name,
+inline assign_detail::generic_list<Field> fields(
+  const char* name,
   ActiveRecord::Type::Type type
 ) {
   return assign::list_of(Field(name, type));

@@ -16,23 +16,23 @@ using namespace std;
 
 namespace ActiveRecord {
 
-template <class T >
+template <class T>
 class Query {
   public:
 
   Query(Connection& connection):
     limit_(INVALID_LIMIT),
     connection_(&connection) {};
-  Query(const Query< T >& other);
+  Query(const Query<T>& other);
 
-  Query< T > operator=(const Query< T >& other);
+  Query<T> operator=(const Query<T>& other);
 
-  Query< T > where(const string& condition, const Attribute& value);
-  Query< T > order(string order);
-  Query< T > limit(int limit);
+  Query<T> where(const string& condition, const Attribute& value);
+  Query<T> order(string order);
+  Query<T> limit(int limit);
   // Results
   T first();
-  vector< T > all();
+  vector<T> all();
 
   protected:
 
@@ -78,13 +78,13 @@ Query< T > Query< T >::limit(int limit) {
 }
 
 // foo.order("bar DESC");
-template <class T >
-Query< T > Query< T >::order(string order) {
+template <class T>
+Query<T> Query<T>::order(string order) {
   orderings_.push_back(order);
   return *this;
 }
-template <class T >
-string Query< T >::limit_clause() {
+template <class T>
+string Query<T>::limit_clause() {
   if(limit_ == INVALID_LIMIT)
     return "";
 
@@ -94,8 +94,8 @@ string Query< T >::limit_clause() {
   return ss.str();
 }
 
-template <class T >
-QueryParametersPair Query< T >::condition_clause() {
+template <class T>
+QueryParametersPair Query<T>::condition_clause() {
   AttributeList parameters;
 
   if(conditions_.size() == 0)
@@ -120,8 +120,8 @@ QueryParametersPair Query< T >::condition_clause() {
   return QueryParametersPair(ss.str(), parameters);
 }
 
-template <class T >
-QueryParametersPair Query< T >::query_and_parameters() {
+template <class T>
+QueryParametersPair Query<T>::query_and_parameters() {
   Table t = connection_->get_table(T::class_name);
 
   stringstream ss;
@@ -203,8 +203,8 @@ namespace assign
 {
 
 template<>
-inline assign_detail::generic_list< ActiveRecord::Attribute>
-list_of(const ActiveRecord::Attribute &t) {
+inline assign_detail::generic_list<ActiveRecord::Attribute>
+list_of(const ActiveRecord::Attribute& t) {
   return assign_detail::generic_list<ActiveRecord::Attribute>()(t);
 }
 
