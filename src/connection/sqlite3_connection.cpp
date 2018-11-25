@@ -223,10 +223,10 @@ string Sqlite3Connection::primary_key(const string& table_name) {
 
 string temp_table_name() {
   const char* base_name = "ar_rename";
-  time_t t_now = time(0);
+  time_t t_now = time(nullptr);
   struct tm* now = gmtime(&t_now);
 
-  char* buffer;
+  char* buffer = nullptr;
   const char* format = "%s_%u%02u%02u_%02u%02u%02u";
   int len = snprintf(
     buffer, 0, format,
@@ -240,7 +240,7 @@ string temp_table_name() {
   );
 
   buffer = new char[len + 1];
-  int used = snprintf(
+  snprintf(
     buffer, len + 1, format,
     base_name,
     now->tm_year + 1900,
@@ -269,7 +269,7 @@ void Sqlite3Connection::remove_field(
 
   stringstream copy_fields;
   bool first = true;
-  if(pk != "") {
+  if(!pk.empty()) {
     copy_fields << pk;
     first = false;
   }
@@ -278,7 +278,7 @@ void Sqlite3Connection::remove_field(
   temp.primary_key(pk);
 
   for(auto& field: fields) {
-    string name = field.name();
+    const string& name = field.name();
     if(name == field_name) {
       continue;
     }
@@ -322,9 +322,9 @@ sqlite3_stmt* Sqlite3Connection::prepare(
     throw ActiveRecordException("Database not connected", __FILE__, __LINE__);
   }
 
-  sqlite3_stmt* ppStmt = 0;
+  sqlite3_stmt* ppStmt = nullptr;
   int prepare_result = sqlite3_prepare_v2(
-    db_, query.c_str(), query.size(), &ppStmt, 0
+    db_, query.c_str(), query.size(), &ppStmt, nullptr
   );
 
   if(prepare_result != SQLITE_OK) {
@@ -374,7 +374,7 @@ void Sqlite3Connection::bind_parameters(
 
         pa.param_values[i] = new char[len + 1];
         strncpy(pa.param_values[i], value.c_str(), len + 1);
-        sqlite3_bind_text(ppStmt, i + 1, pa.param_values[i], len, 0);
+        sqlite3_bind_text(ppStmt, i + 1, pa.param_values[i], len, nullptr);
         break;
       }
 
@@ -392,7 +392,7 @@ void Sqlite3Connection::bind_parameters(
 
         pa.param_values[i] = new char[len + 1];
         strncpy(pa.param_values[i], value.c_str(), len + 1);
-        sqlite3_bind_text(ppStmt, i + 1, pa.param_values[i], len, 0);
+        sqlite3_bind_text(ppStmt, i + 1, pa.param_values[i], len, nullptr);
         break;
       }
 
@@ -428,9 +428,9 @@ void Sqlite3Connection::cleanup(ParameterAllocations& pa) {
 //////////////////////
 // SQLite-specific
 
-bool Sqlite3Connection::sqlite_initialize(string database_path_name) {
+bool Sqlite3Connection::sqlite_initialize(string& database_path_name) {
   int nResult = sqlite3_open(database_path_name.c_str(), &db_);
-  if(nResult) {
+  if(nResult != 0) {
     stringstream error;
     error << "Can't open database '" << database_path_name << "'";
     error << sqlite3_errmsg(db_);

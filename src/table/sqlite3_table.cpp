@@ -26,4 +26,4 @@ void Table::remove_field(const Field &field) {
 }
 */
 
-}
+} // namespace ActiveRecord

@@ -10,4 +10,4 @@ Row::Row(PGresult* exec_result, int row) {
   }
 }
 
-}
+} // namespace ActiveRecord

@@ -4,8 +4,8 @@
 
 #include <active_record/active_record.h>
 #include <active_record/attribute.h>
-#include <active_record/type.h>
 #include <active_record/exception.h>
+#include <active_record/type.h>
 
 namespace ActiveRecord {
 
@@ -15,7 +15,7 @@ Type::Type Row::get_type(const string &name) {
 
 bool Row::is_type(const string& name, Type::Type type) {
   Type::Type actual = attributes_[name].type();
-  return (actual == type)? true : false;
+  return actual == type;
 }
 
 // TYPE_LIST

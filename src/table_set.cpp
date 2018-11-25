@@ -1,10 +1,11 @@
 #include <active_record/table_set.h>
 
 #include <sstream>
+
 #include <active_record/active_record.h>
+#include <active_record/connection.h>
 #include <active_record/exception.h>
 #include <active_record/type.h>
-#include <active_record/connection.h>
 
 namespace ActiveRecord {
 
@@ -24,7 +25,7 @@ void TableSet::create_table(Table& td) {
   bool is_first = true;
 
   string pk = td.primary_key();
-  if(pk != "") {
+  if(!pk.empty()) {
     ss << pk << " INTEGER PRIMARY KEY";
     is_first = false;
   }
@@ -39,9 +40,7 @@ void TableSet::create_table(Table& td) {
   }
 
   if(td.timestamps()) {
-    if(is_first) {
-      is_first = false;
-    } else {
+    if(!is_first) {
       ss << ", ";
     }
     ss << "created_at TEXT";
@@ -53,18 +52,18 @@ void TableSet::create_table(Table& td) {
   td.connection()->execute(ss.str());
 }
 
-void TableSet::update_table(Table& required) {
+void TableSet::update_table(Table& td) {
   log("TableSet::update_table");
-  log(required.table_name());
+  log(td.table_name());
 
-  Table existing = required.connection()->table_data(required.table_name());
+  Table existing = td.connection()->table_data(td.table_name());
 
-  Fields missing = required.fields() - existing.fields();
+  Fields missing = td.fields() - existing.fields();
   for(auto& field: missing) {
     existing.add_field(field);
   }
 
-  Fields remove = existing.fields() - required.fields();
+  Fields remove = existing.fields() - td.fields();
   for(auto& field: remove) {
     existing.remove_field(field);
   }

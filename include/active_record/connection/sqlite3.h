@@ -58,7 +58,7 @@ class Sqlite3Connection: public Connection {
   Sqlite3Connection(const Sqlite3Connection& other) {};
   Sqlite3Connection operator=(const Sqlite3Connection& other) {};
 
-  bool sqlite_initialize(string database_path_name);
+  bool sqlite_initialize(string& database_path_name);
   static string sqlite_error(int error_code);
   sqlite3_stmt* prepare(
     const string& query,

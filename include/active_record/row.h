@@ -23,7 +23,7 @@ class Row {
   public:
 
   Row() {};
-  Row(sqlite3_stmt* ppStmt);
+  Row(sqlite3_stmt* pStmt);
   Row(PGresult* exec_result, int row);
 
   bool has_data() { return attributes_.size() > 0; };
