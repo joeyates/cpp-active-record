@@ -253,12 +253,9 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithFloatParam) {
   connection_.execute("INSERT INTO foo (f) VALUES (-5.0);");
   connection_.execute("INSERT INTO foo (f) VALUES (9.99);");
 
-  // TODO: use parameters () ()
-  AttributeList params;
-  params.push_back(9.9);
-  params.push_back(10.0);
+  AttributeList params = parameters (9.9) (10.0);
   ActiveRecord::Attribute result = connection_.select_value(
-    "SELECT pk FROM foo WHERE f> $1 AND f < $2", params
+    "SELECT pk FROM foo WHERE f > $1 AND f < $2", params
   );
   ASSERT_TRUE(result.has_data());
   ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
