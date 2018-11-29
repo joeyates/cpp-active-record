@@ -73,7 +73,7 @@ TEST_F(FieldsTest, DoesNotSubtractAccordingToType) {
   ASSERT_EQ(0, result.size());
 }
 
-TEST_F( FieldsTest, FieldsMethodInCtor) {
+TEST_F(FieldsTest, FieldsMethodInCtor) {
   Fields abc(
     fields
       ("a", Type::integer)

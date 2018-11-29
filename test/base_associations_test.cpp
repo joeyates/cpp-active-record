@@ -16,7 +16,7 @@ class Library: public ActiveRecord::Base<Library> {
   }
 };
 
-class Book: public ActiveRecord::Base< Book> {
+class Book: public ActiveRecord::Base<Book> {
   public:
 
   AR_CONSTRUCTORS( Book)
@@ -97,7 +97,7 @@ TEST_F(AssociationTest, HasManyIncorrectAssociation) {
   );
 }
 
-TEST_F( AssociationTest, BelongsTo) {
+TEST_F(AssociationTest, BelongsTo) {
   Library owner = lindisfarne.belongs_to<Library>();
 
   ASSERT_EQ(british_library.id(), owner.id());

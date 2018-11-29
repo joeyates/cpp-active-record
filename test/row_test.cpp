@@ -49,10 +49,10 @@ TEST_F(RowTest, GetType) {
 
   Row row(ppStmt);
 
-  ASSERT_EQ( Type::integer,        row.get_type("bar"));
-  ASSERT_EQ( Type::text,           row.get_type("baz"));
-  ASSERT_EQ( Type::floating_point, row.get_type("qux"));
-  ASSERT_EQ( Type::date,           row.get_type("derp"));
+  ASSERT_EQ(Type::integer,        row.get_type("bar"));
+  ASSERT_EQ(Type::text,           row.get_type("baz"));
+  ASSERT_EQ(Type::floating_point, row.get_type("qux"));
+  ASSERT_EQ(Type::date,           row.get_type("derp"));
 }
 
 TEST_F(RowTest, IsType) {
