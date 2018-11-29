@@ -28,6 +28,12 @@ You can supply PG_HOST if your PostgreSQL is not running locally.
 
 You can supply PG_PORT if your PostgreSQL is not running on port 5432.
 
+## Running a selection of tests
+
+```shell
+$ PG_USER=postgres GTEST_FILTER=<<class>>.<<test|*>> rake test
+```
+
 # Linter
 
 Dependencies:
