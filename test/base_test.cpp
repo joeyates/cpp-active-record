@@ -51,14 +51,14 @@ TEST_F(BaseAttributeTest, Defaults) {
 TEST_F(BaseAttributeTest, SettingAttributesSingly) {
   Person joe;
 
+  joe["age"]     = 45;
   joe["name"]    = "Joe";
   joe["surname"] = "Yates";
-  joe["age"]     = 45;
   joe["height"]  = 1.80;
   joe["dob"]     = Date(1965, 7, 31);
 
-  assert_string("Joe",                joe.text("name"));
   ASSERT_EQ(45,                       joe.integer("age"));
+  assert_string("Joe",                joe.text("name"));
   ASSERT_DOUBLE_EQ(1.80,              joe.floating_point("height"));
   assert_attribute(Date(1965, 7, 31), joe.date("dob"));
 }
@@ -66,15 +66,15 @@ TEST_F(BaseAttributeTest, SettingAttributesSingly) {
 TEST_F(BaseAttributeTest, SettingAttributesUsingAttributesMethod) {
   Person joe(
     attribute_pairs
+      ("age", 45)
       ("name", "Joe")
       ("surname", "Yates")
-      ("age", 45)
       ("height", 1.80)
       ("dob", Date(1965, 7, 31))
   );
 
-  assert_string("Joe",                joe.text("name"));
   ASSERT_EQ(45,                       joe.integer("age"));
+  assert_string("Joe",                joe.text("name"));
   ASSERT_DOUBLE_EQ(1.80,              joe.floating_point("height"));
   assert_attribute(Date(1965, 7, 31), joe.date("dob"));
 }
@@ -84,16 +84,16 @@ TEST_F(BaseAttributeTest, SettingAttributesAfterConstruction) {
   ASSERT_NO_THROW(
     joe.init(
       attribute_pairs
+        ("age", 45)
         ("name", "Joe")
         ("surname", "Yates")
-        ("age", 45)
         ("height", 1.80)
         ("dob", Date(1965, 7, 31))
     )
   );
 
-  assert_string("Joe",                joe.text("name"));
   ASSERT_EQ(45,                       joe.integer("age"));
+  assert_string("Joe",                joe.text("name"));
   ASSERT_DOUBLE_EQ(1.80,              joe.floating_point("height"));
   assert_attribute(Date(1965, 7, 31), joe.date("dob"));
 }
@@ -125,8 +125,8 @@ class BaseLoadTest: public ::testing::Test {
 TEST_F(BaseLoadTest, Default) {
   Person joe(1);
 
-  assert_string("Joe",                joe.text("name"));
   ASSERT_EQ(45,                       joe.integer("age"));
+  assert_string("Joe",                joe.text("name"));
   ASSERT_DOUBLE_EQ(1.80,              joe.floating_point("height"));
   assert_attribute(Date(1965, 7, 31), joe.date("dob"));
 }
@@ -140,8 +140,8 @@ TEST_F(BaseLoadTest, LoadInvalidId) {
 TEST_F(BaseLoadTest, SquareBracketsOperator) {
   Person joe(1);
 
-  assert_attribute("Joe",             joe["name"]);
   assert_attribute(45,                joe["age"]);
+  assert_attribute("Joe",             joe["name"]);
   assert_attribute(1.80,              joe["height"]);
   assert_attribute(Date(1965, 7, 31), joe["dob"]);
 }
@@ -161,9 +161,9 @@ TEST_F(BaseLoadTest, HasDataOnlyId) {
 TEST_F(BaseLoadTest, HasDataWithAttributes) {
   Person joe(
     attribute_pairs
+      ("age", 45)
       ("name", "Joe")
       ("surname", "Yates")
-      ("age", 45)
       ("height", 1.80)
       ("dob", Date(1965, 7, 31))
   );
@@ -286,17 +286,17 @@ TEST_F(BaseSaveTest, SaveWithNoData) {
 TEST_F(BaseSaveTest, SavedAttributes) {
   Person joe(
     attribute_pairs
+      ("age", 45)
       ("name", "Joe")
       ("surname", "Yates")
-      ("age", 45)
       ("height", 1.80)
       ("dob", Date(1965, 7, 31))
   );
   ASSERT_TRUE(joe.save());
 
   Person first(1);
-  assert_string("Joe",                first.text("name"));
   ASSERT_EQ(45,                       first.integer("age"));
+  assert_string("Joe",                first.text("name"));
   ASSERT_DOUBLE_EQ(1.80,              first.floating_point("height"));
   assert_attribute(Date(1965, 7, 31), first.date("dob"));
 }
