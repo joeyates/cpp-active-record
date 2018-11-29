@@ -24,9 +24,8 @@ class Book: public ActiveRecord::Base<Book> {
     Table td(connection, "books");
     td.fields() =
       fields
-        ("title", Type::text)
-        ("date", Type::date)
-        ("library_id", Type::integer);
+        ("library_id", Type::integer)
+        ("title", Type::text);
     return td;
   }
 };
@@ -50,23 +49,22 @@ class AssociationTest: public ::testing::Test {
 
     lindisfarne.init(
       attribute_pairs
-        ("title", "The Lindisfarne Gospels")
         ("library_id", british_library.id())
+        ("title", "The Lindisfarne Gospels")
     ).save();
 
     codex_arundel.init(
       attribute_pairs
-        ("title", "The Codex Arundel")
-        ("date", "1518-01-01")
         ("library_id", british_library.id())
+        ("title", "The Codex Arundel")
     ).save();
 
     nazionale.init(attribute_pairs ("name", "La biblioteca nazionale")).save();
 
     galileiana.init(
       attribute_pairs
-        ("title", "Collezione galileiana")
         ("library_id", nazionale.id())
+        ("title", "Collezione galileiana")
     ).save();
   }
 
