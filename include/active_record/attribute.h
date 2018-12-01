@@ -85,10 +85,20 @@ namespace boost
 namespace assign
 {
 
+// See `attribute_pairs` definition, below
+
 template<>
 inline ActiveRecord::GenericAttributePairList
 list_of(const ActiveRecord::AttributePair& t) {
   return ActiveRecord::GenericAttributePairList()(t);
+}
+
+// See `parameters` definition, below
+
+template<>
+inline assign_detail::generic_list<ActiveRecord::Attribute>
+list_of(const ActiveRecord::Attribute& t) {
+  return assign_detail::generic_list<ActiveRecord::Attribute>()(t);
 }
 
 } // namespace assign
@@ -107,6 +117,17 @@ inline GenericAttributePairList attribute_pairs(
   return boost::assign::list_of(AttributePair(name, value));
 }
 
+/*
+ parameters (13) ("hello") (15.5)
+*/
+
+inline boost::assign_detail::generic_list<Attribute> parameters(
+  const Attribute& value
+) {
+  return boost::assign::list_of(Attribute(value));
+}
+
 } // namespace ActiveRecord
+
 
 #endif // ndef _ACTIVE_RECORD_ATTRIBUTE_H_
