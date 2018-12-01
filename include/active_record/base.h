@@ -331,6 +331,7 @@ bool Base<T>::create() {
     ss << "(" << columns.str() << ") VALUES (" << placeholders.str() << ")";
   } else {
     // Handle INSERT with no data
+    // TODO use << " DEFAULT VALUES"
     ss << "(" << primary_key_ << ") VALUES (NULL)";
   }
 
