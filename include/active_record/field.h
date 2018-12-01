@@ -43,21 +43,17 @@ class Fields: public vector<Field> {
   Fields() {}
 
   // Allow Fields foo(fields (...) ... );
-  Fields(const assign_detail::generic_list<Field>& other) {
-    for(
-      assign_detail::generic_list<Field>::const_iterator it = other.begin();
-      it != other.end();
-      ++it
-    ) {
-      push_back(*it);
+  Fields(const GenericFieldList& other) {
+    for(auto& field: other) {
+      push_back(field);
     }
   }
 
-  Fields operator-(Fields &other) {
+  Fields operator-(Fields& other) {
     Fields fields;
-    for(Fields::iterator it = this->begin(); it != this->end(); ++it) {
-      if(!other.has_field(it->name())) {
-        fields.push_back(Field(it->name(), it->type()));
+    for(auto& field: *this) {
+      if(!other.has_field(field.name())) {
+        fields.push_back(Field(field.name(), field.type()));
       }
     }
     return fields;
@@ -66,8 +62,8 @@ class Fields: public vector<Field> {
   private:
 
   bool has_field(const string& field_name) {
-    for(Fields::iterator it = this->begin(); it != this->end(); ++it) {
-      if(it->name() == field_name) {
+    for(auto& field: *this) {
+      if(field.name() == field_name) {
         return true;
       }
     }
@@ -83,9 +79,9 @@ namespace assign
 {
 
 template<>
-inline assign_detail::generic_list<ActiveRecord::Field>
+inline ActiveRecord::GenericFieldList
 list_of(const ActiveRecord::Field& f) {
-  return assign_detail::generic_list<ActiveRecord::Field>()(f);
+  return ActiveRecord::GenericFieldList()(f);
 }
 
 } // namespace boost
@@ -93,7 +89,7 @@ list_of(const ActiveRecord::Field& f) {
 
 namespace ActiveRecord {
 
-inline assign_detail::generic_list<Field> fields(
+inline GenericFieldList fields(
   const char* name,
   ActiveRecord::Type::Type type
 ) {

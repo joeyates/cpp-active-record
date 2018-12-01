@@ -69,11 +69,9 @@ class Base {
   Base& init(const GenericAttributePairList& attributes) {
     ensure_prepared();
 
-    for(
-      GenericAttributePairList::const_iterator it = attributes.begin();
-      it != attributes.end();
-      ++it
-    ) { attributes_[it->first] = it->second; }
+    for(auto& attribute: attributes) {
+      attributes_[attribute.first] = attribute.second;
+    }
 
     state_ = unsaved;
 
@@ -175,13 +173,10 @@ class Base {
       return false;
     }
 
-    for(
-      AttributeHash::const_iterator it = attributes_.begin();
-      it != attributes_.end();
-      ++it
-    ) {
+    for(auto& attribute: attributes_) {
       // TODO: compare attributes
     }
+
     return true;
   }
 
@@ -256,15 +251,11 @@ string Base<T>::to_string() const {
   stringstream ss;
   ss << T::class_name << ": ";
 
-  for(
-    AttributeHash::const_iterator it = attributes_.begin();
-    it != attributes_.end();
-    ++it
-  ) {
-    if(it != attributes_.begin()) {
+  for(auto& attribute: attributes_) {
+    if(attribute != *attributes_.begin()) {
       ss << ", ";
     }
-    ss << it->first << " " <<it->second;
+    ss << attribute.first << " " << attribute.second;
   }
 
   return ss.str();
@@ -310,12 +301,8 @@ bool Base<T>::create() {
   stringstream columns, placeholders;
   AttributeList parameters;
 
-  for(
-    AttributeHash::iterator it = attributes_.begin();
-    it != attributes_.end();
-    ++it
-  ) {
-    if(it->first == primary_key_) {
+  for(auto& attribute: attributes_) {
+    if(attribute.first == primary_key_) {
       continue;
     }
 
@@ -324,10 +311,10 @@ bool Base<T>::create() {
       placeholders << ", ";
     }
 
-    columns << it->first;
+    columns << attribute.first;
     placeholders << "?";
 
-    parameters.push_back(it->second);
+    parameters.push_back(attribute.second);
     columns_added = true;
   }
 
@@ -354,12 +341,8 @@ bool Base<T>::update() {
   stringstream columns;
   AttributeList parameters;
 
-  for(
-    AttributeHash::iterator it = attributes_.begin();
-    it != attributes_.end();
-    ++it
-  ) {
-    if(it->first == primary_key_) {
+  for(auto& attribute: attributes_) {
+    if(attribute.first == primary_key_) {
       continue;
     }
 
@@ -367,8 +350,8 @@ bool Base<T>::update() {
       columns << ", ";
     }
 
-    columns << it->first << " = ?";
-    parameters.push_back(it->second);
+    columns << attribute.first << " = ?";
+    parameters.push_back(attribute.second);
     columns_added = true;
   }
 
