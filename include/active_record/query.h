@@ -49,30 +49,30 @@ class Query {
   QueryParametersPair    query_and_parameters();
 };
 
-template <class T >
-Query< T >::Query(const Query< T >& other) {
+template <class T>
+Query<T>::Query(const Query<T>& other) {
   conditions_ = other.conditions_;
   limit_      = other.limit_;
   orderings_  = other.orderings_;
   connection_ = other.connection_;
 }
 
-template <class T >
-Query< T > Query< T >::operator=(const Query< T >& other) {
-  Query< T > result(other);
+template <class T>
+Query<T> Query<T>::operator=(const Query<T>& other) {
+  Query<T> result(other);
   return result;
 }
 
 // foo.where("name = ?", "Joe");
-template <class T >
-Query< T > Query< T >::where(const string& condition, const Attribute& value) {
+template <class T>
+Query<T> Query<T>::where(const string& condition, const Attribute& value) {
   conditions_.push_back(AttributePair(condition, value));
   return *this;
 }
 
 // foo.limit(50);
-template <class T >
-Query< T > Query< T >::limit(int limit) {
+template <class T>
+Query<T> Query<T>::limit(int limit) {
   limit_ = limit;
   return *this;
 }
@@ -175,8 +175,8 @@ T Query<T>::first() {
 /////////////////////////////////////////////
 // Private
 
-template <class T >
-string Query< T >::order_clause() {
+template <class T>
+string Query<T>::order_clause() {
   if(orderings_.size() == 0) {
     return "";
   }
