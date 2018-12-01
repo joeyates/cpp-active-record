@@ -84,6 +84,15 @@ class Base {
     return attributes_[name];
   }
 
+  const Attribute get(const string& name) const {
+    auto a = attributes_.find(name);
+    if(a == attributes_.end()) {
+      return Attribute();
+    } else {
+      return a->second;
+    }
+  }
+
   // TYPE_LIST
   int64 integer(const string& name) {
     load_unless_new();
