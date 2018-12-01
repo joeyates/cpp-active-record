@@ -148,8 +148,8 @@ vector<T> Query<T>::all() {
   AttributeList ids = connection_->select_values(query.first, query.second);
   vector<T> results;
 
-  for(AttributeList::iterator it = ids.begin(); it != ids.end(); ++it) {
-    T record(boost::get<int64>(*it));
+  for(auto& id: ids) {
+    T record(boost::get<int64>(id));
     results.push_back(record);
   }
 
@@ -184,18 +184,14 @@ string Query<T>::order_clause() {
   stringstream ss;
   ss << " ";
 
-  for(
-    vector<string>::const_iterator it = orderings_.begin();
-    it != orderings_.end();
-    ++it
-  ) {
-    if(it == orderings_.begin()) {
+  for(auto& ordering: orderings_) {
+    if(ordering == *orderings_.begin()) {
       ss << "ORDER BY ";
     } else {
       ss << ", ";
     }
 
-    ss << *it;
+    ss << ordering;
   }
 
   return ss.str();
