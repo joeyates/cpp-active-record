@@ -166,9 +166,6 @@ class Base {
     return (state_ != loaded) ? true : false;
   }
 
-  // No need to load either instance:
-  // if states and attributes are the same,
-  // we accept they're the same
   bool operator==(const Base& other) const {
     if(id() != other.id()) {
       return false;
@@ -183,7 +180,10 @@ class Base {
     }
 
     for(auto& attribute: attributes_) {
-      // TODO: compare attributes
+      const Attribute a = other.get(attribute.first);
+      if(attribute.second != a) {
+        return false;
+      }
     }
 
     return true;
