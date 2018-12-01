@@ -31,6 +31,10 @@ bool Attribute::operator==(const Attribute& other) const {
   }
 }
 
+bool Attribute::operator!=(const Attribute& other) const {
+  return !(*this == other);
+}
+
 ostream& operator<<(ostream& cout, ActiveRecord::Date const& date) {
   cout << date.to_string();
   return cout;

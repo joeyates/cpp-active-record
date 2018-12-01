@@ -50,6 +50,7 @@ class Attribute: public AttributeType {
   bool has_data() const { return initialised_; }
   Type::Type type() const;
   bool operator==(const Attribute& other) const;
+  bool operator!=(const Attribute& other) const;
 
   private:
 
