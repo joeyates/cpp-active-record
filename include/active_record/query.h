@@ -37,8 +37,8 @@ class Query {
   protected:
 
   AttributePairList conditions_;
-  int               limit_;
   vector<string>    orderings_;
+  int               limit_;
   Connection*       connection_;
 
   private:
@@ -70,76 +70,18 @@ Query<T> Query<T>::where(const string& condition, const Attribute& value) {
   return *this;
 }
 
-// foo.limit(50);
-template <class T>
-Query<T> Query<T>::limit(int limit) {
-  limit_ = limit;
-  return *this;
-}
-
 // foo.order("bar DESC");
 template <class T>
 Query<T> Query<T>::order(string order) {
   orderings_.push_back(order);
   return *this;
 }
+
+// foo.limit(50);
 template <class T>
-string Query<T>::limit_clause() {
-  if(limit_ == INVALID_LIMIT) {
-    return "";
-  }
-
-  stringstream ss;
-  ss << " LIMIT " << limit_;
-
-  return ss.str();
-}
-
-template <class T>
-QueryParametersPair Query<T>::condition_clause() {
-  AttributeList parameters;
-
-  if(conditions_.size() == 0) {
-    return QueryParametersPair("", parameters);
-  }
-
-  stringstream ss;
-  ss << " ";
-
-  for(
-    AttributePairList::const_iterator it = conditions_.begin();
-    it != conditions_.end();
-    ++it
-  ) {
-    if(it == conditions_.begin()) {
-      ss << "WHERE ";
-    } else {
-      ss << " AND ";
-    }
-    ss << it->first;
-    parameters.push_back(it->second);
-  }
-
-  return QueryParametersPair(ss.str(), parameters);
-}
-
-template <class T>
-QueryParametersPair Query<T>::query_and_parameters() {
-  Table t = connection_->get_table(T::class_name);
-
-  stringstream ss;
-  ss << "SELECT ";
-  ss << t.primary_key() << " ";
-  ss << "FROM ";
-  ss << t.table_name();
-
-  QueryParametersPair conditions = condition_clause();
-  ss << conditions.first;
-  ss << order_clause();
-  ss << limit_clause();
-  ss << ";";
-
-  return QueryParametersPair(ss.str(), conditions.second);
+Query<T> Query<T>::limit(int limit) {
+  limit_ = limit;
+  return *this;
 }
 
 template <class T>
@@ -172,8 +114,32 @@ T Query<T>::first() {
   return record;
 }
 
-/////////////////////////////////////////////
-// Private
+//////////////////////////////////////////////////
+// private
+
+template <class T>
+QueryParametersPair Query<T>::condition_clause() {
+  AttributeList parameters;
+
+  if(conditions_.size() == 0) {
+    return QueryParametersPair("", parameters);
+  }
+
+  stringstream ss;
+  ss << " ";
+
+  for(auto& condition: conditions_) {
+    if(condition == *conditions_.begin()) {
+      ss << "WHERE ";
+    } else {
+      ss << " AND ";
+    }
+    ss << condition.first;
+    parameters.push_back(condition.second);
+  }
+
+  return QueryParametersPair(ss.str(), parameters);
+}
 
 template <class T>
 string Query<T>::order_clause() {
@@ -195,6 +161,37 @@ string Query<T>::order_clause() {
   }
 
   return ss.str();
+}
+
+template <class T>
+string Query<T>::limit_clause() {
+  if(limit_ == INVALID_LIMIT) {
+    return "";
+  }
+
+  stringstream ss;
+  ss << " LIMIT " << limit_;
+
+  return ss.str();
+}
+
+template <class T>
+QueryParametersPair Query<T>::query_and_parameters() {
+  Table t = connection_->get_table(T::class_name);
+
+  stringstream ss;
+  ss << "SELECT ";
+  ss << t.primary_key() << " ";
+  ss << "FROM ";
+  ss << t.table_name();
+
+  QueryParametersPair conditions = condition_clause();
+  ss << conditions.first;
+  ss << order_clause();
+  ss << limit_clause();
+  ss << ";";
+
+  return QueryParametersPair(ss.str(), conditions.second);
 }
 
 } // namespace ActiveRecord
