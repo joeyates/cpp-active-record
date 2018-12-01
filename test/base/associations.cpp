@@ -1,4 +1,4 @@
-#include "test_helper.h"
+#include "../test_helper.h"
 #include <active_record/connection/sqlite3.h>
 
 extern string database_name;

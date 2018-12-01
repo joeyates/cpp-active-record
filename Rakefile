@@ -70,7 +70,7 @@ Rake::Builder.new do |builder|
 end
 
 TEST_NAME                = "#{name}_test"
-TEST_SOURCE_SEARCH_PATHS = ['test']
+TEST_SOURCE_SEARCH_PATHS = ['test', 'test/base']
 
 test_target_parameters =
   if GTEST_FILTER
