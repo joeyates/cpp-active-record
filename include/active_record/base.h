@@ -16,7 +16,7 @@
 
 #define AR_CONSTRUCTORS(klass)                                                                \
   klass(int id = ACTIVE_RECORD_UNSAVED): ActiveRecord::Base<klass>(id) {}                     \
-  klass(const GenericAttributePairList& attributes) : ActiveRecord::Base<klass>(attributes) {}
+  klass(const ActiveRecord::GenericAttributePairList& attributes) : ActiveRecord::Base<klass>(attributes) {}
 
 // The model needs to know it's own name
 #define AR_DECLARE(klass)                                                    \
@@ -44,7 +44,7 @@ GCC wants template instantiation in the same file as the declaration,
 so all of the code is here.
 */
 
-template <class T >
+template <class T>
 class Base {
   enum state { blank, prepared, unsaved, loaded };
 
