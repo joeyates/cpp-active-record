@@ -22,6 +22,7 @@ class Query {
 
   Query(Connection& connection):
     limit_(INVALID_LIMIT),
+    offset_(0),
     connection_(&connection) {};
   Query(const Query<T>& other);
 
@@ -30,6 +31,7 @@ class Query {
   Query<T> where(const std::string& condition, const Attribute& value);
   Query<T> order(std::string order);
   Query<T> limit(int limit);
+  Query<T> offset(int offset);
   // Results
   T first();
   std::vector<T> all();
@@ -39,6 +41,7 @@ class Query {
   AttributePairList   conditions_;
   std::vector<std::string> orderings_;
   int                 limit_;
+  int                 offset_;
   Connection*         connection_;
 
   private:
@@ -46,14 +49,16 @@ class Query {
   QueryParametersPair    condition_clause();
   std::string            order_clause();
   std::string            limit_clause();
+  std::string            offset_clause();
   QueryParametersPair    query_and_parameters();
 };
 
 template <class T>
 Query<T>::Query(const Query<T>& other) {
   conditions_ = other.conditions_;
-  limit_      = other.limit_;
   orderings_  = other.orderings_;
+  limit_      = other.limit_;
+  offset_     = other.offset_;
   connection_ = other.connection_;
 }
 
@@ -81,6 +86,13 @@ Query<T> Query<T>::order(std::string order) {
 template <class T>
 Query<T> Query<T>::limit(int limit) {
   limit_ = limit;
+  return *this;
+}
+
+// foo.offset(50);
+template <class T>
+Query<T> Query<T>::offset(int offset) {
+  offset_ = offset;
   return *this;
 }
 
@@ -176,6 +188,28 @@ std::string Query<T>::limit_clause() {
 }
 
 template <class T>
+std::string Query<T>::offset_clause() {
+  if(offset_ == 0) {
+    return "";
+  }
+
+  std::stringstream ss;
+
+#ifdef AR_SQLITE
+  if(dynamic_cast<Sqlite3Connection*>(connection_) != nullptr) {
+    // Sqlite requires a LIMIT clause before OFFSET
+    if(limit_ == INVALID_LIMIT) {
+      ss << " LIMIT -1";
+    }
+  }
+#endif // def AR_SQLITE
+
+  ss << " OFFSET " << offset_;
+
+  return ss.str();
+}
+
+template <class T>
 QueryParametersPair Query<T>::query_and_parameters() {
   Table t = connection_->get_table(T::class_name);
 
@@ -189,6 +223,7 @@ QueryParametersPair Query<T>::query_and_parameters() {
   ss << conditions.first;
   ss << order_clause();
   ss << limit_clause();
+  ss << offset_clause();
   ss << ";";
 
   return QueryParametersPair(ss.str(), conditions.second);

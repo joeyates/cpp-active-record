@@ -41,7 +41,7 @@ class QueryTest: public ::testing::Test {
   }
 
   virtual void TearDown() {
-    sqlite_delete_database();
+    // sqlite_delete_database();
   }
 
   protected:
@@ -83,6 +83,17 @@ TEST_F(QueryTest, Limit) {
   std::vector<Person> people = query.all();
 
   ASSERT_EQ(2, people.size());
+}
+
+TEST_F(QueryTest, Offset) {
+  Query<Person> query(connection);
+  query.offset(1);
+  std::vector<Person> people = query.all();
+
+  ASSERT_EQ(people.size(), 3);
+
+  Person person = query.first();
+  assert_attribute(person["surname"], "Smith");
 }
 
 } // namespace ActiveRecord
