@@ -1,3 +1,5 @@
+#ifdef AR_SQLITE
+
 #include <string>
 
 #include <active_record/connection/sqlite3.h>
@@ -12,3 +14,5 @@ std::string Table::primary_key(
 }
 
 } // namespace ActiveRecord
+
+#endif // def AR_SQLITE

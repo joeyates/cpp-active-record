@@ -1,6 +1,8 @@
 #include "test_helper.h"
 #include "postgresql_connection_test.h"
 
+#include <cstdint>
+
 extern const char* pg_host;
 extern const char* pg_port;
 extern const char* pg_user;
@@ -258,7 +260,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValue) {
   );
   ASSERT_TRUE(result.has_data());
   ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
-  ASSERT_EQ(boost::get<int64>(result), 42);
+  ASSERT_EQ(boost::get<int64_t>(result), 42);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithNoResult) {
@@ -280,7 +282,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectValueWithParam) {
 
   ASSERT_TRUE(result.has_data());
   ASSERT_EQ(result.type(), ActiveRecord::Type::integer);
-  ASSERT_EQ(boost::get<int64>(result), 113);
+  ASSERT_EQ(boost::get<int64_t>(result), 113);
 }
 
 TEST_F(PostgresqlWithConnectionAndTableTest, SelectValues) {

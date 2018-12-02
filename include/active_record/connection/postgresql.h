@@ -1,3 +1,5 @@
+#ifdef AR_POSTGRES
+
 #ifndef _ACTIVE_RECORD_CONNECTION_POSTGRESQL_H_
 #define _ACTIVE_RECORD_CONNECTION_POSTGRESQL_H_
 
@@ -31,8 +33,7 @@ class PostgresqlConnection: public Connection {
    * connection - an existing database connect to be used to issue
    *   the CREATE DATABASE command
    * options:
-   *   database - the name of the database to be created (or file name
-   *     for SQLite3)
+   *   database - the name of the database to be created
    *   owner - (optional)
    *   template - (optional)
    */
@@ -111,3 +112,5 @@ class PostgresqlConnection: public Connection {
 } // namespace ActiveRecord
 
 #endif // ndef _ACTIVE_RECORD_CONNECTION_POSTGRESQL_H_
+
+#endif // def AR_POSTGRES

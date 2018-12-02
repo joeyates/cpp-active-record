@@ -9,19 +9,27 @@
 namespace ActiveRecord {
 
 class Connection;
+#ifdef AR_POSTGRES
 class PostgresqlConnection;
+#endif // def AR_POSTGRES
+#ifdef AR_SQLITE
 class Sqlite3Connection;
+#endif // def AR_SQLITE
 
 class Table {
   public:
 
   // Static members
+#ifdef AR_POSTGRES
   static std::string primary_key(
     PostgresqlConnection* connection, const std::string& table_name
   );
+#endif // def AR_POSTGRES
+#ifdef AR_SQLITE
   static std::string primary_key(
     Sqlite3Connection* connection, const std::string& table_name
   );
+#endif // def AR_SQLITE
 
   // Constructors
   Table(Connection* connection = NULL, const std::string& table_name = ""):

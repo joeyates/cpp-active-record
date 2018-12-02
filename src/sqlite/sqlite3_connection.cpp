@@ -1,3 +1,5 @@
+#ifdef AR_SQLITE
+
 #include <active_record/connection/sqlite3.h>
 
 #include <ctime>
@@ -60,7 +62,7 @@ bool Sqlite3Connection::execute(
   return true;
 }
 
-int64 Sqlite3Connection::insert(
+int64_t Sqlite3Connection::insert(
   const std::string& query,
   const AttributeList& parameters
 ) {
@@ -360,7 +362,7 @@ void Sqlite3Connection::bind_parameters(
   for(auto& parameter: parameters) {
     switch(parameter.which()) {
       case Type::integer: {
-        int64 value = boost::get<int64>(parameter);
+        int64_t value = boost::get<int64_t>(parameter);
         pa.param_values[i] = nullptr;
         sqlite3_bind_int(ppStmt, i + 1, value);
         break;
@@ -475,3 +477,5 @@ std::string Sqlite3Connection::sqlite_error(int error_code) {
 }
 
 } // namespace ActiveRecord
+
+#endif // def AR_SQLITE

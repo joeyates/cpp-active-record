@@ -19,8 +19,8 @@ bool Row::is_type(const std::string& name, Type::Type type) {
 }
 
 // TYPE_LIST
-int64 Row::get_integer(const std::string& name) {
-  return boost::get<int64>(attributes_[name]);
+int64_t Row::get_integer(const std::string& name) {
+  return boost::get<int64_t>(attributes_[name]);
 }
 
 std::string Row::get_text(const std::string& name) {

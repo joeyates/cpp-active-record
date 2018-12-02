@@ -1,3 +1,5 @@
+#ifdef AR_POSTGRES
+
 #include <active_record/row.h>
 
 namespace ActiveRecord {
@@ -11,3 +13,5 @@ Row::Row(PGresult* exec_result, int row) {
 }
 
 } // namespace ActiveRecord
+
+#endif // def AR_POSTGRES

@@ -17,7 +17,7 @@ bool Attribute::operator==(const Attribute& other) const {
   // TYPE_LIST
   switch(which()) {
     case 0:
-      return boost::get<int64>(*this) == boost::get<int64>(other);
+      return boost::get<int64_t>(*this) == boost::get<int64_t>(other);
     case 1:
       return boost::get<std::string>(*this) == boost::get<std::string>(other);
     case 2:

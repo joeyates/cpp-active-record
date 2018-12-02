@@ -1,6 +1,7 @@
 #ifndef _ACTIVE_RECORD_QUERY_H_
 #define _ACTIVE_RECORD_QUERY_H_
 
+#include <cstdint>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -90,7 +91,7 @@ std::vector<T> Query<T>::all() {
   std::vector<T> results;
 
   for(auto& id: ids) {
-    T record(boost::get<int64>(id));
+    T record(boost::get<int64_t>(id));
     results.push_back(record);
   }
 

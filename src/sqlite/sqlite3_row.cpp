@@ -1,6 +1,8 @@
-#include <active_record/row.h>
+#ifdef AR_SQLITE
 
 #include <sqlite3.h>
+
+#include <active_record/row.h>
 
 namespace ActiveRecord {
 
@@ -13,3 +15,5 @@ Row::Row(sqlite3_stmt* pStmt) {
 }
 
 } // namespace ActiveRecord
+
+#endif // def AR_SQLITE

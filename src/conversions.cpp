@@ -1,11 +1,10 @@
 #include <active_record/exception.h>
 
-#include <c.h>
-#include <sstream>
+#include <cstring>
 
 namespace ActiveRecord {
 
-int64 string_to_int64(const char* raw, bool& found) {
+int64_t string_to_int64(const char* raw, bool& found) {
   size_t length = strlen(raw);
 
   if(length == 0) {
@@ -14,7 +13,7 @@ int64 string_to_int64(const char* raw, bool& found) {
   }
 
   errno = 0;
-  int64 result = strtol(raw, nullptr, 10);
+  int64_t result = strtol(raw, nullptr, 10);
 
   if(errno != 0) {
     found = false;

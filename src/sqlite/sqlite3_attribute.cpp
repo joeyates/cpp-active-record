@@ -1,3 +1,5 @@
+#ifdef AR_SQLITE
+
 #include <active_record/attribute.h>
 
 namespace ActiveRecord {
@@ -17,7 +19,7 @@ Attribute Attribute::from_field(sqlite3_stmt* pStmt, int i) {
 
   // TYPE_LIST
   if(strcasecmp(type, "INTEGER") == 0) {
-    return static_cast<int64>(sqlite3_column_int(pStmt, i));
+    return static_cast<int64_t>(sqlite3_column_int(pStmt, i));
   }
 
   if(strcasecmp(type, "FLOAT") == 0) {
@@ -46,3 +48,5 @@ Attribute Attribute::from_field(sqlite3_stmt* pStmt, int i) {
 }
 
 } // namespace ActiveRecord
+
+#endif // def AR_SQLITE

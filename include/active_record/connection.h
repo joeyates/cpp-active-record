@@ -1,13 +1,15 @@
 #ifndef _ACTIVE_RECORD_CONNECTION_H_
 #define _ACTIVE_RECORD_CONNECTION_H_
 
+#include <cstdint>
+#include <cstdio>
+
 #include <active_record/active_record.h>
 #include <active_record/options.h>
 #include <active_record/type.h>
 #include <active_record/table.h>
 #include <active_record/table_set.h>
 #include <active_record/row.h>
-#include <cstdio>
 
 namespace ActiveRecord {
 
@@ -43,7 +45,7 @@ class Connection {
     const std::string& query,
     const AttributeList &parameters = AttributeList()
   ) = 0;
-  virtual int64 insert(const std::string& query,
+  virtual int64_t insert(const std::string& query,
   const AttributeList &parameters = AttributeList())             = 0;
   virtual Attribute select_value(const std::string& query,
   const AttributeList &parameters = AttributeList())             = 0;

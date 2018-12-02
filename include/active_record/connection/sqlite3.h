@@ -1,7 +1,10 @@
+#ifdef AR_SQLITE
 #ifndef _ACTIVE_RECORD_SQLITE3_CONNECTION_H_
 #define _ACTIVE_RECORD_SQLITE3_CONNECTION_H_
 
+#include <cstdint>
 #include <sqlite3.h>
+
 #include <active_record/connection.h>
 
 namespace ActiveRecord {
@@ -28,7 +31,7 @@ class Sqlite3Connection: public Connection {
     const std::string& query,
     const AttributeList& parameters = AttributeList()
   );
-  virtual int64 insert(
+  virtual int64_t insert(
     const std::string& query,
     const AttributeList& parameters = AttributeList()
   );
@@ -83,3 +86,4 @@ class Sqlite3Connection: public Connection {
 } // namespace ActiveRecord
 
 #endif // ndef _ACTIVE_RECORD_SQLITE3_CONNECTION_H_
+#endif // def AR_SQLITE

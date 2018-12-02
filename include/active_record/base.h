@@ -2,6 +2,7 @@
 #define _ACTIVE_RECORD_BASE_H_
 
 #include <algorithm>
+#include <cstdint>
 #include <sstream>
 #include <string>
 
@@ -94,9 +95,9 @@ class Base {
   }
 
   // TYPE_LIST
-  int64 integer(const std::string& name) {
+  int64_t integer(const std::string& name) {
     load_unless_new();
-    return boost::get<int64>(attributes_[name]);
+    return boost::get<int64_t>(attributes_[name]);
   }
 
   std::string text(const std::string& name) {

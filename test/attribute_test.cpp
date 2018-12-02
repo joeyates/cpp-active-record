@@ -1,11 +1,13 @@
 #include "test_helper.h"
 
+#include <cstdint>
+
 namespace ActiveRecord {
 
 class AttributeTest: public ::testing::Test {};
 
 TEST_F(AttributeTest, GetType) {
-  ActiveRecord::Attribute foo((int64) 13);
+  ActiveRecord::Attribute foo((int64_t) 13);
   ActiveRecord::Attribute bar("hello");
   ActiveRecord::Attribute baz(1.8);
   ActiveRecord::Attribute qux(ActiveRecord::Date(1999, 8, 29));
@@ -17,7 +19,7 @@ TEST_F(AttributeTest, GetType) {
 }
 
 TEST_F(AttributeTest, HasData) {
-  ActiveRecord::Attribute foo((int64) 13);
+  ActiveRecord::Attribute foo((int64_t) 13);
   ActiveRecord::Attribute def;
 
   ASSERT_TRUE(foo.has_data());
@@ -25,7 +27,7 @@ TEST_F(AttributeTest, HasData) {
 }
 
 TEST_F(AttributeTest, Equality) {
-  ActiveRecord::Attribute foo((int64) 13);
+  ActiveRecord::Attribute foo((int64_t) 13);
   ActiveRecord::Attribute bar("hello");
   ActiveRecord::Attribute baz(1.8);
   ActiveRecord::Attribute qux(ActiveRecord::Date(1999, 8, 29));
@@ -35,7 +37,7 @@ TEST_F(AttributeTest, Equality) {
 }
 
 TEST_F(AttributeTest, Ostream) {
-  ActiveRecord::Attribute foo((int64) 13);
+  ActiveRecord::Attribute foo((int64_t) 13);
   ActiveRecord::Attribute bar("hello");
   ActiveRecord::Attribute baz(1.8);
   ActiveRecord::Attribute qux(ActiveRecord::Date(1999, 8, 29));
@@ -57,7 +59,7 @@ class AttributeHashTest: public ::testing::Test {};
 TEST_F(AttributeHashTest, AttributesFunction) {
   const ActiveRecord::AttributePairList attribs =
     ActiveRecord::attribute_pairs
-      ("foo", (int64) 13)
+      ("foo", (int64_t) 13)
       ("bar", "hello")
       ("baz", 15.5)
       ("qux", ActiveRecord::Date(1999, 8, 29));
@@ -65,7 +67,7 @@ TEST_F(AttributeHashTest, AttributesFunction) {
   ASSERT_EQ(4, attribs.size());
 
   ActiveRecord::AttributePairList expected;
-  expected.push_back(ActiveRecord::AttributePair("foo", (int64) 13));
+  expected.push_back(ActiveRecord::AttributePair("foo", (int64_t) 13));
   expected.push_back(ActiveRecord::AttributePair("bar", "hello"));
   expected.push_back(ActiveRecord::AttributePair("baz", 15.5));
   expected.push_back(ActiveRecord::AttributePair(
@@ -79,17 +81,17 @@ TEST_F(AttributeHashTest, AttributesFunction) {
 TEST_F(AttributeHashTest, Access) {
   ActiveRecord::AttributeHash attribs =
     ActiveRecord::attribute_pairs
-      ("foo", (int64) 13)
+      ("foo", (int64_t) 13)
       ("bar", "hello");
 
-  assert_attribute((int64) 13, attribs["foo"]);
+  assert_attribute((int64_t) 13, attribs["foo"]);
   assert_attribute("hello",    attribs["bar"]);
 }
 
 TEST_F(AttributeHashTest, MissingKeys) {
   ActiveRecord::AttributeHash attribs =
     ActiveRecord::attribute_pairs
-      ("foo", (int64) 13)
+      ("foo", (int64_t) 13)
       ("bar", "hello");
 
   ActiveRecord::Attribute a = attribs["xxx"];

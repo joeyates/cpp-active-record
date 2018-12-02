@@ -1,3 +1,4 @@
+#ifdef AR_POSTGRES
 #include <active_record/connection/postgresql.h>
 
 #include <c.h>
@@ -130,7 +131,7 @@ bool PostgresqlConnection::execute(
   return !error;
 }
 
-int64 PostgresqlConnection::insert(
+int64_t PostgresqlConnection::insert(
   const std::string& query,
   const AttributeList& parameters
 ) {
@@ -142,7 +143,7 @@ int64 PostgresqlConnection::insert(
     return 0;
   }
 
-  return boost::get<int64>(id);
+  return boost::get<int64_t>(id);
 }
 
 Row PostgresqlConnection::select_one(
@@ -374,7 +375,7 @@ void PostgresqlConnection::bind_parameters(
     // TYPE_LIST
     switch(parameter.which()) {
       case Type::integer: {
-        int64 value = boost::get<int64>(parameter);
+        int64_t value = boost::get<int64_t>(parameter);
         // From https://stackoverflow.com/q/190229
         int len = (value == 0) ? 1 : floor(log10l(labs(value))) + 1;
 
@@ -474,7 +475,7 @@ void PostgresqlConnection::cleanup(ParameterAllocations& pa) {
 bool PostgresqlConnection::is_error(PGresult* exec_result) {
   ExecStatusType status = PQresultStatus(exec_result);
   return status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK;
- }
+}
 
 void PostgresqlConnection::log_error(PGresult* exec_result) {
   std::stringstream error;
@@ -489,3 +490,5 @@ void PostgresqlConnection::log_error(PGresult* exec_result) {
 }
 
 } // namespace ActiveRecord
+
+#endif // def AR_POSTGRES

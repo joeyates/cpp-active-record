@@ -1,6 +1,8 @@
+#ifdef AR_POSTGRES
 #include <active_record/attribute.h>
 #include <active_record/conversions.h>
 
+#include <c.h>
 #include <catalog/pg_type.h>
 
 namespace ActiveRecord {
@@ -14,7 +16,7 @@ Attribute Attribute::from_field(PGresult* exec_result, int row, int column) {
   switch(type) {
     case Type::integer: {
       bool found = false;
-      int64 i = string_to_int64(raw, found);
+      int64_t i = string_to_int64(raw, found);
       if(!found) {
         return Attribute();
       }
@@ -76,3 +78,5 @@ Type::Type Attribute::pg_type_to_ar_type(Oid pg_type) {
 }
 
 } // namespace ActiveRecord
+
+#endif // def AR_POSTGRES
