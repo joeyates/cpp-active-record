@@ -1,9 +1,10 @@
 require "rake/builder"
 
-ARCHITECTURE       = "x86_64"
-PROFILED           = ENV["PROFILED"]
-GTEST_FILTER       = ENV["GTEST_FILTER"]
-LIBRARY_PATHS      = (ENV["CPPAR_LIBRARYPATHS"] || "").split(",")
+ARCHITECTURE  = "x86_64"
+PROFILED      = ENV["PROFILED"]
+GTEST_FILTER  = ENV["GTEST_FILTER"]
+LIBRARY_PATHS = (ENV["CPPAR_LIBRARYPATHS"] || "").split(",")
+VERSION       = File.read("VERSION").chomp
 
 task :default => "build"
 
@@ -18,22 +19,24 @@ task :help do
     Build for profiling:
       $ PROFILED=1 rake ...
     See DEVELOPMENT.md for further options.
-   EOT
+  EOT
 end
 
 namespace :configure do
   desc "Remove configure and related files files to allow rebuild"
-
   task :clean do
     `rm -rf aclocal.m4 autom4te.cache configure configure.ac Makefile.am Makefile.in config.status config.h.in`
   end
 
   desc "Rebuild configure and associated files"
-  task :rebuild => [:clean, "configure.ac", "aclocal.m4", "config.h.in", :autoconf, :automake]
+  task rebuild: [
+    :clean, "configure.ac", "aclocal.m4", "config.h.in", :autoconf, :automake
+  ]
 
   task :"configure.ac" do
-    version = File.read("VERSION").chomp
-    Rake::Task["autoconf"].execute(OpenStruct.new(:project_title => "cpp-active-record", :version => version))
+    Rake::Task["autoconf"].execute(
+      OpenStruct.new(project_title: "cpp-active-record", version: VERSION)
+    )
   end
 
   task :"aclocal.m4" do
