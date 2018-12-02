@@ -4,7 +4,7 @@
 
 namespace ActiveRecord {
 
-string Table::primary_key(
+std::string Table::primary_key(
   Sqlite3Connection* connection,
   const std::string& table_name
 ) {

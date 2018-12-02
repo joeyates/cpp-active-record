@@ -23,12 +23,12 @@
   template <>                                                                \
   ActiveRecord::Connection* ActiveRecord::Base<klass>::connection_ = NULL ; \
   template <>                                                                \
-  string ActiveRecord::Base<klass>::class_name = #klass;
+  std::string ActiveRecord::Base<klass>::class_name = #klass;
 
 #define AR_HAS_MANY(owner, item)                         \
   namespace ActiveRecord {                               \
     template<class owner> template<class other>          \
-    vector<other> ActiveRecord::Base<owner>::has_many(); \
+    std::vector<other> ActiveRecord::Base<owner>::has_many(); \
   }
 
 #define AR_BELONGS_TO(item, owner)                \
@@ -51,7 +51,7 @@ class Base {
   public:
 
   // Static members
-  static string class_name;
+  static std::string class_name;
   static Connection* connection_;
   static void setup(Connection* connection);
 
@@ -79,12 +79,12 @@ class Base {
   }
 
   // Attributes
-  Attribute& operator[](const string& name) {
+  Attribute& operator[](const std::string& name) {
     load_unless_new();
     return attributes_[name];
   }
 
-  const Attribute get(const string& name) const {
+  const Attribute get(const std::string& name) const {
     auto a = attributes_.find(name);
     if(a == attributes_.end()) {
       return Attribute();
@@ -94,36 +94,36 @@ class Base {
   }
 
   // TYPE_LIST
-  int64 integer(const string& name) {
+  int64 integer(const std::string& name) {
     load_unless_new();
     return boost::get<int64>(attributes_[name]);
   }
 
-  string text(const string& name) {
+  std::string text(const std::string& name) {
     load_unless_new();
-    return boost::get<string>(attributes_[name]);
+    return boost::get<std::string>(attributes_[name]);
   }
 
-  double floating_point(const string& name) {
+  double floating_point(const std::string& name) {
     load_unless_new();
     return boost::get<double>(attributes_[name]);
   }
 
-  Date date(const string& name) {
+  Date date(const std::string& name) {
     load_unless_new();
     return boost::get<Date>(attributes_[name]);
   }
 
   // Associations
   template<class T1>
-  vector<T1> has_many() {
+  std::vector<T1> has_many() {
     if(state_ < loaded) {
       throw ActiveRecordException("Instance not loaded", __FILE__, __LINE__);
     }
 
     Query<T1> query(*connection_);
     Table t1 = connection_->get_table(T1::class_name);
-    stringstream where;
+    std::stringstream where;
     where << singular_name_ << "_id = ?";
     return query.where(where.str(), id()).all();
   }
@@ -136,9 +136,9 @@ class Base {
 
     Query<T1> query(*connection_);
     Table t1 = connection_->get_table(T1::class_name);
-    string primary_key = t1.primary_key();
+    std::string primary_key = t1.primary_key();
 
-    stringstream where;
+    std::stringstream where;
     where << primary_key << " = ?";
 
     return query.where(where.str(), id()).first();
@@ -189,7 +189,7 @@ class Base {
     return true;
   }
 
-  string to_string() const;
+  std::string to_string() const;
 
   private:
 
@@ -197,9 +197,9 @@ class Base {
   state         state_;
   AttributeHash attributes_;
   int           id_;
-  string        primary_key_;
-  string        table_name_;
-  string        singular_name_;
+  std::string   primary_key_;
+  std::string   table_name_;
+  std::string   singular_name_;
 
   private:
 
@@ -255,9 +255,9 @@ void Base<T>::setup(Connection* connection) {
 }
 
 template<class T>
-string Base<T>::to_string() const {
+std::string Base<T>::to_string() const {
   const_cast<Base<T>*>(this)->load_unless_new();
-  stringstream ss;
+  std::stringstream ss;
   ss << T::class_name << ": ";
 
   for(auto& attribute: attributes_) {
@@ -271,7 +271,9 @@ string Base<T>::to_string() const {
 }
 
 template<class T>
-ostream& operator<<(ostream& cout, const ActiveRecord::Base<T>& record) {
+std::ostream& operator<<(
+  std::ostream& cout, const ActiveRecord::Base<T>& record
+) {
   cout << record.to_string();
   return cout;
 }
@@ -281,7 +283,7 @@ ostream& operator<<(ostream& cout, const ActiveRecord::Base<T>& record) {
 
 template <class T>
 bool Base<T>::load() {
-  stringstream ss;
+  std::stringstream ss;
   ss << "SELECT * ";
   ss << "FROM " << table_name_ << " ";
   ss << "WHERE ";
@@ -303,11 +305,11 @@ bool Base<T>::load() {
 // TODO: Re-read the record afterwards to get default values?
 template <class T>
 bool Base<T>::create() {
-  stringstream ss;
+  std::stringstream ss;
   ss << "INSERT INTO " << table_name_ << " ";
 
   bool columns_added = false;
-  stringstream columns, placeholders;
+  std::stringstream columns, placeholders;
   AttributeList parameters;
 
   for(auto& attribute: attributes_) {
@@ -344,11 +346,11 @@ bool Base<T>::create() {
 template <class T>
 bool Base<T>::update() {
   ensure_loaded();
-  stringstream ss;
+  std::stringstream ss;
   ss << "UPDATE " << table_name_ << " ";
 
   bool columns_added = false;
-  stringstream columns;
+  std::stringstream columns;
   AttributeList parameters;
 
   for(auto& attribute: attributes_) {

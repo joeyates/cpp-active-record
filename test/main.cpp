@@ -19,8 +19,8 @@ int main(int argc, char** argv) {
     result = RUN_ALL_TESTS();
   }
   catch(std::exception& e) {
-    cout << "Test raised an unexpected exception:" << endl;
-    cout << e.what() << endl;
+    std::cout << "Test raised an unexpected exception:" << std::endl;
+    std::cout << e.what() << std::endl;
   }
 
   return result;

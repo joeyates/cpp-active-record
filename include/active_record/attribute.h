@@ -13,14 +13,10 @@
 #include <active_record/type.h>
 #include <active_record/date.h>
 
-using namespace std;
-using namespace boost::assign;
-using namespace boost;
-
 namespace ActiveRecord {
 
 // TYPE_LIST
-typedef boost::variant<int64, string, double, Date> AttributeType;
+typedef boost::variant<int64, std::string, double, Date> AttributeType;
 
 // N.B. boost::variant.which() returns a 0-based index into the
 // AttributeType list
@@ -42,8 +38,9 @@ class Attribute: public AttributeType {
   Attribute(int i):           AttributeType((int64) i), initialised_(true) {}
   // TYPE_LIST
   Attribute(int64 i):         AttributeType(i), initialised_(true) {}
-  Attribute(const string& s): AttributeType(s), initialised_(true) {}
-  Attribute(const char* s):   AttributeType(string(s)), initialised_(true) {}
+  Attribute(const std::string& s): AttributeType(s), initialised_(true) {}
+  Attribute(const char* s):   AttributeType(std::string(s)),
+    initialised_(true) {}
   Attribute(double d):        AttributeType(d), initialised_(true) {}
   Attribute(Date date):       AttributeType(date), initialised_(true) {}
 
@@ -57,25 +54,26 @@ class Attribute: public AttributeType {
   bool initialised_;
 };
 
-typedef pair<string, Attribute>             AttributePair;
-typedef map<string, Attribute>              AttributeHash;
-typedef list<AttributePair>                 AttributePairList;
-typedef list<Attribute>                     AttributeList;
-typedef pair<string, AttributeList>         QueryParametersPair;
-typedef assign_detail::generic_list<AttributePair> GenericAttributePairList;
+typedef std::pair<std::string, Attribute> AttributePair;
+typedef std::map<std::string, Attribute> AttributeHash;
+typedef std::list<AttributePair> AttributePairList;
+typedef std::list<Attribute> AttributeList;
+typedef std::pair<std::string, AttributeList> QueryParametersPair;
+typedef boost::assign_detail::generic_list<AttributePair>
+  GenericAttributePairList;
 
-ostream& operator<<(
-  ostream& cout, const ActiveRecord::AttributeHash& attributes
+std::ostream& operator<<(
+  std::ostream& cout, const ActiveRecord::AttributeHash& attributes
 );
 
-ostream& operator<<(
-  ostream& cout, const ActiveRecord::AttributeList& attributes
+std::ostream& operator<<(
+  std::ostream& cout, const ActiveRecord::AttributeList& attributes
 );
 
 } // namespace ActiveRecord
 
-ostream& operator<<(
-  ostream& cout, const ActiveRecord::GenericAttributePairList& attributes
+std::ostream& operator<<(
+  std::ostream& cout, const ActiveRecord::GenericAttributePairList& attributes
 );
 
 // Instantiate boost::assign::list_of for our option type
@@ -119,7 +117,7 @@ inline GenericAttributePairList attribute_pairs(
 }
 
 /*
- parameters (13) ("hello") (15.5)
+parameters (13) ("hello") (15.5)
 */
 
 inline boost::assign_detail::generic_list<Attribute> parameters(
@@ -129,6 +127,5 @@ inline boost::assign_detail::generic_list<Attribute> parameters(
 }
 
 } // namespace ActiveRecord
-
 
 #endif // ndef _ACTIVE_RECORD_ATTRIBUTE_H_

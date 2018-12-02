@@ -2,7 +2,9 @@
 #include <active_record/connection/sqlite3.h>
 #include <active_record/query.h>
 
-extern string database_name;
+extern std::string database_name;
+
+namespace ActiveRecord {
 
 class QueryTest: public ::testing::Test {
   protected:
@@ -49,7 +51,7 @@ class QueryTest: public ::testing::Test {
 
 TEST_F(QueryTest, All) {
   Query<Person> query(connection);
-  vector<Person> people = query.all();
+  std::vector<Person> people = query.all();
 
   ASSERT_EQ(4, people.size());
 }
@@ -70,7 +72,7 @@ TEST_F( QueryTest, FirstNoData) {
 TEST_F(QueryTest, Where) {
   Query<Person> query(connection);
   query.where("surname = ?", "Smith");
-  vector<Person> people = query.all();
+  std::vector<Person> people = query.all();
 
   ASSERT_EQ(3, people.size());
 }
@@ -78,7 +80,9 @@ TEST_F(QueryTest, Where) {
 TEST_F(QueryTest, Limit) {
   Query<Person> query(connection);
   query.limit(2);
-  vector<Person> people = query.all();
+  std::vector<Person> people = query.all();
 
   ASSERT_EQ(2, people.size());
 }
+
+} // namespace ActiveRecord

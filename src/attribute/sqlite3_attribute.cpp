@@ -40,7 +40,7 @@ Attribute Attribute::from_field(sqlite3_stmt* pStmt, int i) {
     return Date::parse(value);
   }
 
-  stringstream error;
+  std::stringstream error;
   error << "Unhandled data type: " <<type;
   throw ActiveRecordException(error.str(), __FILE__, __LINE__);
 }

@@ -5,11 +5,11 @@ extern const char* pg_host;
 extern const char* pg_port;
 extern const char* pg_user;
 
-using namespace ActiveRecord;
-
 /* N.B. These tests assume that a 'template1' database exists
  *      and that the supplied user can access that database
  *      and can create new databases */
+
+namespace ActiveRecord {
 
 void PostgresqlTest::SetUp() {
   test_db_ = "active_record_postgresql_test";
@@ -48,7 +48,7 @@ TEST_F(PostgresqlTest, DropDatabase) {
   connection_.connect(connection_options_);
 
   ASSERT_NO_THROW(
-    PostgresqlConnection::drop_database(connection_, test_db_)
+    ActiveRecord::PostgresqlConnection::drop_database(connection_, test_db_)
   );
   ASSERT_FALSE(postgresql_shell_database_exists(test_db_, connection_options_));
 }
@@ -68,7 +68,7 @@ class PostgresqlWithTemplate1ConnectionTest : public PostgresqlTest {
 };
 
 TEST_F(PostgresqlWithTemplate1ConnectionTest, CreateDatabase) {
-  bool created = PostgresqlConnection::create_database(
+  bool created = ActiveRecord::PostgresqlConnection::create_database(
     connection_,
     options
       ("database", test_db_)
@@ -82,12 +82,12 @@ TEST_F(PostgresqlWithTemplate1ConnectionTest, CreateDatabase) {
 
 TEST_F(PostgresqlWithTemplate1ConnectionTest, DatabaseExists) {
   ASSERT_TRUE(
-    PostgresqlConnection::database_exists(
+      ActiveRecord::PostgresqlConnection::database_exists(
       connection_, connection_options_["database"]
     )
   );
   ASSERT_FALSE(
-    PostgresqlConnection::database_exists(
+      ActiveRecord::PostgresqlConnection::database_exists(
       connection_, "database_that_does_not_exist"
     )
   );
@@ -149,7 +149,7 @@ TEST_F(PostgresqlWithConnectionAndTableTest, Insert) {
 
   ASSERT_EQ(id, 1);
 
-  list<string> output = postgresql_shell_command(
+  std::list<std::string> output = postgresql_shell_command(
     "SELECT num FROM foo", connection_options_
   );
 
@@ -228,10 +228,10 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectAll) {
   connection_.execute("INSERT INTO foo (num) VALUES (42);");
   connection_.execute("INSERT INTO foo (num) VALUES (99);");
 
-  RowSet rows = connection_.select_all("SELECT num FROM foo");
+  ActiveRecord::RowSet rows = connection_.select_all("SELECT num FROM foo");
 
   ASSERT_EQ(2, rows.size());
-  RowSet::iterator it = rows.begin();
+  ActiveRecord::RowSet::iterator it = rows.begin();
   ASSERT_EQ(it->get_integer("num"), 42);
   ++it;
   ASSERT_EQ(it->get_integer("num"), 99);
@@ -241,12 +241,12 @@ TEST_F(PostgresqlWithConnectionAndTableTest, SelectAllWithParameter) {
   connection_.execute("INSERT INTO foo (num) VALUES (42);");
   connection_.execute("INSERT INTO foo (num) VALUES (99);");
 
-  RowSet rows = connection_.select_all(
+  ActiveRecord::RowSet rows = connection_.select_all(
     "SELECT num FROM foo WHERE pk = $1", parameters (2)
   );
 
   ASSERT_EQ(1, rows.size());
-  RowSet::iterator it = rows.begin();
+  ActiveRecord::RowSet::iterator it = rows.begin();
   ASSERT_EQ(it->get_integer("num"), 99);
 }
 
@@ -343,3 +343,5 @@ TEST_F(PostgresqlWithConnectionAndTableTest, RemovesField) {
   assert_field(t, 1, "fp", Type::floating_point);
   assert_field(t, 2, "dt", Type::date);
 }
+
+} // namespace ActiveRecord

@@ -11,11 +11,11 @@ void set_debug(bool new_debug) {
   debug = new_debug;
 }
 
-void log(const string& message) {
+void log(const std::string& message) {
   if(!debug) {
     return;
   }
-  cout << message << endl;
+  std::cout << message << std::endl;
 }
 
 } // namespace ActiveRecord

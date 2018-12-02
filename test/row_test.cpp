@@ -1,8 +1,8 @@
 #include "test_helper.h"
 
-extern string database_name;
+extern std::string database_name;
 
-using namespace ActiveRecord;
+namespace ActiveRecord {
 
 class RowTest: public ::testing::Test {
   protected:
@@ -37,7 +37,7 @@ class RowTest: public ::testing::Test {
 };
 
 TEST_F(RowTest, Empty) {
-  Row row;
+  ActiveRecord::Row row;
 
   ASSERT_FALSE(row.has_data());
 }
@@ -47,7 +47,7 @@ TEST_F(RowTest, GetType) {
   int prepare_result = sqlite3_prepare_v2(db, query, strlen(query), &ppStmt, 0);
   sqlite3_step(ppStmt);
 
-  Row row(ppStmt);
+  ActiveRecord::Row row(ppStmt);
 
   ASSERT_EQ(Type::integer,        row.get_type("bar"));
   ASSERT_EQ(Type::text,           row.get_type("baz"));
@@ -60,7 +60,7 @@ TEST_F(RowTest, IsType) {
   int prepare_result = sqlite3_prepare_v2(db, query, strlen(query), &ppStmt, 0);
   sqlite3_step(ppStmt);
 
-  Row row(ppStmt);
+  ActiveRecord::Row row(ppStmt);
 
   ASSERT_TRUE(row.is_type("bar", Type::integer));
   ASSERT_FALSE(row.is_type("bar", Type::text));
@@ -71,7 +71,7 @@ TEST_F(RowTest, GetInteger) {
   int prepare_result = sqlite3_prepare_v2(db, query, strlen(query), &ppStmt, 0);
   sqlite3_step(ppStmt);
 
-  Row row(ppStmt);
+  ActiveRecord::Row row(ppStmt);
 
   ASSERT_EQ(123, row.get_integer("bar"));
 }
@@ -81,7 +81,7 @@ TEST_F(RowTest, GetText) {
   int prepare_result = sqlite3_prepare_v2(db, query, strlen(query), &ppStmt, 0);
   sqlite3_step(ppStmt);
 
-  Row row(ppStmt);
+  ActiveRecord::Row row(ppStmt);
 
   ASSERT_EQ("hello", row.get_text("baz"));
 }
@@ -91,7 +91,7 @@ TEST_F(RowTest, GetFloatingPoint) {
   sqlite3_prepare_v2(db, query, strlen(query), &ppStmt, 0);
   sqlite3_step(ppStmt);
 
-  Row row(ppStmt);
+  ActiveRecord::Row row(ppStmt);
 
   ASSERT_EQ( 1.5, row.get_floating_point("qux"));
 }
@@ -101,7 +101,9 @@ TEST_F(RowTest, GetDate) {
   sqlite3_prepare_v2(db, query, strlen(query), &ppStmt, 0);
   sqlite3_step(ppStmt);
 
-  Row row(ppStmt);
+  ActiveRecord::Row row(ppStmt);
 
   assert_attribute(Date(1971, 07, 02), row.get_date("derp"));
 }
+
+} // namespace ActiveRecord

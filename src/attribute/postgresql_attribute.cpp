@@ -47,7 +47,7 @@ Attribute Attribute::from_field(PGresult* exec_result, int row, int column) {
     }
 
     default: {
-      stringstream error;
+      std::stringstream error;
       error << "Value '" << raw << "' has unhandled data type " << pg_type;
       throw ActiveRecordException(error.str(), __FILE__, __LINE__);
     }

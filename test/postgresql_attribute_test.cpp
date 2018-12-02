@@ -6,6 +6,8 @@
 #include <catalog/pg_type.h>
 #include <postgresql/libpq-fe.h>
 
+namespace ActiveRecord {
+
 class PostgresqlAttributesTest: public PostgresqlTest {
   protected:
 
@@ -15,13 +17,13 @@ class PostgresqlAttributesTest: public PostgresqlTest {
     postgresql_shell_create_database(created_database_, connection_options_);
     connection_options_["database"] = created_database_;
 
-    string conninfo = postgresql_conninfo(connection_options_);
+    std::string conninfo = postgresql_conninfo(connection_options_);
     pgconn_ = PQconnectdb(conninfo.c_str());
     if (PQstatus(pgconn_) != CONNECTION_OK) {
       throw "Connection failed";
     }
 
-    string create_table =
+    std::string create_table =
       "CREATE TABLE foo ("
       "  id      SERIAL, "
       "  i       INTEGER, "
@@ -33,7 +35,7 @@ class PostgresqlAttributesTest: public PostgresqlTest {
       ")";
     postgresql_shell_command(create_table, connection_options_);
 
-    string insert_values =
+    std::string insert_values =
       "INSERT INTO foo "
       "  (i, bi, cv, t, fp, d) "
       "VALUES "
@@ -47,10 +49,10 @@ class PostgresqlAttributesTest: public PostgresqlTest {
       ")";
     postgresql_shell_command(insert_values, connection_options_);
 
-    string insert_blanks = "INSERT INTO foo DEFAULT VALUES";
+    std::string insert_blanks = "INSERT INTO foo DEFAULT VALUES";
     postgresql_shell_command(insert_blanks, connection_options_);
 
-    string query = "SELECT * FROM foo;";
+    std::string query = "SELECT * FROM foo;";
     exec_result_ = PQexec(pgconn_, query.c_str());
   }
 
@@ -63,7 +65,7 @@ class PostgresqlAttributesTest: public PostgresqlTest {
 
   protected:
 
-  string created_database_;
+  std::string created_database_;
   PGconn* pgconn_;
   PGresult* exec_result_;
 };
@@ -136,3 +138,5 @@ TEST_F(PostgresqlAttributesTest, EmptyFromDateField) {
   Attribute blank = Attribute::from_field(exec_result_, 1, 6);
   ASSERT_FALSE(blank.has_data());
 }
+
+} // namespace ActiveRecord

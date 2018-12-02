@@ -5,65 +5,85 @@
 #include "models.h"
 #include <active_record/exception.h>
 
-using namespace std;
+typedef std::list<std::string> strings;
 
-typedef list<string> strings;
+namespace ActiveRecord {
 
-strings shell_command(const string& command);
+strings shell_command(const std::string& command);
 
 void sqlite_connect_database(
-  Connection& connection, const string& database_name
+  ActiveRecord::Connection& connection,
+  const std::string& database_name
 );
 void sqlite_delete_database();
-string sqlite_table_definition(
-  Connection& connection, const string& table_name
+std::string sqlite_table_definition(
+  ActiveRecord::Connection& connection,
+  const std::string& table_name
 );
 
-void pipe_to_sqlite(const string& database_name, const string& command);
+void pipe_to_sqlite(
+  const std::string& database_name,
+  const std::string& command
+);
 
-void assert_string(const string& expected, const string& actual);
-void assert_attribute(const Attribute& expected, const Attribute& actual);
+void assert_string(const std::string& expected, const std::string& actual);
+void assert_attribute(
+  const ActiveRecord::Attribute& expected,
+  const ActiveRecord::Attribute& actual
+);
 void assert_attribute_pair_list(
-  const AttributePairList& expected,
-  const AttributePairList& actual
+  const ActiveRecord::AttributePairList& expected,
+  const ActiveRecord::AttributePairList& actual
 );
 
 void sqlite_assert_table_exists(
-  const string& database_name, const string& table
+  const std::string& database_name,
+  const std::string& table
 );
 
-void assert_field_name(Table& td, int field_index, const string& name);
+void assert_field_name(
+  ActiveRecord::Table& td,
+  int field_index,
+  const std::string& name
+);
 void assert_field_type(
-  Table& td, int field_index, ActiveRecord::Type::Type type
+  ActiveRecord::Table& td,
+  int field_index,
+  ActiveRecord::Type::Type type
 );
 void assert_field(
-  Table& td, int field_index, const string& name, ActiveRecord::Type::Type type
+  ActiveRecord::Table& td,
+  int field_index,
+  const std::string& name,
+  ActiveRecord::Type::Type type
 );
-void assert_file_exists(const string& file_name);
-void assert_file_non_zero_length(const string& file_name);
+void assert_file_exists(const std::string& file_name);
+void assert_file_non_zero_length(const std::string& file_name);
 
 // postgresql helpers
-string postgresql_invocation(const OptionsHash& options);
-string postgresql_conninfo(const OptionsHash& options);
+std::string postgresql_invocation(const ActiveRecord::OptionsHash& options);
+std::string postgresql_conninfo(const ActiveRecord::OptionsHash& options);
 strings postgresql_shell_command(
-  const string& query,
-  const OptionsHash& connection_options
+  const std::string& query,
+  const ActiveRecord::OptionsHash& connection_options
 );
 void postgresql_shell_create_database(
-  const string& create_database_name,
-  const OptionsHash& connection_options
+  const std::string& create_database_name,
+  const ActiveRecord::OptionsHash& connection_options
 );
 void postgresql_shell_drop_database(
-  const string& drop_database_name,
-  const OptionsHash& connection_options
+  const std::string& drop_database_name,
+  const ActiveRecord::OptionsHash& connection_options
 );
 bool postgresql_shell_database_exists(
-  const string& database_name,
-  const OptionsHash& connection_options
+  const std::string& database_name,
+  const ActiveRecord::OptionsHash& connection_options
 );
 void assert_postgresql_table_exists(
-  const string& table_name,
-  const OptionsHash& connection_options
+  const std::string& table_name,
+  const ActiveRecord::OptionsHash& connection_options
 );
+
+} // namespace ActiveRecord
 
 #endif // ndef _ACTIVE_RECORD_TEST_HELPER_H_

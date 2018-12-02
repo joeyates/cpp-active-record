@@ -1,7 +1,9 @@
 #include "../test_helper.h"
 #include <active_record/connection/sqlite3.h>
 
-extern string database_name;
+extern std::string database_name;
+
+namespace ActiveRecord {
 
 class NoTableNameModel: public ActiveRecord::Base<NoTableNameModel> {
   public:
@@ -22,3 +24,5 @@ TEST_F(BaseSetupTest, RequiresTableName) {
     NoTableNameModel::setup(nullptr), ActiveRecord::ActiveRecordException
   );
 }
+
+} // namespace ActiveRecord

@@ -1,5 +1,7 @@
 #include "./test.h"
 
+namespace ActiveRecord {
+
 class BaseAttributesTest: public BaseTest {};
 
 TEST_F(BaseAttributesTest, IdDefaultsToMinusOne) {
@@ -57,3 +59,5 @@ TEST_F(BaseAttributesTest, CanBeSetViaInit) {
   ASSERT_DOUBLE_EQ(1.80,              joe.floating_point("height"));
   assert_attribute(Date(1965, 7, 31), joe.date("dob"));
 }
+
+} // namespace ActiveRecord

@@ -27,12 +27,12 @@ class Connection {
   virtual bool connected()                    = 0;
 
   // Tables/Models
-  void set_table(const string& class_name, const Table& table);
-  Table& get_table(const string& class_name);
+  void set_table(const std::string& class_name, const Table& table);
+  Table& get_table(const std::string& class_name);
   void update_database();
 
   // Database Structure
-  virtual bool table_exists(const string& table_name)      = 0;
+  virtual bool table_exists(const std::string& table_name)       = 0;
 
   // Transactions
   void begin_transaction();
@@ -40,24 +40,32 @@ class Connection {
 
   // Queries
   virtual bool execute(
-    const string& query,
+    const std::string& query,
     const AttributeList &parameters = AttributeList()
-   )       = 0;
-  virtual int64 insert(const string& query,
-    const AttributeList &parameters = AttributeList())       = 0;
-  virtual Attribute select_value(const string& query,
-    const AttributeList &parameters = AttributeList())       = 0;
-  virtual AttributeList select_values(const string &query,
-    const AttributeList &parameters = AttributeList())       = 0;
-  virtual Row select_one(const string& query,
-      const AttributeList &parameters = AttributeList())     = 0;
-  virtual RowSet select_all(const string& query,
-    const AttributeList &parameters = AttributeList())        = 0;
-  virtual TableSet schema()                              = 0;
-  virtual Table table_data(const string& table_name)  = 0;
-  virtual string primary_key(const string& table_name) = 0;
-  virtual void remove_field(const string& table_name,
-    const string &field_name)                                 = 0;
+  ) = 0;
+  virtual int64 insert(const std::string& query,
+  const AttributeList &parameters = AttributeList())             = 0;
+  virtual Attribute select_value(const std::string& query,
+  const AttributeList &parameters = AttributeList())             = 0;
+  virtual AttributeList select_values(
+    const std::string &query,
+    const AttributeList &parameters = AttributeList()
+  ) = 0;
+  virtual Row select_one(
+    const std::string& query,
+    const AttributeList &parameters = AttributeList()
+  ) = 0;
+  virtual RowSet select_all(
+    const std::string& query,
+    const AttributeList &parameters = AttributeList()
+  ) = 0;
+  virtual TableSet schema()                                      = 0;
+  virtual Table table_data(const std::string& table_name)        = 0;
+  virtual std::string primary_key(const std::string& table_name) = 0;
+  virtual void remove_field(
+    const std::string& table_name,
+    const std::string &field_name
+  ) = 0;
 
   private:
 

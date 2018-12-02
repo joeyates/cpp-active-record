@@ -2,6 +2,8 @@
 #include "postgresql_connection_test.h"
 #include <active_record/connection/postgresql.h>
 
+namespace ActiveRecord {
+
 class PostgresqlTableSetTest: public PostgresqlTest {
   protected:
 
@@ -22,7 +24,7 @@ class PostgresqlTableSetTest: public PostgresqlTest {
   protected:
 
   PostgresqlConnection connection_;
-  string created_database_;
+  std::string created_database_;
 };
 
 TEST_F(PostgresqlTableSetTest, CreateTable) {
@@ -34,3 +36,5 @@ TEST_F(PostgresqlTableSetTest, CreateTable) {
     "people", connection_options_
   );
 }
+
+} // namespace ActiveRecord

@@ -1,5 +1,7 @@
 #include "./test.h"
 
+namespace ActiveRecord {
+
 class BaseToString: public BaseTest {
   protected:
 
@@ -23,3 +25,5 @@ TEST_F(BaseToString, OutputsAttributes) {
     cher.to_string()
   );
 }
+
+} // namespace ActiveRecord

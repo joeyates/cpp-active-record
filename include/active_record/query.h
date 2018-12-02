@@ -10,7 +10,6 @@
 #include <active_record/table_set.h>
 #include <active_record/row.h>
 #include <active_record/connection.h>
-using namespace std;
 
 #define INVALID_LIMIT -1
 
@@ -27,25 +26,25 @@ class Query {
 
   Query<T> operator=(const Query<T>& other);
 
-  Query<T> where(const string& condition, const Attribute& value);
-  Query<T> order(string order);
+  Query<T> where(const std::string& condition, const Attribute& value);
+  Query<T> order(std::string order);
   Query<T> limit(int limit);
   // Results
   T first();
-  vector<T> all();
+  std::vector<T> all();
 
   protected:
 
-  AttributePairList conditions_;
-  vector<string>    orderings_;
-  int               limit_;
-  Connection*       connection_;
+  AttributePairList   conditions_;
+  std::vector<std::string> orderings_;
+  int                 limit_;
+  Connection*         connection_;
 
   private:
 
   QueryParametersPair    condition_clause();
-  string                 order_clause();
-  string                 limit_clause();
+  std::string            order_clause();
+  std::string            limit_clause();
   QueryParametersPair    query_and_parameters();
 };
 
@@ -65,14 +64,14 @@ Query<T> Query<T>::operator=(const Query<T>& other) {
 
 // foo.where("name = ?", "Joe");
 template <class T>
-Query<T> Query<T>::where(const string& condition, const Attribute& value) {
+Query<T> Query<T>::where(const std::string& condition, const Attribute& value) {
   conditions_.push_back(AttributePair(condition, value));
   return *this;
 }
 
 // foo.order("bar DESC");
 template <class T>
-Query<T> Query<T>::order(string order) {
+Query<T> Query<T>::order(std::string order) {
   orderings_.push_back(order);
   return *this;
 }
@@ -85,10 +84,10 @@ Query<T> Query<T>::limit(int limit) {
 }
 
 template <class T>
-vector<T> Query<T>::all() {
+std::vector<T> Query<T>::all() {
   QueryParametersPair query = query_and_parameters();
   AttributeList ids = connection_->select_values(query.first, query.second);
-  vector<T> results;
+  std::vector<T> results;
 
   for(auto& id: ids) {
     T record(boost::get<int64>(id));
@@ -108,7 +107,7 @@ T Query<T>::first() {
   }
 
   Table t = connection_->get_table(T::class_name);
-  string primary_key = t.primary_key();
+  std::string primary_key = t.primary_key();
   T record(row.get_integer(primary_key));
 
   return record;
@@ -125,7 +124,7 @@ QueryParametersPair Query<T>::condition_clause() {
     return QueryParametersPair("", parameters);
   }
 
-  stringstream ss;
+  std::stringstream ss;
   ss << " ";
 
   for(auto& condition: conditions_) {
@@ -142,12 +141,12 @@ QueryParametersPair Query<T>::condition_clause() {
 }
 
 template <class T>
-string Query<T>::order_clause() {
+std::string Query<T>::order_clause() {
   if(orderings_.size() == 0) {
     return "";
   }
 
-  stringstream ss;
+  std::stringstream ss;
   ss << " ";
 
   for(auto& ordering: orderings_) {
@@ -164,12 +163,12 @@ string Query<T>::order_clause() {
 }
 
 template <class T>
-string Query<T>::limit_clause() {
+std::string Query<T>::limit_clause() {
   if(limit_ == INVALID_LIMIT) {
     return "";
   }
 
-  stringstream ss;
+  std::stringstream ss;
   ss << " LIMIT " << limit_;
 
   return ss.str();
@@ -179,7 +178,7 @@ template <class T>
 QueryParametersPair Query<T>::query_and_parameters() {
   Table t = connection_->get_table(T::class_name);
 
-  stringstream ss;
+  std::stringstream ss;
   ss << "SELECT ";
   ss << t.primary_key() << " ";
   ss << "FROM ";

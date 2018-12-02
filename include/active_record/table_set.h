@@ -7,7 +7,7 @@ namespace ActiveRecord {
 
 class Connection;
 
-class TableSet: public map<string, Table> {
+class TableSet: public std::map<std::string, Table> {
   public:
 
   static void create_table(Table& td);

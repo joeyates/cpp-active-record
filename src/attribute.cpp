@@ -19,7 +19,7 @@ bool Attribute::operator==(const Attribute& other) const {
     case 0:
       return boost::get<int64>(*this) == boost::get<int64>(other);
     case 1:
-      return boost::get<string>(*this) == boost::get<string>(other);
+      return boost::get<std::string>(*this) == boost::get<std::string>(other);
     case 2:
       return boost::get<double>(*this) == boost::get<double>(other);
     case 3:
@@ -35,13 +35,15 @@ bool Attribute::operator!=(const Attribute& other) const {
   return !(*this == other);
 }
 
-ostream& operator<<(ostream& cout, ActiveRecord::Date const& date) {
+std::ostream& operator<<(
+  std::ostream& cout, ActiveRecord::Date const& date
+) {
   cout << date.to_string();
   return cout;
 }
 
-ostream& operator<<(
-  ostream& cout, const ActiveRecord::AttributeList& attributes
+std::ostream& operator<<(
+  std::ostream& cout, const ActiveRecord::AttributeList& attributes
 ) {
   for(auto it = attributes.begin(); it != attributes.end(); ++it) {
     if(it != attributes.begin()) {
@@ -50,13 +52,13 @@ ostream& operator<<(
     cout << *it;
   }
 
-  cout << endl;
+  cout << std::endl;
 
   return cout;
 }
 
-ostream& operator<<(
-  ostream& cout, const ActiveRecord::AttributeHash& attributes
+std::ostream& operator<<(
+  std::ostream& cout, const ActiveRecord::AttributeHash& attributes
 ) {
   for(auto& attribute: attributes) {
     if(attribute != *attributes.begin()) {
@@ -65,24 +67,24 @@ ostream& operator<<(
     cout << attribute.first << ": " << attribute.second;
   }
 
-  cout << endl;
+  cout << std::endl;
 
   return cout;
 }
 
 } // namespace ActiveRecord
 
-ostream& operator<<(
-  ostream& cout, const ActiveRecord::GenericAttributePairList& attributes
+std::ostream& operator<<(
+  std::ostream& cout, const ActiveRecord::GenericAttributePairList& attributes
 ) {
-  for(auto it = attributes.begin(); it != attributes.end(); ++it) {
-    if(it != attributes.begin()) {
+  for(auto& attribute: attributes) {
+    if(attribute != *attributes.begin()) {
       cout << ", ";
     }
-    cout << it->first << ": " << it->second;
+    cout << attribute.first << ": " << attribute.second;
   }
 
-  cout << endl;
+  cout << std::endl;
 
   return cout;
 }

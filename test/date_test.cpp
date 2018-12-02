@@ -1,6 +1,8 @@
 #include "test_helper.h"
 #include <active_record/date.h>
 
+namespace ActiveRecord {
+
 class DateTest: public ::testing::Test {
   protected:
 
@@ -44,7 +46,7 @@ TEST_F(DateTest, ToString) {
 
 TEST_F(DateTest, StreamOutput) {
   Date d(2001, 9, 11);
-  stringstream date_out;
+  std::stringstream date_out;
   date_out << d;
 
   assert_string("2001-09-11", date_out.str());
@@ -59,3 +61,5 @@ TEST_F(DateTest, Compare) {
   ASSERT_TRUE(d1 == d2);
   ASSERT_FALSE(d1 == d3);
 }
+
+} // namespace ActiveRecord

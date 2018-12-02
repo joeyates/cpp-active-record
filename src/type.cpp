@@ -26,7 +26,7 @@ Type::Type index_to_type(int index) {
 }
 
 // TYPE_LIST
-Type::Type to_type(const string& type_name) {
+Type::Type to_type(const std::string& type_name) {
   if(type_name == "INTEGER") {
     return Type::integer;
   }

@@ -1,8 +1,13 @@
 #include <active_record/exception.h>
 
-ostream& operator<<(
-  ostream& cout, const ActiveRecord::ActiveRecordException& e
+namespace ActiveRecord {
+
+std::ostream& operator<<(
+  std::ostream& cout, const ActiveRecord::ActiveRecordException& e
 ) {
   cout << e.to_string();
+
   return cout;
 }
+
+} // namespace ActiveRecord

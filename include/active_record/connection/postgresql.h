@@ -42,11 +42,11 @@ class PostgresqlConnection: public Connection {
   );
   static void drop_database(
     PostgresqlConnection& connection,
-    const string& database_name
+    const std::string& database_name
   );
   static bool database_exists(
     PostgresqlConnection& connection,
-    const string &database_name
+    const std::string &database_name
   );
 
   virtual void connect(OptionsHash options);
@@ -54,41 +54,44 @@ class PostgresqlConnection: public Connection {
   virtual bool connected();
 
   // Database Structure
-  virtual bool table_exists(const string& table_name);
+  virtual bool table_exists(const std::string& table_name);
   // Queries
   virtual bool execute(
-    const string& query,
+    const std::string& query,
     const AttributeList& parameters = AttributeList()
   );
   virtual long insert(
-    const string& query,
+    const std::string& query,
     const AttributeList& parameters = AttributeList()
   );
   virtual Attribute select_value(
-    const string& query,
+    const std::string& query,
     const AttributeList& parameters = AttributeList()
   );
   virtual AttributeList select_values(
-    const string& query,
+    const std::string& query,
     const AttributeList& parameters = AttributeList()
   );
   virtual Row select_one(
-    const string& query,
+    const std::string& query,
     const AttributeList& parameters = AttributeList()
   );
   virtual RowSet select_all(
-    const string& query,
+    const std::string& query,
     const AttributeList& parameters = AttributeList()
   );
-  virtual string primary_key(const string& table_name);
+  virtual std::string primary_key(const std::string& table_name);
   virtual TableSet schema();
-  virtual Table table_data(const string& table_name);
-  virtual void remove_field(const string& table_name, const string& field_name);
+  virtual Table table_data(const std::string& table_name);
+  virtual void remove_field(
+    const std::string& table_name,
+    const std::string& field_name
+  );
 
   private:
 
   PGresult* prepare(
-    const string &query,
+    const std::string &query,
     const AttributeList& parameters,
     ParameterAllocations& pa
   );

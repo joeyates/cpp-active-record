@@ -1,14 +1,14 @@
 #include "test_helper.h"
 
+namespace ActiveRecord {
+
 class AttributeTest: public ::testing::Test {};
 
-using namespace ActiveRecord;
-
 TEST_F(AttributeTest, GetType) {
-  Attribute foo((int64) 13);
-  Attribute bar("hello");
-  Attribute baz(1.8);
-  Attribute qux(Date(1999, 8, 29));
+  ActiveRecord::Attribute foo((int64) 13);
+  ActiveRecord::Attribute bar("hello");
+  ActiveRecord::Attribute baz(1.8);
+  ActiveRecord::Attribute qux(ActiveRecord::Date(1999, 8, 29));
 
   ASSERT_EQ(Type::integer,        foo.type());
   ASSERT_EQ(Type::text,           bar.type());
@@ -17,30 +17,30 @@ TEST_F(AttributeTest, GetType) {
 }
 
 TEST_F(AttributeTest, HasData) {
-  Attribute foo((int64) 13);
-  Attribute def;
+  ActiveRecord::Attribute foo((int64) 13);
+  ActiveRecord::Attribute def;
 
   ASSERT_TRUE(foo.has_data());
   ASSERT_FALSE(def.has_data());
 }
 
 TEST_F(AttributeTest, Equality) {
-  Attribute foo((int64) 13);
-  Attribute bar("hello");
-  Attribute baz(1.8);
-  Attribute qux(Date(1999, 8, 29));
+  ActiveRecord::Attribute foo((int64) 13);
+  ActiveRecord::Attribute bar("hello");
+  ActiveRecord::Attribute baz(1.8);
+  ActiveRecord::Attribute qux(ActiveRecord::Date(1999, 8, 29));
 
   ASSERT_TRUE(foo == foo);
   ASSERT_FALSE(foo == bar);
 }
 
 TEST_F(AttributeTest, Ostream) {
-  Attribute foo((int64) 13);
-  Attribute bar("hello");
-  Attribute baz(1.8);
-  Attribute qux(Date(1999, 8, 29));
+  ActiveRecord::Attribute foo((int64) 13);
+  ActiveRecord::Attribute bar("hello");
+  ActiveRecord::Attribute baz(1.8);
+  ActiveRecord::Attribute qux(ActiveRecord::Date(1999, 8, 29));
 
-  stringstream foo_out, bar_out, baz_out, qux_out;
+  std::stringstream foo_out, bar_out, baz_out, qux_out;
   foo_out << foo;
   bar_out << bar;
   baz_out << baz;
@@ -55,27 +55,30 @@ TEST_F(AttributeTest, Ostream) {
 class AttributeHashTest: public ::testing::Test {};
 
 TEST_F(AttributeHashTest, AttributesFunction) {
-  const AttributePairList attribs =
-    attribute_pairs
+  const ActiveRecord::AttributePairList attribs =
+    ActiveRecord::attribute_pairs
       ("foo", (int64) 13)
       ("bar", "hello")
       ("baz", 15.5)
-      ("qux", Date(1999, 8, 29));
+      ("qux", ActiveRecord::Date(1999, 8, 29));
 
   ASSERT_EQ(4, attribs.size());
 
-  AttributePairList expected;
-  expected.push_back(AttributePair("foo", (int64) 13));
-  expected.push_back(AttributePair("bar", "hello"));
-  expected.push_back(AttributePair("baz", 15.5));
-  expected.push_back(AttributePair("qux", Date(1999, 8, 29)));
+  ActiveRecord::AttributePairList expected;
+  expected.push_back(ActiveRecord::AttributePair("foo", (int64) 13));
+  expected.push_back(ActiveRecord::AttributePair("bar", "hello"));
+  expected.push_back(ActiveRecord::AttributePair("baz", 15.5));
+  expected.push_back(ActiveRecord::AttributePair(
+    "qux",
+    ActiveRecord::Date(1999, 8, 29))
+  );
 
   assert_attribute_pair_list(expected, attribs);
 }
 
 TEST_F(AttributeHashTest, Access) {
-  AttributeHash attribs =
-    attribute_pairs
+  ActiveRecord::AttributeHash attribs =
+    ActiveRecord::attribute_pairs
       ("foo", (int64) 13)
       ("bar", "hello");
 
@@ -84,11 +87,13 @@ TEST_F(AttributeHashTest, Access) {
 }
 
 TEST_F(AttributeHashTest, MissingKeys) {
-  AttributeHash attribs =
-    attribute_pairs
+  ActiveRecord::AttributeHash attribs =
+    ActiveRecord::attribute_pairs
       ("foo", (int64) 13)
       ("bar", "hello");
 
-  Attribute a = attribs["xxx"];
+  ActiveRecord::Attribute a = attribs["xxx"];
   ASSERT_FALSE(a.has_data());
 }
+
+} // namespace ActiveRecord

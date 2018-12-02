@@ -28,39 +28,42 @@ it:
 #include <active_record/query.h>
 #include <iostream>
 
-using namespace ActiveRecord;
-
-class Greeting: public ActiveRecord::Base< Greeting > {
+class Greeting: public ActiveRecord::Base<Greeting> {
  public:
-  AR_CONSTRUCTORS( Greeting )
-  static Table table( Connection * connection ) {
-    Table td( connection, "greetings" );
-    td.fields() = fields
-                  ( "salute",   ActiveRecord::text )
-                  ( "thing",    ActiveRecord::text )
-                  ( "language", ActiveRecord::text );
+  AR_CONSTRUCTORS(Greeting)
+  static ActiveRecord::Table table(ActiveRecord::Connection* connection) {
+    ActiveRecord::Table td(connection, "greetings");
+    td.fields() =
+      ActiveRecord::fields
+        ("salute",   ActiveRecord::Type::text)
+        ("thing",    ActiveRecord::Type::text)
+        ("language", ActiveRecord::Type::text);
     return td;
   }
 };
 
-AR_DECLARE( Greeting )
+AR_DECLARE(Greeting)
 
-int main( int argc, const char *argv[] ) {
+int main(int argc, const char *argv[]) {
   Connection connection;
-  connection.connect( options
-                      ( "adapter", "sqlite" )
-                      ( "database", "greetings.sqlite3" ) );
-  Greeting::setup( &connection );
+  connection.connect(
+    ActiveRecord::options
+      ("adapter", "sqlite")
+      ("database", "greetings.sqlite3")
+    );
+  Greeting::setup(&connection);
   connection.update_database();
-  Greeting greeting( attributes
-                  ( "salute", "Hello" )
-                  ( "thing", "World" )
-                  ( "language", "English" ) );
+  Greeting greeting(
+    ActiveRecord::attributes
+      ("salute", "Hello")
+      ("thing", "World")
+      ("language", "English")
+  );
   greeting.save();
 
-  Greeting greeting1( 1 );
-  cout << "In " << greeting1[ "language" ] << " you say:" << endl;
-  cout << "'" << greeting1[ "salute" ] << " " << greeting1[ "thing" ] << "!'" << endl;
+  Greeting greeting1(1);
+  std::cout << "In " << greeting1["language"] << " you say:" << std::endl;
+  std::cout << "'" << greeting1["salute"] << " " << greeting1["thing"] << "!'" << std::endl;
 
   return 0;
 }

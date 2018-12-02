@@ -9,48 +9,49 @@
 
 namespace ActiveRecord {
 
-Type::Type Row::get_type(const string &name) {
+Type::Type Row::get_type(const std::string &name) {
   return attributes_[name].type();
 }
 
-bool Row::is_type(const string& name, Type::Type type) {
+bool Row::is_type(const std::string& name, Type::Type type) {
   Type::Type actual = attributes_[name].type();
   return actual == type;
 }
 
 // TYPE_LIST
-int64 Row::get_integer(const string& name) {
+int64 Row::get_integer(const std::string& name) {
   return boost::get<int64>(attributes_[name]);
 }
 
-string Row::get_text(const string& name) {
-  return boost::get<string>(attributes_[name]);
+std::string Row::get_text(const std::string& name) {
+  return boost::get<std::string>(attributes_[name]);
 }
 
-double Row::get_floating_point(const string& name) {
+double Row::get_floating_point(const std::string& name) {
   return boost::get<double>(attributes_[name]);
 }
 
-Date Row::get_date(const string& name) {
+Date Row::get_date(const std::string& name) {
   return boost::get<Date>(attributes_[name]);
 }
 
-string Row::to_string() const {
-  stringstream row;
-  row << "{" << endl;
+std::string Row::to_string() const {
+  std::stringstream row;
+  row << "{" << std::endl;
 
   for(auto& attribute: attributes_) {
     row << attribute.first << ": ";
-    row << attribute.second << endl;
+    row << attribute.second << std::endl;
   }
 
-  row << "}" << endl;
+  row << "}" << std::endl;
 
   return row.str();
 }
 
-ostream& operator<<(ostream& cout, const ActiveRecord::Row& row) {
+std::ostream& operator<<(std::ostream& cout, const ActiveRecord::Row& row) {
   cout << row.to_string();
+
   return cout;
 }
 

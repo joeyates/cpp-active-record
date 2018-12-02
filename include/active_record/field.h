@@ -5,39 +5,31 @@
 #include <boost/assign.hpp>
 #include <boost/variant.hpp>
 #include <boost/assign/list_of.hpp>
-using namespace std;
-using namespace boost::assign;
-using namespace boost;
-
-namespace ActiveRecord {
-class Field;
-}
-
-ostream& operator<<(ostream& cout, const ActiveRecord::Field& field);
+#include <sstream>
 
 namespace ActiveRecord {
 
 class Field {
-  friend ostream& ::operator<<(ostream& cout, const Field& field);
-
   public:
 
-  Field(const string& name, ActiveRecord::Type::Type type):
+  Field(const std::string& name, ActiveRecord::Type::Type type):
     name_(name),
     type_(type) {}
 
-  inline const string& name() const { return name_; }
+  inline const std::string& name() const { return name_; }
   inline ActiveRecord::Type::Type type() const { return type_; }
 
   private:
 
-  string                   name_;
+  std::string name_;
   ActiveRecord::Type::Type type_;
 };
 
-typedef assign_detail::generic_list<Field> GenericFieldList;
+std::ostream& operator<<(std::ostream& cout, const ActiveRecord::Field& field);
 
-class Fields: public vector<Field> {
+typedef boost::assign_detail::generic_list<Field> GenericFieldList;
+
+class Fields: public std::vector<Field> {
   public:
 
   Fields() {}
@@ -61,7 +53,7 @@ class Fields: public vector<Field> {
 
   private:
 
-  bool has_field(const string& field_name) {
+  bool has_field(const std::string& field_name) {
     for(auto& field: *this) {
       if(field.name() == field_name) {
         return true;
@@ -93,7 +85,7 @@ inline GenericFieldList fields(
   const char* name,
   ActiveRecord::Type::Type type
 ) {
-  return assign::list_of(Field(name, type));
+  return boost::assign::list_of(Field(name, type));
 }
 
 } // namespace ActiveRecord

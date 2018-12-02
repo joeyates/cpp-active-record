@@ -4,7 +4,9 @@
 #include <active_record/table.h>
 #include <active_record/query.h>
 
-extern string database_name;
+extern std::string database_name;
+
+namespace ActiveRecord {
 
 class ConnectionTest: public ::testing::Test {
   protected:
@@ -29,11 +31,11 @@ TEST_F(ConnectionTest, ConnectExistingDatabase) {
   pipe_to_sqlite(database_name, "CREATE TABLE foo (bar INTEGER);");
   Sqlite3Connection connection;
   ASSERT_NO_THROW({
-      connection.connect(
-        options
-          ("adapter", "sqlite")
-          ("database", database_name)
-       );
+    connection.connect(
+      options
+        ("adapter", "sqlite")
+        ("database", database_name)
+    );
   });
 }
 
@@ -135,7 +137,7 @@ class Sqlite3WithConnectionTest : public ::testing::Test {
   virtual void SetUp() {
     sqlite_delete_database();
     sqlite_connect_database(connection, database_name);
-    string create =
+    std::string create =
       "CREATE TABLE foo "
       "("
       "pk INTEGER PRIMARY KEY, "
@@ -182,3 +184,5 @@ TEST_F(Sqlite3WithConnectionTest, RemoveField) {
 TEST_F(Sqlite3WithConnectionTest, FindsPrimaryKey) {
   ASSERT_EQ(connection.primary_key("foo"), "pk");
 }
+
+} // namespace ActiveRecord

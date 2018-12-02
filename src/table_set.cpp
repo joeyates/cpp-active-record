@@ -16,13 +16,13 @@ void TableSet::create_table(Table& td) {
   log("TableSet::create_table");
   log(td.table_name());
 
-  stringstream ss;
+  std::stringstream ss;
   ss << "CREATE TABLE " << td.table_name();
   ss << " (";
 
   bool is_first = true;
 
-  string pk = td.primary_key();
+  std::string pk = td.primary_key();
   if(!pk.empty()) {
     ss << pk << " INTEGER PRIMARY KEY";
     is_first = false;
@@ -75,7 +75,7 @@ void TableSet::update_table(Table& td) {
 void TableSet::update_database() {
   for(auto& pair: *this) {
     Table td = pair.second;
-    string name = td.table_name();
+    std::string name = td.table_name();
     bool exists = td.connection()->table_exists(name);
     if(exists) {
       update_table(td);

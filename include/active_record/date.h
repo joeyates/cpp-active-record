@@ -8,20 +8,18 @@
 #include <stdio.h>
 #include <active_record/exception.h>
 
-using namespace std;
-
 namespace ActiveRecord {
 
 class Date {
-  friend ostream& operator<<(ostream& cout, const Date& date);
+  friend std::ostream& operator<<(std::ostream& cout, const Date& date);
 
   public:
 
-  static Date parse(const string& date) {
+  static Date parse(const std::string& date) {
     return Date(date);
   }
 
-  static bool is_valid(const string& date) {
+  static bool is_valid(const std::string& date) {
     struct tm tm;
     return parse(date, tm);
   }
@@ -29,7 +27,7 @@ class Date {
   Date() { init(0); }
   Date(time_t t) { init(t); }
 
-  Date(const string &date) {
+  Date(const std::string &date) {
     init(0);
     bool parsed = parse(date, tm_);
     if(!parsed) {
@@ -52,8 +50,8 @@ class Date {
   int month() const { return tm_.tm_mon + 1; }
   int day() const { return tm_.tm_mday; }
 
-  string to_string() const {
-    stringstream ss;
+  std::string to_string() const {
+    std::stringstream ss;
     ss.fill('0');
     ss.width(0);
     ss << year() << "-";
@@ -75,7 +73,7 @@ class Date {
     gmtime_r(&t, &tm_);
   }
 
-  static bool parse(const string& date, struct tm& tm) {
+  static bool parse(const std::string& date, struct tm& tm) {
     int year, month, day;
     int found = sscanf(date.c_str(), "%u-%u-%u", &year, &month, &day);
     if(found != 3) {

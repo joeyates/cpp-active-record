@@ -1,5 +1,7 @@
 #include "./test.h"
 
+namespace ActiveRecord {
+
 class BaseOperators: public BaseTest {
   protected:
 
@@ -40,7 +42,7 @@ TEST_F(BaseOperators, EqualityUpdatedRecords) {
 
 TEST_F(BaseOperators, StreamOutput) {
   Person cher(1);
-  stringstream cher_out;
+  std::stringstream cher_out;
 
   cher_out << cher;
 
@@ -55,3 +57,5 @@ TEST_F(BaseOperators, StreamOutput) {
     cher_out.str()
   );
 }
+
+} // namespace ActiveRecord

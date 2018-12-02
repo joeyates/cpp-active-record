@@ -1,16 +1,16 @@
 #include "../test_helper.h"
 #include <active_record/connection/sqlite3.h>
 
-extern string database_name;
+extern std::string database_name;
 
-using namespace ActiveRecord;
+namespace ActiveRecord {
 
 class Library: public ActiveRecord::Base<Library> {
   public:
 
   AR_CONSTRUCTORS(Library)
-  static Table table(Connection * connection) {
-    Table td(connection, "libraries");
+  static ActiveRecord::Table table(ActiveRecord::Connection * connection) {
+    ActiveRecord::Table td(connection, "libraries");
     td.fields() = fields ("name", Type::text);
     return td;
   }
@@ -19,9 +19,9 @@ class Library: public ActiveRecord::Base<Library> {
 class Book: public ActiveRecord::Base<Book> {
   public:
 
-  AR_CONSTRUCTORS( Book)
-  static Table table(Connection * connection) {
-    Table td(connection, "books");
+  AR_CONSTRUCTORS(Book)
+  static ActiveRecord::Table table(ActiveRecord::Connection * connection) {
+    ActiveRecord::Table td(connection, "books");
     td.fields() =
       fields
         ("library_id", Type::integer)
@@ -38,7 +38,7 @@ class AssociationTest: public ::testing::Test {
 
   virtual void SetUp() {
     sqlite_delete_database();
-    sqlite_connect_database(connection, database_name);
+    sqlite_connect_database(connection, ::database_name);
     Library::setup(&connection);
     Book::setup(&connection);
     connection.update_database();
@@ -74,7 +74,7 @@ class AssociationTest: public ::testing::Test {
 
   protected:
 
-  Sqlite3Connection connection;
+  ActiveRecord::Sqlite3Connection connection;
   Library british_library;
   Library nazionale;
   Book    lindisfarne;
@@ -83,14 +83,14 @@ class AssociationTest: public ::testing::Test {
 };
 
 TEST_F(AssociationTest, HasMany) {
-  vector<Book> books = british_library.has_many<Book>();
+  std::vector<Book> books = british_library.has_many<Book>();
 
   ASSERT_EQ(2, books.size());
 }
 
 TEST_F(AssociationTest, HasManyIncorrectAssociation) {
   ASSERT_THROW(
-    vector<Library> books = lindisfarne.has_many<Library>(),
+    std::vector<Library> books = lindisfarne.has_many<Library>(),
     ActiveRecordException
   );
 }
@@ -100,3 +100,5 @@ TEST_F(AssociationTest, BelongsTo) {
 
   ASSERT_EQ(british_library.id(), owner.id());
 }
+
+} // namespace ActiveRecord

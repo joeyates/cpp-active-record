@@ -32,7 +32,7 @@ bool Sqlite3Connection::connected() {
 /////////////////////////////////////////////////////
 // Database Structure
 
-bool Sqlite3Connection::table_exists(const string& table_name) {
+bool Sqlite3Connection::table_exists(const std::string& table_name) {
   AttributeList parameters;
   parameters.push_back(table_name);
 
@@ -45,7 +45,7 @@ bool Sqlite3Connection::table_exists(const string& table_name) {
 }
 
 bool Sqlite3Connection::execute(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters
 ) {
   log("Sqlite3Connection::execute");
@@ -61,7 +61,7 @@ bool Sqlite3Connection::execute(
 }
 
 int64 Sqlite3Connection::insert(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters
 ) {
   log("Sqlite3Connection::insert");
@@ -77,7 +77,7 @@ int64 Sqlite3Connection::insert(
 }
 
 Row Sqlite3Connection::select_one(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters
 ) {
   ParameterAllocations pa;
@@ -97,7 +97,7 @@ Row Sqlite3Connection::select_one(
 }
 
 RowSet Sqlite3Connection::select_all(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters
 ) {
   ParameterAllocations pa;
@@ -115,7 +115,7 @@ RowSet Sqlite3Connection::select_all(
 }
 
 AttributeList Sqlite3Connection::select_values(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters
 ) {
   ParameterAllocations pa;
@@ -133,7 +133,7 @@ AttributeList Sqlite3Connection::select_values(
 }
 
 Attribute Sqlite3Connection::select_value(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters
 ) {
   ParameterAllocations pa;
@@ -160,20 +160,20 @@ TableSet Sqlite3Connection::schema() {
   );
 
   for(auto& row: rows) {
-    string table_name = row.get_text("name");
+    std::string table_name = row.get_text("name");
     s[table_name] = table_data(table_name);
   }
 
   return s;
 }
 
-Table Sqlite3Connection::table_data(const string& table_name) {
+Table Sqlite3Connection::table_data(const std::string& table_name) {
   Table td(this, table_name);
 
-  string pk = primary_key(table_name);
+  std::string pk = primary_key(table_name);
   td.primary_key(pk);
 
-  stringstream row_query;
+  std::stringstream row_query;
   row_query << "PRAGMA table_info(\"" << table_name << "\");";
 
   RowSet rows = select_all(row_query.str());
@@ -181,8 +181,8 @@ Table Sqlite3Connection::table_data(const string& table_name) {
   for(auto& row: rows) {
     // cid | name | type    | notnull | dflt_value | pk
     //   0 |  bar | INTEGER |       0 |            |  0
-    string name      = row.get_text("name");
-    string type_name = row.get_text("type");
+    std::string name      = row.get_text("name");
+    std::string type_name = row.get_text("type");
 
     if(name == pk) {
       continue;
@@ -190,7 +190,7 @@ Table Sqlite3Connection::table_data(const string& table_name) {
 
     ActiveRecord::Type::Type type = ActiveRecord::to_type(type_name);
     if(type == Type::unknown) {
-      stringstream error;
+      std::stringstream error;
       error << "Unknown type: " << type_name;
       throw ActiveRecordException(error.str(), __FILE__, __LINE__);
     }
@@ -200,8 +200,8 @@ Table Sqlite3Connection::table_data(const string& table_name) {
   return td;
 }
 
-string Sqlite3Connection::primary_key(const string& table_name) {
-  string row_query = "PRAGMA table_info(\"" + table_name + "\");";
+std::string Sqlite3Connection::primary_key(const std::string& table_name) {
+  std::string row_query = "PRAGMA table_info(\"" + table_name + "\");";
 
   RowSet rows = select_all(row_query);
 
@@ -211,7 +211,7 @@ string Sqlite3Connection::primary_key(const string& table_name) {
     bool is_pk = row.get_text("pk") != "0";
 
     if(is_pk) {
-      string name = row.get_text("name");
+      std::string name = row.get_text("name");
       return name;
     }
   }
@@ -219,7 +219,7 @@ string Sqlite3Connection::primary_key(const string& table_name) {
   return "";
 }
 
-string temp_table_name() {
+std::string temp_table_name() {
   const char* base_name = "ar_rename";
   time_t t_now = time(nullptr);
   struct tm* now = gmtime(&t_now);
@@ -249,23 +249,23 @@ string temp_table_name() {
     now->tm_sec
   );
 
-  string name = buffer;
+  std::string name = buffer;
   delete[] buffer;
 
   return name;
 }
 
 void Sqlite3Connection::remove_field(
-  const string& table_name,
-  const string& field_name
+  const std::string& table_name,
+  const std::string& field_name
 ) {
-  string temp_table = temp_table_name();
+  std::string temp_table = temp_table_name();
 
   Table td = table_data(table_name);
-  string pk = td.primary_key();
+  std::string pk = td.primary_key();
   Fields fields = td.fields();
 
-  stringstream copy_fields;
+  std::stringstream copy_fields;
   bool first = true;
   if(!pk.empty()) {
     copy_fields << pk;
@@ -276,7 +276,7 @@ void Sqlite3Connection::remove_field(
   temp.primary_key(pk);
 
   for(auto& field: fields) {
-    const string& name = field.name();
+    const std::string& name = field.name();
     if(name == field_name) {
       continue;
     }
@@ -293,17 +293,17 @@ void Sqlite3Connection::remove_field(
 
   TableSet::create_table(temp);
 
-  stringstream copy;
+  std::stringstream copy;
   copy << "INSERT INTO " << temp_table ;
   copy << " SELECT " << copy_fields.str();
   copy << " FROM " << table_name;
   execute(copy.str(), AttributeList());
 
-  stringstream drop;
+  std::stringstream drop;
   drop << "DROP TABLE " << table_name;
   execute(drop.str(), AttributeList());
 
-  stringstream rename;
+  std::stringstream rename;
   rename << "ALTER TABLE " << temp_table << " RENAME TO " << table_name;
   execute(rename.str(), AttributeList());
 }
@@ -312,7 +312,7 @@ void Sqlite3Connection::remove_field(
 // Private
 
 sqlite3_stmt* Sqlite3Connection::prepare(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters,
   ParameterAllocations& pa
 ) {
@@ -326,7 +326,7 @@ sqlite3_stmt* Sqlite3Connection::prepare(
   );
 
   if(prepare_result != SQLITE_OK) {
-    stringstream error;
+    std::stringstream error;
     error << "SQL error: \"" << sqlite_error(prepare_result) << "\" ";
     error << "in \"" << query << "\"";
     if(!parameters.empty()) {
@@ -367,7 +367,7 @@ void Sqlite3Connection::bind_parameters(
       }
 
       case Type::text: {
-        string value = boost::get<std::string>(parameter);
+        std::string value = boost::get<std::string>(parameter);
         int len = value.size();
 
         pa.param_values[i] = new char[len + 1];
@@ -385,7 +385,7 @@ void Sqlite3Connection::bind_parameters(
 
       case Type::date: {
         Date date = boost::get<Date>(parameter);
-        string value = date.to_string();
+        std::string value = date.to_string();
         int len = value.size();
 
         pa.param_values[i] = new char[len + 1];
@@ -426,10 +426,10 @@ void Sqlite3Connection::cleanup(ParameterAllocations& pa) {
 //////////////////////
 // SQLite-specific
 
-bool Sqlite3Connection::sqlite_initialize(string& database_path_name) {
+bool Sqlite3Connection::sqlite_initialize(std::string& database_path_name) {
   int nResult = sqlite3_open(database_path_name.c_str(), &db_);
   if(nResult != 0) {
-    stringstream error;
+    std::stringstream error;
     error << "Can't open database '" << database_path_name << "'";
     error << sqlite3_errmsg(db_);
     sqlite3_close(db_);
@@ -438,8 +438,8 @@ bool Sqlite3Connection::sqlite_initialize(string& database_path_name) {
   return true;
 }
 
-string Sqlite3Connection::sqlite_error(int error_code) {
-  string error;
+std::string Sqlite3Connection::sqlite_error(int error_code) {
+  std::string error;
   switch(error_code) {
   case SQLITE_ERROR:      error = "SQL error or missing database";               break;
   case SQLITE_INTERNAL:   error = "Internal logic error in SQLite";              break;

@@ -1,5 +1,7 @@
 #include "./test.h"
 
+namespace ActiveRecord {
+
 class BaseLoadTest: public BaseTest {
   protected:
 
@@ -57,3 +59,5 @@ TEST_F(BaseLoadTest, HasDataWithAttributes) {
 
   ASSERT_TRUE(cher.has_data());
 }
+
+} // namespace ActiveRecord

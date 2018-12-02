@@ -5,24 +5,26 @@
 #include <string>
 #include <sstream>
 
-using namespace std;
-
 namespace ActiveRecord {
 class ActiveRecordException;
 }
 
-ostream& operator<<(
-  ostream& cout, const ActiveRecord::ActiveRecordException& e
+std::ostream& operator<<(
+  std::ostream& cout, const ActiveRecord::ActiveRecordException& e
 );
 
 namespace ActiveRecord {
 
 class ActiveRecordException: public std::runtime_error {
+  friend std::ostream& operator<<(
+    std::ostream& cout, const ActiveRecordException& e
+  );
+
   public:
 
   ActiveRecordException(
-    const string& message,
-    const string& file = "",
+    const std::string& message,
+    const std::string& file = "",
     long line = -1
   ):
     std::runtime_error(message),
@@ -32,12 +34,12 @@ class ActiveRecordException: public std::runtime_error {
 
   virtual ~ActiveRecordException() throw() {}
 
-  string message() const { return message_; }
-  string file() const { return file_; }
+  std::string message() const { return message_; }
+  std::string file() const { return file_; }
   long line() const { return line_; }
 
-  string to_string() const {
-    stringstream ss;
+  std::string to_string() const {
+    std::stringstream ss;
     if(file_.size() > 0) {
       ss << file_;
       if(line_ > 0) {
@@ -55,9 +57,9 @@ class ActiveRecordException: public std::runtime_error {
 
   private:
 
-  string message_;
-  string file_;
-  long   line_;
+  std::string message_;
+  std::string file_;
+  long line_;
 };
 
 } // namespace ActiveRecord

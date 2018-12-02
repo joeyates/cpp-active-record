@@ -13,12 +13,10 @@
 #include <active_record/date.h>
 #include <active_record/attribute.h>
 
-using namespace std;
-
 namespace ActiveRecord {
 
 class Row {
-  friend ostream& operator<<(ostream& cout, const Row& row);
+  friend std::ostream& operator<<(std::ostream& cout, const Row& row);
 
   public:
 
@@ -27,13 +25,13 @@ class Row {
   Row(PGresult* exec_result, int row);
 
   bool has_data() { return attributes_.size() > 0; };
-  Type::Type get_type(const string& name);
-  bool is_type(const string& name, Type::Type type);
-  string get_text(const string& name);
-  int64 get_integer(const string& name);
-  double get_floating_point(const string& name);
-  Date get_date(const string& name);
-  string to_string() const;
+  Type::Type get_type(const std::string& name);
+  bool is_type(const std::string& name, Type::Type type);
+  std::string get_text(const std::string& name);
+  int64 get_integer(const std::string& name);
+  double get_floating_point(const std::string& name);
+  Date get_date(const std::string& name);
+  std::string to_string() const;
   const AttributeHash& attributes() { return attributes_; };
 
   private:
@@ -41,7 +39,7 @@ class Row {
   AttributeHash attributes_;
 };
 
-typedef list<Row> RowSet;
+typedef std::list<Row> RowSet;
 
 } // namespace ActiveRecord
 

@@ -19,7 +19,7 @@ bool PostgresqlConnection::create_database(
   PostgresqlConnection& connection,
   OptionsHash options
 ) {
-  stringstream create_stream;
+  std::stringstream create_stream;
   create_stream << "CREATE DATABASE " << options["database"] << " ";
 
   if(options.find("owner") != options.end()) {
@@ -41,18 +41,18 @@ bool PostgresqlConnection::create_database(
 
 void PostgresqlConnection::drop_database(
   PostgresqlConnection& connection,
-  const string& database_name
+  const std::string& database_name
 ) {
-  stringstream query;
+  std::stringstream query;
   query << "DROP DATABASE " << database_name << ";";
   connection.execute(query.str());
 }
 
 bool PostgresqlConnection::database_exists(
   PostgresqlConnection& connection,
-  const string& database_name
+  const std::string& database_name
 ) {
-  stringstream query;
+  std::stringstream query;
   query << "SELECT datname FROM pg_database ";
   query << "WHERE datname = '" << database_name << "';";
   Row row = connection.select_one(query.str());
@@ -63,7 +63,7 @@ bool PostgresqlConnection::database_exists(
 // Connection
 
 void PostgresqlConnection::connect(OptionsHash options) {
-  stringstream connection_stream;
+  std::stringstream connection_stream;
   connection_stream << "dbname=" << options["database"] << " ";
 
   if(options.find("host") != options.end()) {
@@ -78,7 +78,7 @@ void PostgresqlConnection::connect(OptionsHash options) {
     connection_stream << "port=" << options["port"] << " ";
   }
 
-  string conninfo = connection_stream.str();
+  std::string conninfo = connection_stream.str();
 
   pgconn_ = PQconnectdb(conninfo.c_str());
 
@@ -101,8 +101,8 @@ bool PostgresqlConnection::connected() {
   return pgconn_ != nullptr;
 }
 
-bool PostgresqlConnection::table_exists(const string& table_name) {
-  string query = \
+bool PostgresqlConnection::table_exists(const std::string& table_name) {
+  std::string query = \
     "SELECT c.relname as table       \
      FROM pg_catalog.pg_class c      \
      WHERE c.relname = '" + table_name + "'";
@@ -111,7 +111,7 @@ bool PostgresqlConnection::table_exists(const string& table_name) {
 }
 
 bool PostgresqlConnection::execute(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters
 ) {
   log("PostgresqlConnection::execute");
@@ -131,7 +131,7 @@ bool PostgresqlConnection::execute(
 }
 
 int64 PostgresqlConnection::insert(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters
 ) {
   log("PostgresqlConnection::insert");
@@ -146,7 +146,7 @@ int64 PostgresqlConnection::insert(
 }
 
 Row PostgresqlConnection::select_one(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters
 ) {
   log("PostgresqlConnection::select_one");
@@ -176,7 +176,7 @@ Row PostgresqlConnection::select_one(
 }
 
 RowSet PostgresqlConnection::select_all(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters
 ) {
   ParameterAllocations pa;
@@ -201,7 +201,7 @@ RowSet PostgresqlConnection::select_all(
 }
 
 Attribute PostgresqlConnection::select_value(
-    const string& query,
+    const std::string& query,
     const AttributeList& parameters
 ) {
   ParameterAllocations pa;
@@ -233,7 +233,7 @@ Attribute PostgresqlConnection::select_value(
 }
 
 AttributeList PostgresqlConnection::select_values(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters
 ) {
   ParameterAllocations pa;
@@ -258,13 +258,13 @@ AttributeList PostgresqlConnection::select_values(
   return results;
 }
 
-Table PostgresqlConnection::table_data(const string& table_name) {
+Table PostgresqlConnection::table_data(const std::string& table_name) {
   Table td(this, table_name);
 
-  string pk = primary_key(table_name);
+  std::string pk = primary_key(table_name);
   td.primary_key(pk);
 
-  string query = "                      \
+  std::string query = "                      \
     SELECT a.attname, a.atttypid        \
     FROM   pg_index i                   \
     JOIN   pg_attribute a               \
@@ -276,7 +276,7 @@ Table PostgresqlConnection::table_data(const string& table_name) {
   RowSet rows = select_all(query);
 
   for(auto& row: rows) {
-    string name = row.get_text("attname");
+    std::string name = row.get_text("attname");
     Oid pg_type = row.get_integer("atttypid");
     Type::Type type = Attribute::pg_type_to_ar_type(pg_type);
 
@@ -292,7 +292,7 @@ Table PostgresqlConnection::table_data(const string& table_name) {
 
 TableSet PostgresqlConnection::schema() {
   TableSet s;
-  string query = "                         \
+  std::string query = "                         \
   SELECT c.relname                         \
   FROM   pg_catalog.pg_class c             \
     LEFT JOIN pg_catalog.pg_namespace n    \
@@ -307,15 +307,15 @@ TableSet PostgresqlConnection::schema() {
   RowSet rows = select_all(query);
 
   for(auto& row: rows) {
-    string table_name = row.get_text("relname");
+    std::string table_name = row.get_text("relname");
     s[table_name] = table_data(table_name);
   }
 
   return s;
 }
 
-string PostgresqlConnection::primary_key(const string& table_name) {
-  string query = "                      \
+std::string PostgresqlConnection::primary_key(const std::string& table_name) {
+  std::string query = "                      \
     SELECT a.attname                    \
     FROM   pg_index i                   \
     JOIN   pg_attribute a               \
@@ -331,15 +331,15 @@ string PostgresqlConnection::primary_key(const string& table_name) {
     return "";
   }
 
-  return boost::get<string>(pk);
+  return boost::get<std::string>(pk);
 }
 
 void PostgresqlConnection::remove_field(
-  const string& table_name,
-  const string& field_name
+  const std::string& table_name,
+  const std::string& field_name
 ) {
   begin_transaction();
-  string query = "                \
+  std::string query = "                \
   ALTER TABLE " + table_name + "  \
   DROP COLUMN " + field_name + "  \
   ";
@@ -390,7 +390,7 @@ void PostgresqlConnection::bind_parameters(
       }
 
       case Type::text: {
-        string value = boost::get<string>(parameter);
+        std::string value = boost::get<std::string>(parameter);
         int len = value.size();
 
         pa.param_values[i] = new char[len + 1];
@@ -413,7 +413,7 @@ void PostgresqlConnection::bind_parameters(
 
       case Type::date: {
         Date value = boost::get<Date>(parameter);
-        string s = value.to_string();
+        std::string s = value.to_string();
 
         size_t len = s.size();
         pa.param_values[i] = new char[len + 1];
@@ -424,7 +424,7 @@ void PostgresqlConnection::bind_parameters(
       }
 
       default: {
-        cout << "Unrecognized type" << endl;
+        std::cout << "Unrecognized type" << std::endl;
         throw ActiveRecordException("Type not implemented", __FILE__, __LINE__);
       }
     }
@@ -434,7 +434,7 @@ void PostgresqlConnection::bind_parameters(
 }
 
 PGresult* PostgresqlConnection::prepare(
-  const string& query,
+  const std::string& query,
   const AttributeList& parameters,
   ParameterAllocations& pa
 ) {
@@ -477,7 +477,7 @@ bool PostgresqlConnection::is_error(PGresult* exec_result) {
  }
 
 void PostgresqlConnection::log_error(PGresult* exec_result) {
-  stringstream error;
+  std::stringstream error;
   error << "PQexec returned an error. ";
   ExecStatusType status = PQresultStatus(exec_result);
   error << "Code: " <<status << " ";

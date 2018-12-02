@@ -1,6 +1,11 @@
 #include <active_record/field.h>
 
-ostream& operator<<(ostream& cout, const ActiveRecord::Field& field) {
-  cout << field.name_ << " " << ActiveRecord::type_string(field.type_);
+namespace ActiveRecord {
+
+std::ostream& operator<<(std::ostream& cout, const ActiveRecord::Field& field) {
+  cout << field.name() << " " << ActiveRecord::type_string(field.type());
+
   return cout;
 }
+
+} // namespace ActiveRecord

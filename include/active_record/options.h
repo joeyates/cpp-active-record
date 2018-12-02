@@ -5,15 +5,12 @@
 #include <boost/assign.hpp>
 #include <boost/variant.hpp>
 #include <boost/assign/list_of.hpp>
-using namespace std;
-using namespace boost::assign;
-using namespace boost;
 
 namespace ActiveRecord {
 
 // Options are for string only data
-typedef pair<string, string> OptionPair;
-typedef map<string, string>  OptionsHash;
+typedef std::pair<std::string, std::string> OptionPair;
+typedef std::map<std::string, std::string> OptionsHash;
 
 } // namespace ActiveRecord
 
@@ -37,16 +34,16 @@ list_of(const ActiveRecord::OptionPair& t) {
 namespace ActiveRecord {
 
 // Define a method that takes a list of OptionPairs to define options
-inline assign_detail::generic_list<ActiveRecord::OptionPair> options(
+inline boost::assign_detail::generic_list<ActiveRecord::OptionPair> options(
   const char* name, const char* value
 ) {
-  return assign::list_of(ActiveRecord::OptionPair(name, value));
+  return boost::assign::list_of(ActiveRecord::OptionPair(name, value));
 }
 
-inline assign_detail::generic_list<ActiveRecord::OptionPair> options(
-  const string& name, const string& value
+inline boost::assign_detail::generic_list<ActiveRecord::OptionPair> options(
+  const std::string& name, const std::string& value
 ) {
-  return assign::list_of(ActiveRecord::OptionPair(name, value));
+  return boost::assign::list_of(ActiveRecord::OptionPair(name, value));
 }
 
 } // namespace ActiveRecord
