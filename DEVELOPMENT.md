@@ -46,6 +46,8 @@ Run linter:
 clang-tidy-6.0 \
   src/**/*.cpp \
   -- \
+  -DAR_POSTGRES \
+  -DAR_SQLITE \
   -Iinclude \
   -Iinclude/postgresql \
   -Iinclude/postgresql/server
